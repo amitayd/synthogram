@@ -28,8 +28,10 @@ function init() {
   //   }
   // }
 
-  document.getElementById('mute').addEventListener('click', synth.mute, false);
+  document.getElementById('clearCanvas').addEventListener('click', clearCanvas, false);
+
   document.getElementById('pause').addEventListener('click', synth.pause, false);
+  document.getElementById('mute').addEventListener('click', synth.mute, false);
   document.getElementById('oscillatorType').addEventListener('change', function() {
     var el = document.getElementById('oscillatorType');
     var option = el.options[el.selectedIndex].text;

@@ -3,14 +3,27 @@ var context;
 
 function StepSynth(source) {
 
+  var createAudioContext = function() {
+    if (window.webkitAudioContext) {
+      return new webkitAudioContext()
+    } else if (window.AudioContext) {
+      return new AudioContext()
+    } else {
+      alert("Web Audio not supported")
+      throw new Error("Web Audio not supported (could not create audio context");
+    }
+  }
+
   // Create Web Audio Context.
-  var context = new webkitAudioContext();
+  var context = createAudioContext();
   var compressor = context.createDynamicsCompressor();
   compressor.connect(context.destination);
   var oscillators = [];
   var currStep = 0;
   var isPlaying = false;
   var isMuted = false;
+
+
 
 
   var init = function() {
@@ -25,7 +38,7 @@ function StepSynth(source) {
   var createOscillator = function(frequency) {
     // Create oscillator and gain node.
     var oscillator = context.createOscillator(),
-      gainNode = context.createGainNode();
+      gainNode = context.createGain();
 
     // Set the type and frequency of the oscillator.
     oscillator.type = "sine";
@@ -64,15 +77,15 @@ function StepSynth(source) {
 
   function getFrequency(n) {
     // http://www.phy.mtu.edu/~suits/NoteFreqCalcs.html
-    var f0 = 440;
+    //var f0 = 440;
+    var f0 = 55;
     var a = Math.pow(2, 1 / 12.0);
     return f0 * Math.pow(a, n);
   }
 
   function mute() {
-    console.log('stopping');
-
     isMuted = !isMuted;
+    console.log('muting:', isMuted);
     if (isMuted) {
       for (var i = 0; i < oscillators.length; i++) {
         oscillators[i].gain.value = 0;
