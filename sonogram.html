@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src='sonogram.js'></script>
+  <script src='painter.js'></script>
+  <script src='app.js'></script>
+    <meta charset="utf-8">
+    <title>Sonogram</title>
+    <style type="text/css"><!--
+      #container { position: relative; }
+      #imageView { border: 1px solid #000; }
+      #imageTemp { position: absolute; top: 1px; left: 1px; }
+    --></style>
+  </head>
+  <body>
+    <p><label>Drawing tool: <select id="dtool">
+        <option value="line">Line</option>
+        <option value="rect">Rectangle</option>
+        <option value="pencil">Pencil</option>
+    </select></label></p>
+
+    <div id="container">
+      <canvas id="imageView" width="500" height="50">
+        <p>Canvas not supported</p>
+      </canvas>
+    </div>
+
+    <div id="prevContainer">
+      <canvas id="previewCanvas" width="50" height="50">
+        <p>Canvas not supported</p>
+      </canvas>
+    </div>    
+
+    <button id='start'>start</button>
+    <button id='stop'>stop</button>
+</body>
+</html>
