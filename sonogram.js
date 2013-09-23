@@ -1,7 +1,7 @@
 var context;
 
 
-function StepSynth() {
+function StepSynth(source) {
 
   // Create Web Audio Context.
   var context = new webkitAudioContext();
@@ -10,54 +10,57 @@ function StepSynth() {
   var oscillators = [];
   var currStep = 0;
   var isPlaying = false;
-  var isInitialized = false;
-  var steps = [];
-  var stepDuration = 200;
+  var isMuted = false;
 
-  function start(newSteps, newStepDuration) {
-    steps = newSteps;
-    stepDuration = newStepDuration;
-    console.log('start');
-    var createOscillator = function(frequency) {
-      // Create oscillator and gain node.
-      var oscillator = context.createOscillator(),
-        gainNode = context.createGainNode();
 
-      // Set the type and frequency of the oscillator.
-      oscillator.type = oscillator.SQUARE;
-      oscillator.frequency.value = frequency;
-
-      // Set volume of the oscillator.
-      gainNode.gain.value = 0;
-
-      // Route oscillator through gain node to speakers.
-      oscillator.connect(gainNode);
-      gainNode.connect(compressor);
-
-      // Start oscillator playing.
-      oscillator.start(0); // This will be replaced by start() soon.
-
-      return {
-        oscillator: oscillator,
-        gain: gainNode.gain
-      };
+  var init = function() {
+    console.log("initializing");
+    for (var i = 0; i < source.numOscillators; i++) {
+      var frequency = getFrequency(i);
+      oscillators.push(createOscillator(frequency));
     }
-
-
-    if (!isInitialized) {
-      console.log("initializing");
-      for (var i = 0; i < steps[0].length; i++) {
-        // TODO: add some normal frequency scale
-        var frequency = getFrequency(i);
-        oscillators.push(createOscillator(frequency));
-      }
-    }
-    isInitialized = true;
-    if (!isPlaying) {
-      isPlaying = true;
-      playSteps(steps, stepDuration);
-    }
+    playSteps();
   }
+
+  var createOscillator = function(frequency) {
+    // Create oscillator and gain node.
+    var oscillator = context.createOscillator(),
+      gainNode = context.createGainNode();
+
+    // Set the type and frequency of the oscillator.
+    oscillator.type = "sine";
+    oscillator.frequency.value = frequency;
+
+    // Set volume of the oscillator.
+    gainNode.gain.value = 0;
+
+    // Route oscillator through gain node to speakers.
+    oscillator.connect(gainNode);
+    gainNode.connect(compressor);
+
+    // Start oscillator playing.
+    oscillator.start(0); // This will be replaced by start() soon.
+
+    return {
+      oscillator: oscillator,
+      gain: gainNode.gain
+    };
+  };
+
+  // TODO: use ENUM
+
+  function setOscillatorsType(oscillatorType) {
+    console.log("setOscillatorsType", oscillatorType)
+    for (var i = 0; i < oscillators.length; i++) {
+      var osc = oscillators[i].oscillator;
+      osc.type = oscillatorType;
+    }
+  };
+
+
+  function start() {
+    isPlaying = true;
+  };
 
   function getFrequency(n) {
     // http://www.phy.mtu.edu/~suits/NoteFreqCalcs.html
@@ -66,33 +69,89 @@ function StepSynth() {
     return f0 * Math.pow(a, n);
   }
 
-  function stop() {
-    for (var i = 0; i < oscillators.length; i++) {
-      oscillators[i].gain.value = 0;
+  function mute() {
+    console.log('stopping');
+
+    isMuted = !isMuted;
+    if (isMuted) {
+      for (var i = 0; i < oscillators.length; i++) {
+        oscillators[i].gain.value = 0;
+      }
     }
-    isPlaying = false;
+
+  }
+
+  function pause() {
+    console.log('pausing/resuming');
+    isPlaying = !isPlaying;
   }
 
   var playSteps = function() {
     console.log('playSteps');
 
     function loop() {
-      for (var i = 0; i < oscillators.length; i++) {
-        if (!isPlaying) return;
-
-        oscillators[i].gain.value = steps[currStep][i];
+      var step = source.getStep(currStep);
+      if (!isMuted) {
+        for (var i = 0; i < oscillators.length; i++) {
+          oscillators[i].gain.value = step[i];
+        }
       }
 
-      currStep = (currStep + 1) % steps.length;
-      window.setTimeout(loop, stepDuration);
+      if (isPlaying) {
+        currStep = (currStep + 1) % source.numSteps;
+      }
+      window.setTimeout(loop, source.stepDuration);
 
     }
 
     loop();
   }
 
+  init();
+
   return {
-    start: start,
-    stop: stop
+    mute: mute,
+    pause: pause,
+    setOscillatorsType: setOscillatorsType
   }
+}
+
+
+function CanvasSource(elementId, overlayId) {
+  var canvas = document.getElementById(elementId);
+  var context = canvas.getContext('2d');
+  var overlayContext = document.getElementById(overlayId).getContext('2d');
+  var numOscillators = canvas.height;
+  var numSteps = canvas.width;
+
+  var markStep = function(stepIndex) {
+    overlayContext.clearRect(0, 0, canvas.width, canvas.height);
+    overlayContext.beginPath();
+    overlayContext.moveTo(stepIndex, 0);
+    overlayContext.lineTo(stepIndex, canvas.height);
+    overlayContext.stroke();
+  }
+
+  return {
+    getStep: function(stepIndex) {
+      var imageData = context.getImageData(stepIndex, 0, 1, canvas.height);
+      var data = imageData.data;
+
+      step = [];
+      for (var y = 0; y < numOscillators; y++) {
+        // var red = data[(numSteps * y) * 4];
+        // var green = data[(numSteps * y) * 4 + 1];
+        // var blue = data[(numSteps * y) * 4 + 2];
+        var alpha = data[(y) * 4 + 3];
+        step.push(alpha / 256);
+      }
+
+      markStep(stepIndex);
+      return step;
+    },
+    numOscillators: numOscillators,
+    numSteps: numSteps,
+    stepDuration: 100
+  }
+
 }

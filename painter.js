@@ -14,30 +14,13 @@ function addPainter() {
   function init() {
     // Find the canvas element.
     canvaso = document.getElementById('imageView');
-    if (!canvaso) {
-      alert('Error: I cannot find the canvas element!');
-      return;
-    }
-
-    if (!canvaso.getContext) {
-      alert('Error: no canvas.getContext!');
-      return;
-    }
 
     // Get the 2D canvas context.
     contexto = canvaso.getContext('2d');
-    if (!contexto) {
-      alert('Error: failed to getContext!');
-      return;
-    }
 
     // Add the temporary canvas.
     var container = canvaso.parentNode;
     canvas = document.createElement('canvas');
-    if (!canvas) {
-      alert('Error: I cannot create a new canvas element!');
-      return;
-    }
 
     canvas.id = 'imageTemp';
     canvas.width = canvaso.width;
@@ -48,10 +31,6 @@ function addPainter() {
 
     // Get the tool select input.
     var tool_select = document.getElementById('dtool');
-    if (!tool_select) {
-      alert('Error: failed to get the dtool element!');
-      return;
-    }
     tool_select.addEventListener('change', ev_tool_change, false);
 
     // Activate the default tool.

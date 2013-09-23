@@ -10,6 +10,7 @@
       #container { position: relative; }
       #imageView { border: 1px solid #000; }
       #imageTemp { position: absolute; top: 1px; left: 1px; }
+      #overlay { position: absolute; top: 1px; left: 1px; }
     --></style>
   </head>
   <body>
@@ -23,6 +24,7 @@
       <canvas id="imageView" width="500" height="50">
         <p>Canvas not supported</p>
       </canvas>
+      <canvas id="overlay" width="500" height="50">
     </div>
 
     <div id="prevContainer">
@@ -31,7 +33,15 @@
       </canvas>
     </div>    
 
-    <button id='start'>start</button>
-    <button id='stop'>stop</button>
+    <button id='pause'>play/pause</button>
+    <button id='mute'>mute/unmute</button>
+    <label for='stepDuration'>Step Duration</label>
+    <input id='stepDuration' value='100'></input>
+    <select id='oscillatorType'>
+      <option value='0'>sine</option>
+      <option value='1'>square</option>
+      <option value='2'>sawtooth</option>
+      <option value='3'>triangle</option>
+    </select>
 </body>
 </html>
