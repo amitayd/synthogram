@@ -10,7 +10,8 @@ function init() {
     document.getElementById(property).addEventListener('change', bind, false);
   }
 
-  var source = CanvasSource('imageView', 'overlay');
+  var numOscillators = 80;
+  var source = CanvasSource('imageView', 'overlay', numOscillators);
   bindInputToProperty(source, 'stepDuration')
   source.stepDuration = parseInt(document.getElementById('stepDuration').value);
   synth = StepSynth(source);

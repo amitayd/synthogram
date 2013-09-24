@@ -175,8 +175,8 @@ function addPainter() {
       context.clearRect(0, 0, canvas.width, canvas.height);
 
       context.beginPath();
-      context.moveTo(tool.x0, tool.y0);
-      context.lineTo(ev._x, ev._y);
+      context.moveTo(tool.x0 + 0.5, tool.y0);
+      context.lineTo(ev._x + 0.5, ev._y);
       context.stroke();
       context.closePath();
     };
@@ -190,6 +190,40 @@ function addPainter() {
     };
   };
 
+  // The drawing pencil.
+  tools.sharpPencil = function() {
+    var tool = this;
+    this.started = false;
+
+    // This is called when you start holding down the mouse button.
+    // This starts the pencil drawing.
+    this.mousedown = function(ev) {
+      context.beginPath();
+      context.moveTo(ev._x, ev._y);
+      tool.started = true;
+    };
+
+    // This function is called every time you move the mouse. Obviously, it only 
+    // draws if the tool.started state is set to true (when you are holding down 
+    // the mouse button).
+    this.mousemove = function(ev) {
+      if (tool.started) {
+        context.lineTo(ev._x, ev._y);
+        context.stroke();
+      }
+    };
+
+    // This is called when you release the mouse button.
+    this.mouseup = function(ev) {
+      if (tool.started) {
+        tool.mousemove(ev);
+        tool.started = false;
+        img_update();
+      }
+    };
+  };
+
+
   init();
 
 }
@@ -198,84 +232,4 @@ function clearCanvas() {
   var canvas = document.getElementById('imageView');
   var context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height)
-}
-
-
-
-function getCanvasContent() {
-
-  var canvas = document.getElementById('imageView');
-  var numSteps = canvas.width,
-    numOscillators = canvas.height;
-  var context = canvas.getContext('2d');
-
-  var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  //var imageData = resizeImageData2(imageDataOrig, numSteps, numOscillators);
-  var data = imageData.data;
-
-
-  var steps = [];
-  // iterate over all pixels based on x and y coordinates
-  for (var x = 0; x < numSteps; x++) {
-    var step = [];
-    steps.push(step);
-    // loop through each column
-    for (var y = 0; y < numOscillators; y++) {
-      var red = data[((numSteps * y) + x) * 4];
-      var green = data[((numSteps * y) + x) * 4 + 1];
-      var blue = data[((numSteps * y) + x) * 4 + 2];
-      var alpha = data[((numSteps * y) + x) * 4 + 3];
-      step.push(alpha);
-    }
-  }
-
-  console.log(steps);
-
-  return steps;
-}
-
-// from http://stackoverflow.com/questions/3448347/how-to-scale-an-imagedata-in-html-canvas
-
-function resizeImageData(c, imageData, width, height) {
-  var scaled = c.createImageData(width, height);
-
-  for (var row = 0; row < imageData.height; row++) {
-    for (var col = 0; col < imageData.width; col++) {
-      var sourcePixel = [
-        imageData.data[(row * imageData.width + col) * 4 + 0],
-        imageData.data[(row * imageData.width + col) * 4 + 1],
-        imageData.data[(row * imageData.width + col) * 4 + 2],
-        imageData.data[(row * imageData.width + col) * 4 + 3]
-      ];
-      for (var y = 0; y < scale; y++) {
-        var destRow = row * scale + y;
-        for (var x = 0; x < scale; x++) {
-          var destCol = col * scale + x;
-          for (var i = 0; i < 4; i++) {
-            scaled.data[(destRow * scaled.width + destCol) * 4 + i] =
-              sourcePixel[i];
-          }
-        }
-      }
-    }
-  }
-
-  return scaled;
-}
-
-function resizeImageData2(imageData, width, height) {
-  canvas = document.createElement('canvas');
-
-  var context = canvas.getContext('2d');
-  context.putImageData(imageData, 0, 0);
-
-  prevCanvas = document.getElementById('previewCanvas').getContext('2d');
-  //prevCanvas.webkitImageSmoothingEnabled = false;
-  //prevCanvas.mozImageSmoothingEnabled = false;
-  //prevCanvas.imageSmoothingEnabled = false;
-  //prevCanvas.scale(width / imageData.width, height / imageData.width);
-  //prevCanvas.scale(1, 2);
-  prevCanvas.drawImage(context.canvas, 0, 0);
-
-  return prevCanvas.getImageData(0, 0, width, height);
 }

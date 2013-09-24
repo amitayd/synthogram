@@ -3,6 +3,7 @@ var context;
 
 function StepSynth(source) {
 
+
   var createAudioContext = function() {
     if (window.webkitAudioContext) {
       return new webkitAudioContext()
@@ -14,21 +15,22 @@ function StepSynth(source) {
     }
   }
 
-  // Create Web Audio Context.
   var context = createAudioContext();
-  var compressor = context.createDynamicsCompressor();
+  var compressor = context.createDynamicsCompressor()
   compressor.connect(context.destination);
+  var masterGain = context.createGain();
+  masterGain.connect(compressor);
+  masterGain.gain.value = 0.5;
   var oscillators = [];
   var currStep = 0;
   var isPlaying = false;
   var isMuted = false;
 
-
-
-
   var init = function() {
     console.log("initializing");
-    for (var i = 0; i < source.numOscillators; i++) {
+    var i = source.numOscillators;
+    while (i > 0) {
+      i--;
       var frequency = getFrequency(i);
       oscillators.push(createOscillator(frequency));
     }
@@ -49,10 +51,10 @@ function StepSynth(source) {
 
     // Route oscillator through gain node to speakers.
     oscillator.connect(gainNode);
-    gainNode.connect(compressor);
+    gainNode.connect(masterGain);
 
     // Start oscillator playing.
-    oscillator.start(0); // This will be replaced by start() soon.
+    oscillator.start(0);
 
     return {
       oscillator: oscillator,
@@ -85,7 +87,7 @@ function StepSynth(source) {
 
   function mute() {
     isMuted = !isMuted;
-    console.log('muting:', isMuted);
+    console.log('muting: ', isMuted);
     if (isMuted) {
       for (var i = 0; i < oscillators.length; i++) {
         oscillators[i].gain.value = 0;
@@ -95,12 +97,12 @@ function StepSynth(source) {
   }
 
   function pause() {
-    console.log('pausing/resuming');
+    console.log('pausing / resuming ');
     isPlaying = !isPlaying;
   }
 
   var playSteps = function() {
-    console.log('playSteps');
+    console.log('playSteps ');
 
     function loop() {
       var step = source.getStep(currStep);
@@ -120,42 +122,73 @@ function StepSynth(source) {
     loop();
   }
 
+  var setter = function(property) {
+    return function(value) {
+      property = value;
+    };
+  }
+
+  var getter = function(property) {
+    return function() {
+      return property;
+    };
+  }
+
   init();
 
   return {
     mute: mute,
     pause: pause,
-    setOscillatorsType: setOscillatorsType
+    setOscillatorsType: setOscillatorsType,
+    getCompressor: getter(compressor),
+    isMuted: getter(isMuted),
+    isPlaying: getter(isPlaying),
+    getMasterVolume: getter(masterGain.gain.value),
+    setMasterVolume: setter(masterGain.gain.value),
+
+
   }
 }
 
 
-function CanvasSource(elementId, overlayId) {
+function CanvasSource(elementId, overlayId, numOscillators) {
+
   var canvas = document.getElementById(elementId);
   var context = canvas.getContext('2d');
-  var overlayContext = document.getElementById(overlayId).getContext('2d');
-  var numOscillators = canvas.height;
+  var overlayCanvas = document.getElementById(overlayId);
+  var overlayContext = overlayCanvas.getContext('2d');
+  var numOscillators = numOscillators;
   var numSteps = canvas.width;
+  var heightScale = canvas.height / numOscillators;
 
   var markStep = function(stepIndex) {
-    overlayContext.clearRect(0, 0, canvas.width, canvas.height);
+    overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
     overlayContext.beginPath();
     overlayContext.moveTo(stepIndex, 0);
-    overlayContext.lineTo(stepIndex, canvas.height);
+    overlayContext.lineTo(stepIndex, overlayCanvas.height);
     overlayContext.stroke();
   }
 
+
   return {
     getStep: function(stepIndex) {
+      // get just the corresponding row for this step
       var imageData = context.getImageData(stepIndex, 0, 1, canvas.height);
       var data = imageData.data;
 
       step = [];
       for (var y = 0; y < numOscillators; y++) {
-        // var red = data[(numSteps * y) * 4];
-        // var green = data[(numSteps * y) * 4 + 1];
-        // var blue = data[(numSteps * y) * 4 + 2];
-        var alpha = data[(y) * 4 + 3];
+
+        // Use scaling by averging the pixels in the scale
+        var scaledY = parseInt(y * heightScale);
+        var scaledYEnd = parseInt((y + 1) * heightScale);
+        var pixelsToSum = scaledYEnd - scaledY;
+        var alphaSum = 0;
+        while (scaledY < scaledYEnd) {
+          scaledY++;
+          alphaSum += data[(scaledY) * 4 + 3];;
+        }
+        var alpha = alphaSum / pixelsToSum;
         step.push(alpha / 256);
       }
 
@@ -166,5 +199,18 @@ function CanvasSource(elementId, overlayId) {
     numSteps: numSteps,
     stepDuration: 100
   }
+}
 
+function getScaledImageData(origCanvasId, width, height) {
+  origCanvas = document.getElementById(origCanvasId).getContext('2d');
+
+  var tempCanvas = document.createElement('canvas');
+  var tempContext = prevCanvas.getContext('2d');
+  tempContext.webkitImageSmoothingEnabled = false;
+  tempContext.mozImageSmoothingEnabled = false;
+  tempContext.imageSmoothingEnabled = false;
+
+  tempContext.drawImage(origCanvas.canvas, 0, 0, width, height);
+  return tempContext.getImageData(0, 0, width, height);
+  //return prevCanvas.getImageData(0, 0, width, height);
 }
