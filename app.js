@@ -12,9 +12,12 @@ function init() {
 
   var numOscillators = 80;
   var source = CanvasSource('imageView', 'overlay', numOscillators);
-  bindInputToProperty(source, 'stepDuration')
-  source.stepDuration = parseInt(document.getElementById('stepDuration').value);
-  synth = StepSynth(source);
+  var synth = OscSynth(numOscillators);
+  var sequencer = Sequencer(synth, source, 200);
+
+  bindInputToProperty(sequencer.config, 'stepDuration')
+
+  sequencer.start();
 
   // var numSteps = 500;
   // var numOscillators = 50;
@@ -31,8 +34,10 @@ function init() {
 
   document.getElementById('clearCanvas').addEventListener('click', clearCanvas, false);
 
-  document.getElementById('pause').addEventListener('click', synth.pause, false);
-  document.getElementById('mute').addEventListener('click', synth.mute, false);
+  document.getElementById('pause').addEventListener('click', sequencer.pauseToggle, false);
+  document.getElementById('mute').addEventListener('click', function() {
+    synth.setMasterVolume(0);
+  }, false);
   document.getElementById('oscillatorType').addEventListener('change', function() {
     var el = document.getElementById('oscillatorType');
     var option = el.options[el.selectedIndex].text;

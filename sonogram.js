@@ -1,7 +1,16 @@
-var context;
+var setter = function(property) {
+  return function(value) {
+    property = value;
+  };
+};
 
+var getter = function(property) {
+  return function() {
+    return property;
+  };
+};
 
-function StepSynth(source) {
+function OscSynth(numOscillators) {
 
 
   var createAudioContext = function() {
@@ -22,19 +31,15 @@ function StepSynth(source) {
   masterGain.connect(compressor);
   masterGain.gain.value = 0.5;
   var oscillators = [];
-  var currStep = 0;
-  var isPlaying = false;
-  var isMuted = false;
 
   var init = function() {
     console.log("initializing");
-    var i = source.numOscillators;
+    var i = numOscillators;
     while (i > 0) {
       i--;
       var frequency = getFrequency(i);
       oscillators.push(createOscillator(frequency));
     }
-    playSteps();
   }
 
   var createOscillator = function(frequency) {
@@ -62,8 +67,6 @@ function StepSynth(source) {
     };
   };
 
-  // TODO: use ENUM
-
   function setOscillatorsType(oscillatorType) {
     console.log("setOscillatorsType", oscillatorType)
     for (var i = 0; i < oscillators.length; i++) {
@@ -73,10 +76,6 @@ function StepSynth(source) {
   };
 
 
-  function start() {
-    isPlaying = true;
-  };
-
   function getFrequency(n) {
     // http://www.phy.mtu.edu/~suits/NoteFreqCalcs.html
     //var f0 = 440;
@@ -85,64 +84,21 @@ function StepSynth(source) {
     return f0 * Math.pow(a, n);
   }
 
-  function mute() {
-    isMuted = !isMuted;
-    console.log('muting: ', isMuted);
-    if (isMuted) {
-      for (var i = 0; i < oscillators.length; i++) {
-        oscillators[i].gain.value = 0;
-      }
+
+  var play = function(step) {
+    for (var i = 0; i < oscillators.length; i++) {
+      oscillators[i].gain.value = step[i];
     }
+  };
 
-  }
 
-  function pause() {
-    console.log('pausing / resuming ');
-    isPlaying = !isPlaying;
-  }
-
-  var playSteps = function() {
-    console.log('playSteps ');
-
-    function loop() {
-      var step = source.getStep(currStep);
-      if (!isMuted) {
-        for (var i = 0; i < oscillators.length; i++) {
-          oscillators[i].gain.value = step[i];
-        }
-      }
-
-      if (isPlaying) {
-        currStep = (currStep + 1) % source.numSteps;
-      }
-      window.setTimeout(loop, source.stepDuration);
-
-    }
-
-    loop();
-  }
-
-  var setter = function(property) {
-    return function(value) {
-      property = value;
-    };
-  }
-
-  var getter = function(property) {
-    return function() {
-      return property;
-    };
-  }
 
   init();
 
   return {
-    mute: mute,
-    pause: pause,
+    play: play,
     setOscillatorsType: setOscillatorsType,
     getCompressor: getter(compressor),
-    isMuted: getter(isMuted),
-    isPlaying: getter(isPlaying),
     getMasterVolume: getter(masterGain.gain.value),
     setMasterVolume: setter(masterGain.gain.value),
 
@@ -197,7 +153,52 @@ function CanvasSource(elementId, overlayId, numOscillators) {
     },
     numOscillators: numOscillators,
     numSteps: numSteps,
-    stepDuration: 100
+  }
+}
+
+
+function Sequencer(synth, source, stepDuration) {
+  var config = {
+    stepDuration: stepDuration
+  };
+  var currStep = 0;
+  var numSteps = source.numSteps;
+  var isPlaying = true;
+  var isStarted = false;
+
+  var moveToNextStep = function() {
+    if (isPlaying) {
+      currStep = (currStep + 1) % numSteps;
+    }
+  }
+
+  var start = function() {
+    console.log('seq.play');
+    if (isStarted) {
+      return;
+    }
+
+    isStarted = true;
+
+    function loop() {
+      var step = source.getStep(currStep);
+      synth.play(step);
+      moveToNextStep();
+      window.setTimeout(loop, config.stepDuration);
+    }
+
+    loop();
+  };
+
+  var pauseToggle = function() {
+    isPlaying = !isPlaying;
+    console.log('pauseToggle', isPlaying);
+  }
+
+  return {
+    config: config,
+    start: start,
+    pauseToggle: pauseToggle
   }
 }
 
