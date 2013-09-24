@@ -43,13 +43,26 @@ function addPainter() {
     canvas.addEventListener('mousedown', ev_canvas, false);
     canvas.addEventListener('mousemove', ev_canvas, false);
     canvas.addEventListener('mouseup', ev_canvas, false);
+    canvas.addEventListener('touchstart', ev_canvas, false);
+    canvas.addEventListener('touchend', ev_canvas, false);
+    canvas.addEventListener('touchmove', ev_canvas, false);
   }
 
   // The general-purpose event handler. This function just determines the mouse 
   // position relative to the canvas element.
 
   function ev_canvas(ev) {
-    if (ev.layerX || ev.layerX == 0) { // Firefox
+    if (ev.touches) { // Touch event
+      if (ev.touches.length) {
+        ev._x = ev.touches[0].pageX;
+        ev._y = ev.touches[0].pageY;
+      } else {
+        ev._x = null;
+        ev._y = null;
+      }
+      // touchend is not called in chrome android when not doing this...
+      ev.preventDefault();
+    } else if (ev.layerX || ev.layerX == 0) { // Firefox
       ev._x = ev.layerX;
       ev._y = ev.layerY;
     } else if (ev.offsetX || ev.offsetX == 0) { // Opera
@@ -57,8 +70,20 @@ function addPainter() {
       ev._y = ev.offsetY;
     }
 
+
+    // convert touch events to mouse events
+    var touchToMouse = {
+      'touchstart': 'mousedown',
+      'touchend': 'mouseup',
+      'touchmove': 'mousemove'
+    };
+
+
+
+    var type = touchToMouse[ev.type] || ev.type;
+
     // Call the event handler of the tool.
-    var func = tool[ev.type];
+    var func = tool[type];
     if (func) {
       func(ev);
     }
@@ -110,7 +135,9 @@ function addPainter() {
     // This is called when you release the mouse button.
     this.mouseup = function(ev) {
       if (tool.started) {
-        tool.mousemove(ev);
+        if (ev._x !== null) {
+          tool.mousemove(ev);
+        }
         tool.started = false;
         img_update();
       }
@@ -149,7 +176,9 @@ function addPainter() {
 
     this.mouseup = function(ev) {
       if (tool.started) {
-        tool.mousemove(ev);
+        if (ev._x !== null) {
+          tool.mousemove(ev);
+        }
         tool.started = false;
         img_update();
       }
@@ -183,7 +212,9 @@ function addPainter() {
 
     this.mouseup = function(ev) {
       if (tool.started) {
-        tool.mousemove(ev);
+        if (ev._x !== null) {
+          tool.mousemove(ev);
+        }
         tool.started = false;
         img_update();
       }
