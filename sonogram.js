@@ -1,18 +1,4 @@
-var setter = function(property) {
-  return function(value) {
-    property = value;
-  };
-};
-
-var getter = function(property) {
-  return function() {
-    return property;
-  };
-};
-
 function OscSynth(numOscillators) {
-
-
   var createAudioContext = function() {
     if (window.webkitAudioContext) {
       return new webkitAudioContext()
@@ -25,10 +11,11 @@ function OscSynth(numOscillators) {
   }
 
   var context = createAudioContext();
-  var compressor = context.createDynamicsCompressor()
-  compressor.connect(context.destination);
   var masterGain = context.createGain();
-  masterGain.connect(compressor);
+  masterGain.connect(context.destination);
+  var compressor = context.createDynamicsCompressor()
+  compressor.connect(masterGain);
+
   masterGain.gain.value = 0.5;
   var oscillators = [];
 
@@ -56,7 +43,7 @@ function OscSynth(numOscillators) {
 
     // Route oscillator through gain node to speakers.
     oscillator.connect(gainNode);
-    gainNode.connect(masterGain);
+    gainNode.connect(compressor);
 
     // Start oscillator playing.
     oscillator.start(0);
@@ -87,7 +74,7 @@ function OscSynth(numOscillators) {
 
   var play = function(step) {
     for (var i = 0; i < oscillators.length; i++) {
-      oscillators[i].gain.value = step[i];
+      oscillators[i].gain.value = step[i] * 0.1;
     }
   };
 
@@ -98,9 +85,8 @@ function OscSynth(numOscillators) {
   return {
     play: play,
     setOscillatorsType: setOscillatorsType,
-    getCompressor: getter(compressor),
-    getMasterVolume: getter(masterGain.gain.value),
-    setMasterVolume: setter(masterGain.gain.value),
+    compressor: compressor,
+    masterGain: masterGain.gain,
 
 
   }

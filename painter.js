@@ -30,7 +30,7 @@ function addPainter() {
     context = canvas.getContext('2d');
 
     // Get the tool select input.
-    var tool_select = document.getElementById('dtool');
+    var tool_select = document.getElementById('drawingTool');
     tool_select.addEventListener('change', ev_tool_change, false);
 
     // Activate the default tool.
@@ -92,8 +92,9 @@ function addPainter() {
   // The event handler for any changes made to the tool selector.
 
   function ev_tool_change(ev) {
-    if (tools[this.value]) {
-      tool = new tools[this.value]();
+    console.log(ev);
+    if (tools[ev.srcElement.value]) {
+      tool = new tools[ev.srcElement.value]();
     }
   }
 

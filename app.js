@@ -1,4 +1,39 @@
 function init() {
+
+  $("#oscillatorType").buttonset();
+  $("#drawingTool").buttonset();
+  $('#clearCanvas').button();
+  $("#masterVolume").knob({
+    width: 50,
+    height: 50,
+    fgColor: 'black',
+    change: function(v) {
+      synth.masterGain.value = (v / 100);
+    }
+  });
+
+  $("#compressorRatio").knob({
+    width: 50,
+    height: 50,
+    min: -100,
+    max: 0,
+    fgColor: 'red',
+    change: function(v) {
+      synth.compressor.ratio.value = (v);
+    }
+  });
+
+  $("#compressorReduction").knob({
+    width: 50,
+    height: 50,
+    min: -20,
+    max: 0,
+    fgColor: 'red',
+    change: function(v) {
+      synth.compressor.reduction.value = (v);
+    }
+  });
+
   addPainter();
 
   var bindInputToProperty = function(obj, property) {
@@ -35,12 +70,8 @@ function init() {
   document.getElementById('clearCanvas').addEventListener('click', clearCanvas, false);
 
   document.getElementById('pause').addEventListener('click', sequencer.pauseToggle, false);
-  document.getElementById('mute').addEventListener('click', function() {
-    synth.setMasterVolume(0);
-  }, false);
   document.getElementById('oscillatorType').addEventListener('change', function() {
-    var el = document.getElementById('oscillatorType');
-    var option = el.options[el.selectedIndex].text;
+    var option = $('input:checked', '#oscillatorType')[0].id;
     synth.setOscillatorsType(option);
   }, false);
 }
