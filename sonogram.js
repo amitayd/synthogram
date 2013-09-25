@@ -127,8 +127,8 @@ function CanvasSource(elementId, overlayId, numOscillators) {
         var pixelsToSum = scaledYEnd - scaledY;
         var alphaSum = 0;
         while (scaledY < scaledYEnd) {
-          scaledY++;
           alphaSum += data[(scaledY) * 4 + 3];;
+          scaledY++;
         }
         var alpha = alphaSum / pixelsToSum;
         step.push(alpha / 256);

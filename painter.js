@@ -5,7 +5,7 @@
 // Keep everything in anonymous function, called on window load.
 var painterConfig = {
   lineWidth: 1,
-  alpha: 0.5,
+  alpha: 1,
 };
 
 
@@ -105,8 +105,8 @@ function addPainter() {
 
   function ev_tool_change(ev) {
     console.log(ev);
-    if (tools[ev.srcElement.value]) {
-      tool = new tools[ev.srcElement.value]();
+    if (tools[ev.target.value]) {
+      tool = new tools[ev.target.value]();
     }
   }
 
@@ -130,6 +130,7 @@ function addPainter() {
     // This is called when you start holding down the mouse button.
     // This starts the pencil drawing.
     this.mousedown = function(ev) {
+      startTool();
       context.beginPath();
       context.moveTo(ev._x, ev._y);
       tool.started = true;
