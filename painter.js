@@ -3,6 +3,11 @@
  */
 
 // Keep everything in anonymous function, called on window load.
+var painterConfig = {
+  lineWidth: 1,
+  alpha: 0.5,
+};
+
 
 function addPainter() {
   var canvas, context, canvaso, contexto;
@@ -46,6 +51,12 @@ function addPainter() {
     canvas.addEventListener('touchstart', ev_canvas, false);
     canvas.addEventListener('touchend', ev_canvas, false);
     canvas.addEventListener('touchmove', ev_canvas, false);
+  }
+
+  function startTool() {
+    context.lineWidth = painterConfig.lineWidth;
+    //context.fillStyle = "rgba(0,0,0, " + painterConfig.alpha + ")";
+    context.globalAlpha = painterConfig.alpha;
   }
 
   // The general-purpose event handler. This function just determines the mouse 
@@ -152,6 +163,7 @@ function addPainter() {
     this.started = false;
 
     this.mousedown = function(ev) {
+      startTool()
       tool.started = true;
       tool.x0 = ev._x;
       tool.y0 = ev._y;
@@ -193,6 +205,7 @@ function addPainter() {
     this.started = false;
 
     this.mousedown = function(ev) {
+      startTool();
       tool.started = true;
       tool.x0 = ev._x;
       tool.y0 = ev._y;
@@ -231,6 +244,7 @@ function addPainter() {
     // This is called when you start holding down the mouse button.
     // This starts the pencil drawing.
     this.mousedown = function(ev) {
+      startTool();
       context.beginPath();
       context.moveTo(ev._x, ev._y);
       tool.started = true;

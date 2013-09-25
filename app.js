@@ -1,8 +1,61 @@
 function init() {
 
+  var defaultStepDuration = 100;
+
+
   $("#oscillatorType").buttonset();
   $("#drawingTool").buttonset();
   $('#clearCanvas').button();
+  $('#pauseToggle').button();
+
+
+  var isSelectorClicked = false;
+  $('#stepSelector').bind('mousedown', function(e) {
+    isSelectorClicked = true;
+    sequencer.jumpToStep(e.pageX - $('#stepSelector').offset().left);
+  }).bind('mouseup', function(e) {
+    isSelectorClicked = false;
+  }).bind('mousemove', function(e) {
+    if (isSelectorClicked) {
+      sequencer.jumpToStep(e.pageX - $('#stepSelector').offset().left);
+    }
+  });
+
+  $('#stepDurationSlider').slider({
+    min: 10,
+    max: 400,
+    value: painterConfig.lineWidth,
+    change: function(event, ui) {
+      $("#stepDuration").val(ui.value);
+      $("#stepDuration").trigger("change");
+    }
+  });
+  $('#stepDuration').bind('change', function() {
+    sequencer.config.stepDuration = $(this).val();
+  })
+  $('#stepDuration').val(defaultStepDuration);
+
+  $('#lineWidthSlider').slider({
+    min: 1,
+    max: 10,
+    value: 1,
+    change: function(event, ui) {
+      $("#lineWidth").val(ui.value);
+      painterConfig.lineWidth = ui.value;
+    }
+  });
+
+  $('#alphaSlider').slider({
+    min: 0,
+    max: 1,
+    step: 0.01,
+    value: 1,
+    change: function(event, ui) {
+      $("#alpha").val(ui.value);
+      painterConfig.alpha = ui.value;
+    }
+  });
+
   $("#masterVolume").knob({
     width: 50,
     height: 50,
@@ -37,7 +90,10 @@ function init() {
   addPainter();
 
   var bindInputToProperty = function(obj, property) {
+    console.log(property);
+
     function bind() {
+      console.log("changing");
       obj[property] = parseInt(document.getElementById(property).value);
     }
 
@@ -48,9 +104,11 @@ function init() {
   var numOscillators = 80;
   var source = CanvasSource('imageView', 'overlay', numOscillators);
   var synth = OscSynth(numOscillators);
-  var sequencer = Sequencer(synth, source, 200);
+  var sequencer = Sequencer(synth, source, defaultStepDuration);
 
-  bindInputToProperty(sequencer.config, 'stepDuration')
+  //bindInputToProperty(sequencer.config, 'stepDuration');
+
+
 
   sequencer.start();
 
@@ -69,7 +127,7 @@ function init() {
 
   document.getElementById('clearCanvas').addEventListener('click', clearCanvas, false);
 
-  document.getElementById('pause').addEventListener('click', sequencer.pauseToggle, false);
+  document.getElementById('pauseToggle').addEventListener('click', sequencer.pauseToggle, false);
   document.getElementById('oscillatorType').addEventListener('change', function() {
     var option = $('input:checked', '#oscillatorType')[0].id;
     synth.setOscillatorsType(option);

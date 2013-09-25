@@ -158,6 +158,13 @@ function Sequencer(synth, source, stepDuration) {
     }
   }
 
+  var jumpToStep = function(newStep) {
+    currStep = newStep;
+    console.log(currStep);
+    var step = source.getStep(currStep);
+    synth.play(step);
+  }
+
   var start = function() {
     console.log('seq.play');
     if (isStarted) {
@@ -184,7 +191,8 @@ function Sequencer(synth, source, stepDuration) {
   return {
     config: config,
     start: start,
-    pauseToggle: pauseToggle
+    pauseToggle: pauseToggle,
+    jumpToStep: jumpToStep
   }
 }
 

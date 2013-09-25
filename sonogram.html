@@ -20,7 +20,7 @@
   <div id='mainContainer'>
     <div id='synth' class='componenet'>
       <div class='compSide'>
-          <h1>The Sonogram Synth!</h1>
+          <h1 class='depth'>The Sonogram Synth 0.001</h1>
       </div>
       <div class='compMain'>
         <div class='horizontalControls'>
@@ -80,7 +80,6 @@
           </div>
           <div class='control'>
             <div class='controlTop buttonset'>
-              <label class='controlLabel' for='drawingTool'>Drawing tool:</label>
               <div id='drawingTool'>
                 <input type='radio' id='line' value='line' name="drawingTool" checked />
                 <label for="line">---</label>
@@ -89,8 +88,23 @@
                 <input type='radio' id='pencil' value='pencil' name="drawingTool"/>
                 <label for="pencil">Pencil</label>
               </div>              
+              <label class='controlLabel' for='drawingTool'>Drawing tool</label>
             </div>
-          </div>          
+          </div>
+          <div class='control'  style='height:75px'>        
+            <div class='controlTop buttonset'>
+              <input id='lineWidth' style="width: 80px;" value='1'></input>   
+              <div id='lineWidthSlider' style="width: 80px;"></div>        
+              <label for='lineWidth' style="width: 80px;" class="controlLabel">Line width</label>
+            </div>
+          </div>
+          <div class='control' style='height:75px'>        
+            <div class='controlTop buttonset'>
+              <input id='alpha' style="width: 80px;" value='1'></input>   
+              <div id='alphaSlider' style="width: 80px;"></div>        
+              <label for='alpha' style="width: 80px;" class="controlLabel">Alpha (amplitude)</label>
+            </div>
+          </div>                    
         </div>
       </div>
       <div class='compMain'>
@@ -104,13 +118,19 @@
     </div>
     <div id='sequencer' class='componenet'>
       <div class='compSide'>
-  <label for='stepDuration'>Step Duration</label>
-  <input id='stepDuration' value='100'></input>        
-  <button id='pause'>play/pause</button> 
-
+        <div class='horizontalControls'>
+          <div class='control'>
+            <button id='pauseToggle'>play/pause</button> 
+          </div>
+          <div class='control'>
+            <input id='stepDuration' style="width: 80px;" value='200'></input>   
+            <div id='stepDurationSlider' style="width: 80px;"></div>        
+            <label for='stepDuration' style="width: 80px;" class="controlLabel">Step Duration</label>
+          </div>
+        </div>
       </div>
       <div class='compMain'>
-               
+        <div style='height:50px;width:500px; background-color:white' id="stepSelector">Click or drag here to change the position live</div>
       </div>
     </div>         
 

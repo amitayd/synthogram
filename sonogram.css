@@ -10,15 +10,16 @@
 }
 
 .control {
-  height: 75px;
+
 }
 
 .controlTop {
+  height:50px;
 
 }
 
 .controlText {
-  position: absolute;
+  overflow: auto ;
   bottom: 0px;
 }
 
@@ -26,13 +27,19 @@
   background-color: yellow;
   padding: 2px;
   margin-top: 5px;
+  margin-bottom: 5px;
+  display: block;
 }
 
 
 .componenet {
   position: relative;
   border: 1px solid black;
-  background-color: gray;
+  background: -webkit-gradient(linear, 0 0, 0 100%, 363636(#5C5C5C), to(#363636));
+  background: -webkit-linear-gradient(#5C5C5C 0%, #001e96 100%);
+  background: -moz-linear-gradient(#5C5C5C 0%, #363636 100%);
+  background: -o-linear-gradient(#5C5C5C 0%, #363636 100%);
+  background: linear-gradient(#5C5C5C 0%, #363636 100%);
 }
 
 .horizontalControls > * {
@@ -72,5 +79,18 @@
 }
 
 .buttonset {
-  margin-top: 15px;
+  top: 10px;
+  position: relative;
+}
+
+
+h1 {
+
+    display: block;
+    color: black;
+    text-shadow: 2px 2px gray;
+    font: bold 1.8em Arial, sans-serif;
+    position: relative;
+    text-align: center;
+    text-transform:uppercase;
 }
