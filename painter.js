@@ -54,8 +54,9 @@ function addPainter() {
   function ev_canvas(ev) {
     if (ev.touches) { // Touch event
       if (ev.touches.length) {
-        ev._x = ev.touches[0].pageX;
-        ev._y = ev.touches[0].pageY;
+        var offset = $(canvas).offset();
+        ev._x = ev.touches[0].clientX - offset.left;
+        ev._y = ev.touches[0].clientY - offset.top;
       } else {
         ev._x = null;
         ev._y = null;
