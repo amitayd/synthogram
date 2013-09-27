@@ -1,4 +1,4 @@
-function OscSynth(numOscillators) {
+function OscSynth(numOscillators, startFrequency) {
   var createAudioContext = function() {
     if (window.webkitAudioContext) {
       return new webkitAudioContext()
@@ -9,6 +9,7 @@ function OscSynth(numOscillators) {
       throw new Error("Web Audio not supported (could not create audio context");
     }
   }
+
 
   var context = createAudioContext();
   var masterGain = context.createGain();
@@ -66,15 +67,22 @@ function OscSynth(numOscillators) {
   function getFrequency(n) {
     // http://www.phy.mtu.edu/~suits/NoteFreqCalcs.html
     //var f0 = 440;
-    var f0 = 55;
+    var f0 = startFrequency;
     var a = Math.pow(2, 1 / 12.0);
-    return f0 * Math.pow(a, n);
+    var freq = f0 * Math.pow(a, n);
+    console.log('freq', freq);
+    return freq;
   }
 
 
   var play = function(step) {
     for (var i = 0; i < oscillators.length; i++) {
-      oscillators[i].gain.value = step[i] * 0.1;
+      // TODO: better gain normalization (perhaps based on the number of active oscilators?)
+      var normalizedGain = step[i] * 0.1;
+      if (oscillators[i].gain.value != normalizedGain) {
+        //console.log('set gain', normalizedGain);
+        oscillators[i].gain.value = normalizedGain;
+      }
     }
   };
 
@@ -102,13 +110,15 @@ function CanvasSource(elementId, overlayId, numOscillators) {
   var numOscillators = numOscillators;
   var numSteps = canvas.width;
   var heightScale = canvas.height / numOscillators;
+  var markedStep = 0;
 
   var markStep = function(stepIndex) {
-    overlayContext.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+    overlayContext.clearRect(markedStep - 1, 0, markedStep + 1, overlayCanvas.height);
     overlayContext.beginPath();
     overlayContext.moveTo(stepIndex, 0);
     overlayContext.lineTo(stepIndex, overlayCanvas.height);
     overlayContext.stroke();
+    markedStep = stepIndex;
   }
 
 
@@ -159,8 +169,8 @@ function Sequencer(synth, source, stepDuration) {
   }
 
   var jumpToStep = function(newStep) {
+    //console.log('jumpToStep', newStep);
     currStep = newStep;
-    console.log(currStep);
     var step = source.getStep(currStep);
     synth.play(step);
   }

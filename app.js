@@ -10,16 +10,32 @@ function init() {
 
 
   var isSelectorClicked = false;
-  $('#stepSelector').bind('mousedown', function(e) {
+  var stepSelector = $('#stepSelector');
+  stepSelector[0].addEventListener('mousedown', function(e) {
     isSelectorClicked = true;
-    sequencer.jumpToStep(e.pageX - $('#stepSelector').offset().left);
-  }).bind('mouseup', function(e) {
+    sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
+  }, false);
+
+  stepSelector[0].addEventListener('mouseup', function(e) {
     isSelectorClicked = false;
-  }).bind('mousemove', function(e) {
+  }, false);
+
+  stepSelector[0].addEventListener('mousemove', function(e) {
     if (isSelectorClicked) {
-      sequencer.jumpToStep(e.pageX - $('#stepSelector').offset().left);
+      sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
     }
-  });
+  }, false);
+
+  // $('#stepSelector').bind('mousedown', function(e) {
+  //   isSelectorClicked = true;
+  //   sequencer.jumpToStep(e.pageX - $('#stepSelector').offset().left);
+  // }).bind('mouseup', function(e) {
+  //   isSelectorClicked = false;
+  // }).bind('mousemove', function(e) {
+  //   if (isSelectorClicked) {
+  //     sequencer.jumpToStep(e.pageX - $('#stepSelector').offset().left);
+  //   }
+  // });
 
   $('#stepDurationSlider').slider({
     min: 10,
@@ -102,8 +118,10 @@ function init() {
   }
 
   var numOscillators = 80;
+  var startFrequency = 55;
+  //var startFrequency = 440;
   var source = CanvasSource('imageView', 'overlay', numOscillators);
-  var synth = OscSynth(numOscillators);
+  var synth = OscSynth(numOscillators, startFrequency);
   var sequencer = Sequencer(synth, source, defaultStepDuration);
 
   //bindInputToProperty(sequencer.config, 'stepDuration');
