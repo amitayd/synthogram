@@ -1,4 +1,5 @@
 function init() {
+  //return;
 
   var defaultStepDuration = 100;
 
@@ -7,28 +8,6 @@ function init() {
   $("#drawingTool").buttonset();
   $('#clearCanvas').button();
   $('#pauseToggle').button();
-
-  $('#wPaint').wPaint({
-    path: 'js/wpaint/',
-    menuOffsetLeft: 0, // left offset of primary menu
-    menuOffsetTop: -45,
-    lineWidth: '1', // starting line width
-    fillStyle: '#FFFFFF', // starting fill style
-    strokeStyle: '#000000', // start stroke style    
-    menuHandle: false,
-  });
-
-  $("#elem").wPaint({
-    onDrawDown: function(e) {
-      console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY);
-    },
-    onDrawMove: function(e) {
-      console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY);
-    },
-    onDrawUp: function(e) {
-      console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY);
-    }
-  });
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
@@ -51,7 +30,7 @@ function init() {
   $('#stepDurationSlider').slider({
     min: 1,
     max: 400,
-    value: painterConfig.lineWidth,
+    value: 100,
     orientation: 'vertical',
     change: function(event, ui) {
       $("#stepDuration").val(ui.value);
@@ -96,7 +75,6 @@ function init() {
     }
   });
 
-  //addPainter();
 
   var bindInputToProperty = function(obj, property) {
     console.log(property);
@@ -110,6 +88,17 @@ function init() {
     document.getElementById(property).addEventListener('change', bind, false);
   }
 
+  $('#wPaint').wPaint({
+    path: 'js/wpaint/',
+    menuOffsetLeft: 0, // left offset of primary menu
+    menuOffsetTop: -45,
+    lineWidth: '1', // starting line width
+    fillStyle: '#FFFFFF', // starting fill style
+    strokeStyle: '#000000', // start stroke style    
+    menuHandle: false,
+  });
+
+
   var freqHerz = $('#freqHertz');
   var wPaintCanvas = $('.wPaint-canvas');
   wPaintCanvas.bind('mousemove', function(e) {
@@ -120,6 +109,7 @@ function init() {
   }).bind("mouseout", function() {
     freqHerz.text('--')
   });
+
 
 
   var numOscillators = 80;
