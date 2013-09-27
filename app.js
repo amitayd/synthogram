@@ -8,6 +8,27 @@ function init() {
   $('#clearCanvas').button();
   $('#pauseToggle').button();
 
+  $('#wPaint').wPaint({
+    path: 'js/wpaint/',
+    menuOffsetLeft: 0, // left offset of primary menu
+    menuOffsetTop: -45,
+    lineWidth: '1', // starting line width
+    fillStyle: '#FFFFFF', // starting fill style
+    strokeStyle: '#000000', // start stroke style    
+    menuHandle: false,
+  });
+
+  $("#elem").wPaint({
+    onDrawDown: function(e) {
+      console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY);
+    },
+    onDrawMove: function(e) {
+      console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY);
+    },
+    onDrawUp: function(e) {
+      console.log(this.settings.mode + ": " + e.pageX + ',' + e.pageY);
+    }
+  });
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
@@ -26,51 +47,23 @@ function init() {
     }
   }, false);
 
-  // $('#stepSelector').bind('mousedown', function(e) {
-  //   isSelectorClicked = true;
-  //   sequencer.jumpToStep(e.pageX - $('#stepSelector').offset().left);
-  // }).bind('mouseup', function(e) {
-  //   isSelectorClicked = false;
-  // }).bind('mousemove', function(e) {
-  //   if (isSelectorClicked) {
-  //     sequencer.jumpToStep(e.pageX - $('#stepSelector').offset().left);
-  //   }
-  // });
 
   $('#stepDurationSlider').slider({
-    min: 10,
+    min: 1,
     max: 400,
     value: painterConfig.lineWidth,
+    orientation: 'vertical',
     change: function(event, ui) {
       $("#stepDuration").val(ui.value);
       $("#stepDuration").trigger("change");
     }
   });
   $('#stepDuration').bind('change', function() {
-    sequencer.config.stepDuration = $(this).val();
+    console.log(1 / $(this).val());
+    sequencer.config.stepDuration = 1 / $(this).val() * 1000;
   })
   $('#stepDuration').val(defaultStepDuration);
 
-  $('#lineWidthSlider').slider({
-    min: 1,
-    max: 10,
-    value: 1,
-    change: function(event, ui) {
-      $("#lineWidth").val(ui.value);
-      painterConfig.lineWidth = ui.value;
-    }
-  });
-
-  $('#alphaSlider').slider({
-    min: 0,
-    max: 1,
-    step: 0.01,
-    value: 1,
-    change: function(event, ui) {
-      $("#alpha").val(ui.value);
-      painterConfig.alpha = ui.value;
-    }
-  });
 
   $("#masterVolume").knob({
     width: 50,
@@ -103,7 +96,7 @@ function init() {
     }
   });
 
-  addPainter();
+  //addPainter();
 
   var bindInputToProperty = function(obj, property) {
     console.log(property);
@@ -117,33 +110,30 @@ function init() {
     document.getElementById(property).addEventListener('change', bind, false);
   }
 
+  var freqHerz = $('#freqHertz');
+  var wPaintCanvas = $('.wPaint-canvas');
+  wPaintCanvas.bind('mousemove', function(e) {
+    var y = e.pageY - wPaintCanvas.offset().top;
+    var oscNum = source.getOscillatorForY(y);
+    var oscData = synth.getOscillatorData(oscNum);
+    freqHerz.text(Math.round(oscData.frequency).toFixed(1));
+  }).bind("mouseout", function() {
+    freqHerz.text('--')
+  });
+
+
   var numOscillators = 80;
   var startFrequency = 55;
   //var startFrequency = 440;
-  var source = CanvasSource('imageView', 'overlay', numOscillators);
+  var source = CanvasSource(wPaintCanvas[0], 'overlay', numOscillators);
   var synth = OscSynth(numOscillators, startFrequency);
   var sequencer = Sequencer(synth, source, defaultStepDuration);
-
-  //bindInputToProperty(sequencer.config, 'stepDuration');
 
 
 
   sequencer.start();
 
-  // var numSteps = 500;
-  // var numOscillators = 50;
 
-
-  // var steps = [];
-  // for (var stepIndex = 0; stepIndex < numSteps; stepIndex++) {
-  //   var step = [];
-  //   steps.push(step);
-  //   for (var oscillatorIndex = 0; oscillatorIndex < numOscillators; oscillatorIndex++) {
-  //     step.push(Math.random());
-  //   }
-  // }
-
-  document.getElementById('clearCanvas').addEventListener('click', clearCanvas, false);
 
   document.getElementById('pauseToggle').addEventListener('click', sequencer.pauseToggle, false);
   document.getElementById('oscillatorType').addEventListener('change', function() {

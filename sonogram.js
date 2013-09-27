@@ -51,7 +51,8 @@ function OscSynth(numOscillators, startFrequency) {
 
     return {
       oscillator: oscillator,
-      gain: gainNode.gain
+      gain: gainNode.gain,
+      frequency:frequency,
     };
   };
 
@@ -70,8 +71,14 @@ function OscSynth(numOscillators, startFrequency) {
     var f0 = startFrequency;
     var a = Math.pow(2, 1 / 12.0);
     var freq = f0 * Math.pow(a, n);
-    console.log('freq', freq);
     return freq;
+  }
+
+  function getOscillatorData(oscillatorNum) {
+    var oscillator = oscillators[oscillatorNum];
+    return {
+      frequency: oscillator.frequency
+    };
   }
 
 
@@ -95,15 +102,14 @@ function OscSynth(numOscillators, startFrequency) {
     setOscillatorsType: setOscillatorsType,
     compressor: compressor,
     masterGain: masterGain.gain,
-
-
+    getOscillatorData: getOscillatorData,
   }
 }
 
 
-function CanvasSource(elementId, overlayId, numOscillators) {
+function CanvasSource(canvas, overlayId, numOscillators) {
 
-  var canvas = document.getElementById(elementId);
+  //var canvas = document.getElementById(elementId);
   var context = canvas.getContext('2d');
   var overlayCanvas = document.getElementById(overlayId);
   var overlayContext = overlayCanvas.getContext('2d');
@@ -135,20 +141,37 @@ function CanvasSource(elementId, overlayId, numOscillators) {
         var scaledY = parseInt(y * heightScale);
         var scaledYEnd = parseInt((y + 1) * heightScale);
         var pixelsToSum = scaledYEnd - scaledY;
-        var alphaSum = 0;
+        var ampSum = 0;
         while (scaledY < scaledYEnd) {
-          alphaSum += data[(scaledY) * 4 + 3];;
+          // get the channels
+          var red = data[(scaledY) * 4 + 0];
+          var green = data[(scaledY) * 4 + 1];
+          var blue = data[(scaledY) * 4 + 2];
+          var alpha = data[(scaledY) * 4 + 3];
+
+          // compute amplitude as the avg of all colors divided by alpha          
+          var amp = 0;
+          if (alpha != 0) {
+            amp = ((red + green + blue) / 3 - 255) / (alpha)
+          }
+          ampSum += amp;
           scaledY++;
         }
-        var alpha = alphaSum / pixelsToSum;
-        step.push(alpha / 256);
+        var amp = ampSum / pixelsToSum;
+        step.push(amp);
       }
 
       markStep(stepIndex);
       return step;
     },
+
     numOscillators: numOscillators,
+
     numSteps: numSteps,
+
+    getOscillatorForY: function(y) {
+      return parseInt(y / heightScale);
+    }
   }
 }
 
@@ -169,6 +192,7 @@ function Sequencer(synth, source, stepDuration) {
   }
 
   var jumpToStep = function(newStep) {
+    newStep = parseInt(newStep);
     //console.log('jumpToStep', newStep);
     currStep = newStep;
     var step = source.getStep(currStep);
