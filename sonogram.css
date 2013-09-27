@@ -87,7 +87,21 @@
 #freqData {
   background-color: white;
   border: 1px solid black;
-  top:3 px;
+  top: 3px;
+  right: 5px;
+  width: 90px;
+  position: absolute;
+}
+
+#save {
+  top: 30px;
+  right: 5px;
+  width: 90px;
+  position: absolute;
+}
+
+#saveNew {
+  top: 65px;
   right: 5px;
   width: 90px;
   position: absolute;

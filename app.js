@@ -8,6 +8,8 @@ function init() {
   $("#drawingTool").buttonset();
   $('#clearCanvas').button();
   $('#pauseToggle').button();
+  $('#save').button();
+  $('#saveNew').button();
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
@@ -118,14 +120,72 @@ function init() {
   var source = CanvasSource(wPaintCanvas[0], 'overlay', numOscillators);
   var synth = OscSynth(numOscillators, startFrequency);
   var sequencer = Sequencer(synth, source, defaultStepDuration);
-
-
-
   sequencer.start();
 
-
+  var getRandomKey = function() {
+    var r6 = function() {
+      return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1)
+    };
+    return r6() + r6();
+  };
 
   document.getElementById('pauseToggle').addEventListener('click', sequencer.pauseToggle, false);
+
+  var imagesDataRef = new Firebase('https://sonogram.firebaseio.com/images');
+
+  var saveImage = function(key) {
+    var img = $("#wPaint").wPaint("image");
+    var navJson = JSON.stringify({
+      imageKey: key
+    });
+    console.log("Saving", navJson, img);
+
+    imagesDataRef.child(key).set(img, function() {
+      console.log('saved', arguments);
+    });
+    window.location.hash = encodeURIComponent(navJson);    
+  }
+
+  document.getElementById('saveNew').addEventListener('click', function() {
+    var key = getRandomKey();
+    saveImage(key);
+  }, false);
+
+
+  document.getElementById('save').addEventListener('click', function() {
+    var key = getHashParameters().imageKey;
+    saveImage(key);
+  }, false);  
+
+  var getHashParameters = function() {
+    var hash = window.location.hash;
+    if (hash.length > 2) {
+      var navJson = JSON.parse(decodeURIComponent(hash.substring(1)));
+      return navJson;
+    } else {
+      return {
+        imageKey: getRandomKey()
+      };
+    }
+  };
+
+  var loadFromHash = function() {
+    //http://192.168.2.109:8000/sonogram.html#%7B%22imgKey%22%3A%22sonogram_image_abb14b488e7b%22%7D
+    var hash = window.location.hash;
+    if (hash.length > 2) {
+      var navJson = JSON.parse(decodeURIComponent(hash.substring(1)));
+      console.log('navigating', navJson);
+
+      imagesDataRef.child(navJson.imageKey).on('value', function(data) {
+        console.log('loaded', data.val());
+        $('#wPaint').wPaint('image', data.val());
+      });
+    }
+  };
+
+  window.onhashchange = loadFromHash;
+  loadFromHash();
+
   document.getElementById('oscillatorType').addEventListener('change', function() {
     var option = $('input:checked', '#oscillatorType')[0].id;
     synth.setOscillatorsType(option);

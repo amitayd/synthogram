@@ -70,12 +70,15 @@
     </div>
     <div id='sonogram' class='componenet'>
       <div class='compSide'>
-          <div id='freqData'>Freq: <span id='freqHertz'></span> HZ</div>
+        <button id='save'>Save</button> 
+        <button id='saveNew'>SaveNew</button> 
+        <div id='freqData'>Freq: <span id='freqHertz'></span> HZ</div>
 
-          <div id='stepDurationSlider' style="position:absolute;height:220px; left:10px;margin-top:30px;">
+
+        <div id='stepDurationSlider' style="position:absolute;height:210px; left:10px;margin-top:40px;">
             <input id='stepDuration' style="position: absolute; right:-15px; bottom:-25px; width: 30px; height: 10px; font-size:10px;" value=''></input>   
             <label for='stepDuration' style="position: absolute; right:-15px; bottom:-50px; width: 30px; text-shadow:none; color:black; font-weight:normal; background-color:yellow;" class="controlLabel">PPS</label>
-
+        </div>
       </div>
       <div class='compMain'>
         <canvas id="overlay" width="500" height="240"></canvas>
@@ -108,6 +111,7 @@
   <script src="js/jquery.knob.js"></script>
   <script src="js/wpaint/wPaint.min.js"></script>
   <script src="js/wpaint/lib/wColorPicker.min.js"></script>
+   <script src='https://cdn.firebase.com/v0/firebase.js'></script>
   <script type="text/javascript" src="js/wpaint/plugins/main/wPaint.menu.main.min.js"></script>
   <script type="text/javascript" src="js/wpaint/plugins/text/wPaint.menu.text.min.js"></script>
   <script type="text/javascript" src="js/wpaint/plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
