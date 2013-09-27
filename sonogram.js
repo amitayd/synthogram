@@ -82,12 +82,14 @@ function OscSynth(numOscillators, startFrequency) {
   }
 
 
+
+  var gainThreshold = 0.001;
   var play = function(step) {
     for (var i = 0; i < oscillators.length; i++) {
       // TODO: better gain normalization (perhaps based on the number of active oscilators?)
       var normalizedGain = step[i] * 0.1;
-      if (oscillators[i].gain.value != normalizedGain) {
-        //console.log('set gain', normalizedGain);
+      if (Math.abs(oscillators[i].gain.value - normalizedGain) > gainThreshold ) {
+        //console.log('set gain', oscillators[i].frequency, normalizedGain, oscillators[i].gain.value);
         oscillators[i].gain.value = normalizedGain;
       }
     }
@@ -152,16 +154,21 @@ function CanvasSource(canvas, overlayId, numOscillators) {
           // compute amplitude as the avg of all colors divided by alpha          
           var amp = 0;
           if (alpha != 0) {
-            amp = ((red + green + blue) / 3 - 255) / (alpha)
+
+            amp = (255 - ((red + green + blue) / 3)) * (alpha / 255);
+            if (amp >  255 || amp < 0) {
+              console.log(red, green, blue, alpha, amp);
+            }
           }
           ampSum += amp;
           scaledY++;
         }
-        var amp = ampSum / pixelsToSum;
+        var amp = ampSum / pixelsToSum / 255;
         step.push(amp);
       }
 
       markStep(stepIndex);
+      //console.log("step", step);
       return step;
     },
 
