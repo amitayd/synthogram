@@ -1,7 +1,15 @@
 function init() {
-  //return;
 
-  var defaultStepDuration = 100;
+  var sonoModel = new Model({
+    stepDuration: 100,
+    volume: 0.5,
+    numOscillators: 80,
+    startFrequency: 55,
+    delayTime: 0.125,
+    delayFeedbackGain: 0.25,
+    delayWetGain: 0.3,
+
+  });
 
 
   $("#oscillatorType").buttonset();
@@ -41,42 +49,43 @@ function init() {
   });
   $('#stepDuration').bind('change', function() {
     console.log(1 / $(this).val());
-    sequencer.config.stepDuration = 1 / $(this).val() * 1000;
+    sonoModel.get('stepDuration').set(1 / $(this).val() * 1000);
   })
-  $('#stepDuration').val(defaultStepDuration);
+  $('#stepDuration').val(sonoModel.getVal('stepDuration'));
 
 
-  $("#masterVolume").knob({
-    width: 50,
-    height: 50,
-    fgColor: 'black',
-    change: function(v) {
-      synth.masterGain.value = (v / 100);
-    }
-  });
+  var createKnob = function(property, min, max, scale, step) {
+    var scale = scale || 1;
+    var step = step || 1;
+    var id = 'knb_' + property.name;
+    var element = $('#' + id);
 
-  $("#compressorRatio").knob({
-    width: 50,
-    height: 50,
-    min: -100,
-    max: 0,
-    fgColor: 'red',
-    change: function(v) {
-      synth.compressor.ratio.value = (v);
-    }
-  });
+    //var label = $("<label class='controlLabel' />")
+    //label.attr({for: id});
+    //label.text(element.attr('data-label'));
+    //element.after(label);
 
-  $("#compressorReduction").knob({
-    width: 50,
-    height: 50,
-    min: -20,
-    max: 0,
-    fgColor: 'red',
-    change: function(v) {
-      synth.compressor.reduction.value = (v);
-    }
-  });
+    element.bind('change', function() {
+      property.set(parseInt(element.val()) / scale);
+    });
+    element.val(property.get() * scale);
+    element.knob({
+      width: 50,
+      height: 50,
+      step: 10,
+      min: min,
+      max: max,
+      fgColor: 'black',
+      change: function(v) {
+        property.set(v / scale);
+      }
+    });
+  }
 
+  createKnob(sonoModel.get('volume'), 0, 100, 100);
+  createKnob(sonoModel.get('delayTime'), 0, 1000, 1000);
+  createKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100);
+  createKnob(sonoModel.get('delayWetGain'), 0, 100, 100);
 
   var bindInputToProperty = function(obj, property) {
     console.log(property);
@@ -114,12 +123,23 @@ function init() {
 
 
 
-  var numOscillators = 80;
-  var startFrequency = 55;
-  //var startFrequency = 440;
-  var source = CanvasSource(wPaintCanvas[0], 'overlay', numOscillators);
-  var synth = OscSynth(numOscillators, startFrequency);
-  var sequencer = Sequencer(synth, source, defaultStepDuration);
+
+  var source = CanvasSource(wPaintCanvas[0], 'overlay',
+    sonoModel.get('numOscillators')
+  );
+  var synth = OscSynth(
+    sonoModel.get('numOscillators'),
+    sonoModel.get('startFrequency'),
+    sonoModel.get('volume'),
+    sonoModel.get('delayTime'),
+    sonoModel.get('delayFeedbackGain'),
+    sonoModel.get('delayWetGain')
+  );
+
+  var sequencer = Sequencer(synth, source,
+    sonoModel.get('stepDuration')
+  );
+
   sequencer.start();
 
   var getRandomKey = function() {
@@ -143,7 +163,7 @@ function init() {
     imagesDataRef.child(key).set(img, function() {
       console.log('saved', arguments);
     });
-    window.location.hash = encodeURIComponent(navJson);    
+    window.location.hash = encodeURIComponent(navJson);
   }
 
   document.getElementById('saveNew').addEventListener('click', function() {
@@ -155,7 +175,7 @@ function init() {
   document.getElementById('save').addEventListener('click', function() {
     var key = getHashParameters().imageKey;
     saveImage(key);
-  }, false);  
+  }, false);
 
   var getHashParameters = function() {
     var hash = window.location.hash;

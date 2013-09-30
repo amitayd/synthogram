@@ -1,4 +1,4 @@
-function OscSynth(numOscillators, startFrequency) {
+function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedbackGain, delayWetGain) {
   var createAudioContext = function() {
     if (window.webkitAudioContext) {
       return new webkitAudioContext()
@@ -12,17 +12,29 @@ function OscSynth(numOscillators, startFrequency) {
 
 
   var context = createAudioContext();
+
   var masterGain = context.createGain();
+  bindParameterToProperty(masterGain.gain, volume);
   masterGain.connect(context.destination);
+
   var compressor = context.createDynamicsCompressor()
   compressor.connect(masterGain);
 
-  masterGain.gain.value = 0.5;
+  var delayNode = new SlapbackDelayNode(context, delayTime, delayFeedbackGain, delayWetGain);
+  //delayNode.delayTime = delay.get();
+  delayNode.connect(compressor);
+
+  var inputForOscillators = delayNode.input;
+
   var oscillators = [];
+
+  volume.addChangeListener(function(val) {
+    masterGain.gain.value = val;
+  });
 
   var init = function() {
     console.log("initializing");
-    var i = numOscillators;
+    var i = numOscillators.get();
     while (i > 0) {
       i--;
       var frequency = getFrequency(i);
@@ -44,7 +56,7 @@ function OscSynth(numOscillators, startFrequency) {
 
     // Route oscillator through gain node to speakers.
     oscillator.connect(gainNode);
-    gainNode.connect(compressor);
+    gainNode.connect(inputForOscillators);
 
     // Start oscillator playing.
     oscillator.start(0);
@@ -52,7 +64,7 @@ function OscSynth(numOscillators, startFrequency) {
     return {
       oscillator: oscillator,
       gain: gainNode.gain,
-      frequency:frequency,
+      frequency: frequency,
     };
   };
 
@@ -68,13 +80,14 @@ function OscSynth(numOscillators, startFrequency) {
   function getFrequency(n) {
     // http://www.phy.mtu.edu/~suits/NoteFreqCalcs.html
     //var f0 = 440;
-    var f0 = startFrequency;
+    var f0 = startFrequency.get();
     var a = Math.pow(2, 1 / 12.0);
     var freq = f0 * Math.pow(a, n);
     return freq;
   }
 
   function getOscillatorData(oscillatorNum) {
+    //console.log('getOscillatorData', oscillatorNum)
     var oscillator = oscillators[oscillatorNum];
     return {
       frequency: oscillator.frequency
@@ -88,11 +101,45 @@ function OscSynth(numOscillators, startFrequency) {
     for (var i = 0; i < oscillators.length; i++) {
       // TODO: better gain normalization (perhaps based on the number of active oscilators?)
       var normalizedGain = step[i] * 0.1;
-      if (Math.abs(oscillators[i].gain.value - normalizedGain) > gainThreshold ) {
+      if (Math.abs(oscillators[i].gain.value - normalizedGain) > gainThreshold) {
         //console.log('set gain', oscillators[i].frequency, normalizedGain, oscillators[i].gain.value);
         oscillators[i].gain.value = normalizedGain;
       }
     }
+  };
+
+  function bindParameterToProperty(parameter, property) {
+    parameter.value = property.get();
+    property.addChangeListener(function(value) {
+      console.log('set Parameter value', value);
+      parameter.value = value;
+    });
+  }
+
+  // from http://www.html5rocks.com/en/tutorials/casestudies/jamwithchrome-audio/
+  function SlapbackDelayNode (audioContext, delayTime, delayFeedbackGain, delayWetGain) {
+    //create the nodes we’ll use
+    this.input = audioContext.createGain();
+    var output = audioContext.createGain(),
+      delay = audioContext.createDelay(),
+      feedback = audioContext.createGain(),
+      wetLevel = audioContext.createGain();
+
+    bindParameterToProperty(delay.delayTime, delayTime);
+    bindParameterToProperty(feedback.gain, delayFeedbackGain);
+    bindParameterToProperty(wetLevel.gain, delayWetGain);
+
+    //set up the routing
+    this.input.connect(delay);
+    this.input.connect(output);
+    delay.connect(feedback);
+    delay.connect(wetLevel);
+    feedback.connect(delay);
+    wetLevel.connect(output);
+
+    this.connect = function(target) {
+      output.connect(target);
+    };
   };
 
 
@@ -115,9 +162,8 @@ function CanvasSource(canvas, overlayId, numOscillators) {
   var context = canvas.getContext('2d');
   var overlayCanvas = document.getElementById(overlayId);
   var overlayContext = overlayCanvas.getContext('2d');
-  var numOscillators = numOscillators;
   var numSteps = canvas.width;
-  var heightScale = canvas.height / numOscillators;
+  var heightScale = canvas.height / numOscillators.get();
   var markedStep = 0;
 
   var markStep = function(stepIndex) {
@@ -137,7 +183,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
       var data = imageData.data;
 
       step = [];
-      for (var y = 0; y < numOscillators; y++) {
+      for (var y = 0, numOsc = numOscillators.get(); y < numOsc; y++) {
 
         // Use scaling by averging the pixels in the scale
         var scaledY = parseInt(y * heightScale);
@@ -156,7 +202,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
           if (alpha != 0) {
 
             amp = (255 - ((red + green + blue) / 3)) * (alpha / 255);
-            if (amp >  255 || amp < 0) {
+            if (amp > 255 || amp < 0) {
               console.log(red, green, blue, alpha, amp);
             }
           }
@@ -171,11 +217,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
       //console.log("step", step);
       return step;
     },
-
-    numOscillators: numOscillators,
-
     numSteps: numSteps,
-
     getOscillatorForY: function(y) {
       return parseInt(y / heightScale);
     }
@@ -184,9 +226,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
 
 
 function Sequencer(synth, source, stepDuration) {
-  var config = {
-    stepDuration: stepDuration
-  };
+
   var currStep = 0;
   var numSteps = source.numSteps;
   var isPlaying = true;
@@ -218,7 +258,7 @@ function Sequencer(synth, source, stepDuration) {
       var step = source.getStep(currStep);
       synth.play(step);
       moveToNextStep();
-      window.setTimeout(loop, config.stepDuration);
+      window.setTimeout(loop, stepDuration.get());
     }
 
     loop();
@@ -230,7 +270,6 @@ function Sequencer(synth, source, stepDuration) {
   }
 
   return {
-    config: config,
     start: start,
     pauseToggle: pauseToggle,
     jumpToStep: jumpToStep
