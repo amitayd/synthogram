@@ -8,10 +8,10 @@ function init() {
     delayTime: 0.125,
     delayFeedbackGain: 0.25,
     delayWetGain: 0.3,
-    startNote: 'A',
+    startNote: 'C',
     startOctave: 2,
     musicalScale: 'major',
-    numOctaves: 3
+    numOctaves: 6
   });
 
 
@@ -67,10 +67,12 @@ function init() {
     }).sort(SortByName);
   };
 
+  var musicalScales = getKeys(MUSIC.scales);
+  musicalScales.push('quarter notes');
 
   bindInputToProperty('#startNote', 'startNote', false, getKeys(MUSIC.notes));
   bindInputToProperty('#startOctave', 'startOctave', true, [0, 1, 2, 3, 4, 5, 6, 7]);
-  bindInputToProperty('#musicalScale', 'musicalScale', false, getKeys(MUSIC.scales));
+  bindInputToProperty('#musicalScale', 'musicalScale', false, musicalScales);
   bindInputToProperty('#numOctaves', 'numOctaves', true, [1, 2, 3, 4, 5, 6]);
 
   var isSelectorClicked = false;
@@ -161,7 +163,7 @@ function init() {
     var y = e.pageY - wPaintCanvas.offset().top;
     var oscNum = source.getOscillatorForY(y);
     var oscData = synth.getOscillatorData(oscNum);
-    freqHerz.text(Math.round(oscData.frequency).toFixed(1));
+    freqHerz.text(oscData.frequency.toFixed(2));
     freqName.text(oscData.name);
   }).bind("mouseout", function() {
     freqHerz.text('--')

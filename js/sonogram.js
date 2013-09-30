@@ -111,29 +111,37 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   };
 
 
-  function getFrequency(n) {
+  function getFrequency(n, startFrequency) {
     // http://www.phy.mtu.edu/~suits/NoteFreqCalcs.html
     //var f0 = 440;
-    var f0 = startFrequency.get();
+    var f0 = startFrequency;
     var a = Math.pow(2, 1 / 12.0);
     var freq = f0 * Math.pow(a, n);
     return freq;
   }
 
+
   function getFrequencies(startNote, startOctave, scale, numOctaves) {
     var frequencies = [];
-
     for (var octave = startOctave; octave < startOctave + numOctaves; octave++) {
       var noteLatin = startNote + octave;
       var n = Note.fromLatin(noteLatin);
-      var majorScale = n.scale(scale);
-
-      // then loop through scale array for each note object 
-      for (var i = 0; i < majorScale.length - 1; i++) {
-        frequencies.push({
-          value: majorScale[i].frequency(),
-          name: majorScale[i].latin() + octave
-        });
+      if (scale == 'quarter notes') {
+        for (var i = 0; i < 12; i++) {
+          frequencies.push({
+            value: getFrequency(i, n.frequency()),
+            name: n.latin() + octave + '_' + (i+1)
+          });        
+        }
+      } else {
+        var majorScale = n.scale(scale);
+        // then loop through scale array for each note object 
+        for (var i = 0; i < majorScale.length - 1; i++) {
+          frequencies.push({
+            value: majorScale[i].frequency(),
+            name: majorScale[i].latin() + octave
+          });
+        }
       }
     }
 
@@ -166,8 +174,9 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   function bindParameterToProperty(parameter, property) {
     parameter.value = property.get();
     property.addChangeListener(function(value) {
-      console.log('set Parameter value', value);
       parameter.value = value;
+      console.log('set Parameter value', parameter.value);
+      
     });
   }
 
