@@ -1,5 +1,6 @@
-function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedbackGain, delayWetGain) {
-  
+function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctaves,
+  volume, delayTime, delayFeedbackGain, delayWetGain) {
+
 
   var createAudioContext = function() {
     if (window.webkitAudioContext) {
@@ -33,7 +34,7 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
 
   var inputForOscillators = delayNode.input;
 
-  
+
 
   volume.addChangeListener(function(val) {
     masterGain.gain.value = val;
@@ -49,21 +50,24 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
     }
 
     oscillators = [];
-    
-    init();
-  }  
 
-  numOscillators.addChangeListener(rebuildOscillators);
-  startFrequency.addChangeListener(rebuildOscillators);
+    init();
+  }
+
+  startNote.addChangeListener(rebuildOscillators);
+  startOctave.addChangeListener(rebuildOscillators);
+  musicalScale.addChangeListener(rebuildOscillators);
+  numOctaves.addChangeListener(rebuildOscillators);
 
   var init = function() {
     console.log("initializing");
-    var i = numOscillators.get();
+    var frequencies = getFrequencies(startNote.get(), startOctave.get(), musicalScale.get(), numOctaves.get());
+    var i = frequencies.length;
     while (i > 0) {
       i--;
-      var frequency = getFrequency(i);
-      oscillators.push(createOscillator(frequency));
+      oscillators.push(createOscillator(frequencies[i]));
     }
+    numOscillators.set(frequencies.length);
   };
 
 
@@ -77,7 +81,7 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
 
     // Set the type and frequency of the oscillator.
     oscillator.type = "sine";
-    oscillator.frequency.value = frequency;
+    oscillator.frequency.value = frequency.value;
 
     // Set volume of the oscillator.
     gainNode.gain.value = 0;
@@ -93,7 +97,8 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
       oscillator: oscillator,
       gain: gainNode.gain,
       gainNode: gainNode,
-      frequency: frequency,
+      frequency: frequency.value,
+      name: frequency.name,
     };
   };
 
@@ -113,6 +118,26 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
     var a = Math.pow(2, 1 / 12.0);
     var freq = f0 * Math.pow(a, n);
     return freq;
+  }
+
+  function getFrequencies(startNote, startOctave, scale, numOctaves) {
+    var frequencies = [];
+
+    for (var octave = startOctave; octave < startOctave + numOctaves; octave++) {
+      var noteLatin = startNote + octave;
+      var n = Note.fromLatin(noteLatin);
+      var majorScale = n.scale(scale);
+
+      // then loop through scale array for each note object 
+      for (var i = 0; i < majorScale.length - 1; i++) {
+        frequencies.push({
+          value: majorScale[i].frequency(),
+          name: majorScale[i].latin() + octave
+        });
+      }
+    }
+
+    return frequencies;
   }
 
   function getOscillatorData(oscillatorNum) {

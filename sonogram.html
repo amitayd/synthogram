@@ -36,6 +36,7 @@
                  
 
         <div class='control  buttonset'>
+          <label class='controlLabel' for='oscillatorType'>Wave shape</label>
             <div id='oscillatorType'>
               <input type='radio' id='sine' name='radio' checked />
               <label for="sine">sine</label>
@@ -46,8 +47,6 @@
               <input type='radio' id='triangle' name='radio' />
               <label for="triangle">triangle</label>
             </div>              
-
-            <label class='controlLabel' for='oscillatorType'>Wave shape</label>
         </div> 
       </div><!-- End synth -->
     </div>
@@ -55,15 +54,19 @@
       <div class='compSide'>
         <button id='save'>Save</button> 
         <button id='saveNew'>SaveNew</button> 
-        <input id='numOscillators'></input> 
-        <input id='startFrequency'></input> 
-        <input id='musicalScale'></input> 
+        <div class='control noteControls'>
+          <select id='startNote' data-label='Starting Note'></select>
+          <select id='startOctave' data-label='Starting Octave'></select> 
+          <select id='musicalScale' data-label='Musical scale'></select> 
+          <select id='numOctaves' data-label='Number of octaves'></select> 
+        </div>
         <div id='freqData'>Freq: <span id='freqHertz'></span> HZ</div>
 
 
-        <div id='stepDurationSlider' style="position:absolute;height:210px; left:10px;margin-top:40px;">
-            <input id='stepDuration' style="position: absolute; right:-15px; bottom:-25px; width: 30px; height: 10px; font-size:10px;" value=''></input>   
-            <label for='stepDuration' style="position: absolute; right:-15px; bottom:-50px; width: 30px; text-shadow:none; color:black; font-weight:normal; background-color:yellow;" class="controlLabel">PPS</label>
+        <!-- TODO: clean up this markup mess!!! -->
+        <div id='stepDurationSlider' style="position:absolute;height:220px; left:10px;margin-top:40px;">
+            <label for='stepDuration' style="position: absolute; right:-15px; top: px; width: 30px; text-shadow:none; color:black; font-weight:normal; background-color:yellow;" class="controlLabel">PPS</label>          
+            <input id='stepDuration' style="position: absolute; right:-15px; bottom:-20px; width: 30px; height: 10px; font-size:10px;" value=''></input>   
         </div>
       </div>
       <div class='compMain'>
@@ -94,6 +97,7 @@
   <script src="lib/jquery-1.9.1.js"></script>
   <script src="lib/jquery-ui-1.10.3.custom.js"></script>
 
+  <script src="lib/music.js"></script>
   <script src="lib/WAAPISim/waapisim.js"></script>
   <script src="lib/jquery.knob.js"></script>
   <script src="lib/wpaint/wPaint.min.js"></script>

@@ -7,6 +7,12 @@
   width: 720px;
   margin: 0 auto;
   font-size: 9pt;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;  
 }
 
 .control {
@@ -26,8 +32,8 @@
 .controlLabel {
   background-color: yellow;
   padding: 2px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  margin-top: 3px;
+  margin-bottom: 3px;
   display: block;
 }
 
@@ -89,7 +95,7 @@
   border: 1px solid black;
   top: 3px;
   right: 5px;
-  width: 90px;
+  width: 180px;
   position: absolute;
 }
 
@@ -107,24 +113,12 @@
   position: absolute;
 }
 
-#numOscillators {
-  top: 105px;
-  right: 5px;
-  width: 90px;
-  position: absolute;
-}
 
-#startFrequency {
-  top: 145px;
-  right: 5px;
-  width: 90px;
-  position: absolute;
-}
 
-#musicalScale {
-  top: 185px;
+.noteControls {
+  top: 100px;
   right: 5px;
-  width: 90px;
+  width: 120px;
   position: absolute;
 }
 

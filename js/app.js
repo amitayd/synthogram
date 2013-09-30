@@ -8,7 +8,10 @@ function init() {
     delayTime: 0.125,
     delayFeedbackGain: 0.25,
     delayWetGain: 0.3,
-
+    startNote: 'A',
+    startOctave: 2,
+    musicalScale: 'major',
+    numOctaves: 3
   });
 
 
@@ -19,19 +22,56 @@ function init() {
   $('#save').button();
   $('#saveNew').button();
 
+  var createLabel = function(element) {
+    var label = $("<label class='controlLabel' />")
+    label.attr({
+      for: element.attr('id'),
+      title: element.attr('title')
+    });
+    label.text(element.attr('data-label'));
+    element.before(label);
 
-  var bindInputToProperty = function(selector, propName) {
+    label.tooltip();
+  };
+
+
+  var bindInputToProperty = function(selector, propName, isInteger, values, label) {
     var element = $(selector);
+    if (values) {
+      $.each(values, function(key, value) {
+        element
+          .append($("<option></option>")
+            .attr("value", value)
+            .text(value));
+      });
+    }
     element.val(sonoModel.getVal(propName));
     element.bind('change', function() {
       var value = element.val();
-      sonoModel.get(propName).set(parseInt(value));
+      if (isInteger) {
+        value = parseInt(value);
+      }
+      sonoModel.get(propName).set(value);
     });
 
+    createLabel(element);
   };
 
-  bindInputToProperty('#numOscillators', 'numOscillators');
-  bindInputToProperty('#startFrequency', 'startFrequency');
+  var getKeys = function(obj) {
+    function SortByName(a, b) {
+      return ((a < b) ? -1 : ((a > b) ? 1 : 0));
+    }
+
+    return $.map(obj, function(element, index) {
+      return index
+    }).sort(SortByName);
+  };
+
+
+  bindInputToProperty('#startNote', 'startNote', false, getKeys(MUSIC.notes));
+  bindInputToProperty('#startOctave', 'startOctave', true, [0, 1, 2, 3, 4, 5, 6, 7]);
+  bindInputToProperty('#musicalScale', 'musicalScale', false, getKeys(MUSIC.scales));
+  bindInputToProperty('#numOctaves', 'numOctaves', true, [1, 2, 3, 4, 5, 6]);
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
@@ -73,17 +113,10 @@ function init() {
     var step = step || 1;
     var id = 'knb_' + property.name;
     var element = $('#' + id);
-
-    var label = $("<label class='controlLabel' />")
-    label.attr({
-      for: id,
-      title: element.attr('title')
-    });
-    label.text(element.attr('data-label'));
-    element.after(label);
     element.tooltip();
-    label.tooltip();
 
+
+    createLabel(element)
     element.bind('change', function() {
       property.set(parseInt(element.val()) / scale);
     });
@@ -136,7 +169,10 @@ function init() {
   );
   var synth = OscSynth(
     sonoModel.get('numOscillators'),
-    sonoModel.get('startFrequency'),
+    sonoModel.get('startNote'),
+    sonoModel.get('startOctave'),
+    sonoModel.get('musicalScale'),
+    sonoModel.get('numOctaves'),
     sonoModel.get('volume'),
     sonoModel.get('delayTime'),
     sonoModel.get('delayFeedbackGain'),
