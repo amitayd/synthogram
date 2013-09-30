@@ -75,20 +75,23 @@ function init() {
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
-  stepSelector[0].addEventListener('mousedown', function(e) {
+  stepSelector.bind('mousedown', function(e) {
     isSelectorClicked = true;
     sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
-  }, false);
+  });
 
-  stepSelector[0].addEventListener('mouseup', function(e) {
+  stepSelector.bind('mouseup', function(e) {
     isSelectorClicked = false;
-  }, false);
+  });
 
-  stepSelector[0].addEventListener('mousemove', function(e) {
+  stepSelector.bind('mousemove', function(e) {
     if (isSelectorClicked) {
       sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
     }
-  }, false);
+  });
+
+  stepSelector.bindMobileEvents();
+
 
 
   $('#stepDurationSlider').slider({
@@ -106,6 +109,7 @@ function init() {
     sonoModel.get('stepDuration').set(1 / $(this).val() * 1000);
   })
   $('#stepDuration').val(sonoModel.getVal('stepDuration'));
+  $('#stepDuration').bindMobileEvents();
 
 
   var createKnob = function(property, min, max, scale, step) {
@@ -198,7 +202,7 @@ function init() {
   try {
     var imagesDataRef = new Firebase('https://sonogram.firebaseio.com/images');
   } catch (e) {
-    
+
   }
 
 
