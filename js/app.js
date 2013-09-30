@@ -130,21 +130,26 @@ function init() {
     element.knob({
       width: 50,
       height: 50,
-      step: 10,
+      step: step,
       min: min,
       max: max,
       fgColor: 'black',
-      change: function(v) {
-        property.set(v / scale);
+      change: function(val) {
+        // fix for the even returning values not rounded
+        var valRounded = Math.floor(val - (val % step)) / scale;
+        property.set(valRounded);;
       }
     });
   }
 
-  createKnob(sonoModel.get('volume'), 0, 100, 100);
-  createKnob(sonoModel.get('delayTime'), 0, 1000, 1000);
-  createKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100);
-  createKnob(sonoModel.get('delayWetGain'), 0, 100, 100);
+  createKnob(sonoModel.get('volume'), 0, 100, 100, 5);
+  createKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 10);
+  createKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
+  createKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
 
+
+  // override some wPaint settings
+  $.fn.wPaint.menus.text.items.fontSize.range = [8, 9, 10, 12, 14, 16, 20, 24, 30, 40, 50, 60];
   $('#wPaint').wPaint({
     path: 'lib/wpaint/',
     menuOffsetLeft: 0, // left offset of primary menu

@@ -14,10 +14,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   };
 
 
-  //
-
-
-  var rebuildOscillators = null;
   var oscillators = [];
   var context = createAudioContext();
 
@@ -29,7 +25,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   compressor.connect(masterGain);
 
   var delayNode = new SlapbackDelayNode(context, delayTime, delayFeedbackGain, delayWetGain);
-  //delayNode.delayTime = delay.get();
   delayNode.connect(compressor);
 
   var inputForOscillators = delayNode.input;
@@ -176,7 +171,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     property.addChangeListener(function(value) {
       parameter.value = value;
       console.log('set Parameter value', parameter.value);
-      
+
     });
   }
 
