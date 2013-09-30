@@ -194,7 +194,13 @@ function init() {
 
   document.getElementById('pauseToggle').addEventListener('click', sequencer.pauseToggle, false);
 
-  var imagesDataRef = new Firebase('https://sonogram.firebaseio.com/images');
+  // TODO: move firebase part to load Async
+  try {
+    var imagesDataRef = new Firebase('https://sonogram.firebaseio.com/images');
+  } catch (e) {
+    
+  }
+
 
   var saveImage = function(key) {
     var img = $("#wPaint").wPaint("image");
