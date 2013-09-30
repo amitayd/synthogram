@@ -107,6 +107,27 @@
   position: absolute;
 }
 
+#numOscillators {
+  top: 105px;
+  right: 5px;
+  width: 90px;
+  position: absolute;
+}
+
+#startFrequency {
+  top: 145px;
+  right: 5px;
+  width: 90px;
+  position: absolute;
+}
+
+#musicalScale {
+  top: 185px;
+  right: 5px;
+  width: 90px;
+  position: absolute;
+}
+
 
 .logo {
   display: block;

@@ -1,4 +1,6 @@
 function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedbackGain, delayWetGain) {
+  
+
   var createAudioContext = function() {
     if (window.webkitAudioContext) {
       return new webkitAudioContext()
@@ -8,9 +10,14 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
       alert("Web Audio not supported")
       throw new Error("Web Audio not supported (could not create audio context");
     }
-  }
+  };
 
 
+  //
+
+
+  var rebuildOscillators = null;
+  var oscillators = [];
   var context = createAudioContext();
 
   var masterGain = context.createGain();
@@ -26,11 +33,28 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
 
   var inputForOscillators = delayNode.input;
 
-  var oscillators = [];
+  
 
   volume.addChangeListener(function(val) {
     masterGain.gain.value = val;
   });
+
+  var rebuildOscillators = function() {
+    console.log('rebuildOscillators');
+    var i = oscillators.length;
+    while (i > 0) {
+      i--;
+      oscillators[i].gainNode.disconnect();
+      oscillators[i].oscillator.disconnect();
+    }
+
+    oscillators = [];
+    
+    init();
+  }  
+
+  numOscillators.addChangeListener(rebuildOscillators);
+  startFrequency.addChangeListener(rebuildOscillators);
 
   var init = function() {
     console.log("initializing");
@@ -40,9 +64,13 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
       var frequency = getFrequency(i);
       oscillators.push(createOscillator(frequency));
     }
-  }
+  };
+
+
 
   var createOscillator = function(frequency) {
+    //console.log('createOscillator', frequency);
+
     // Create oscillator and gain node.
     var oscillator = context.createOscillator(),
       gainNode = context.createGain();
@@ -64,6 +92,7 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
     return {
       oscillator: oscillator,
       gain: gainNode.gain,
+      gainNode: gainNode,
       frequency: frequency,
     };
   };
@@ -117,7 +146,8 @@ function OscSynth(numOscillators, startFrequency, volume, delayTime, delayFeedba
   }
 
   // from http://www.html5rocks.com/en/tutorials/casestudies/jamwithchrome-audio/
-  function SlapbackDelayNode (audioContext, delayTime, delayFeedbackGain, delayWetGain) {
+
+  function SlapbackDelayNode(audioContext, delayTime, delayFeedbackGain, delayWetGain) {
     //create the nodes we’ll use
     this.input = audioContext.createGain();
     var output = audioContext.createGain(),
@@ -163,8 +193,11 @@ function CanvasSource(canvas, overlayId, numOscillators) {
   var overlayCanvas = document.getElementById(overlayId);
   var overlayContext = overlayCanvas.getContext('2d');
   var numSteps = canvas.width;
-  var heightScale = canvas.height / numOscillators.get();
   var markedStep = 0;
+
+  var getHeightScale = function() {
+    return canvas.height / numOscillators.get();
+  }
 
   var markStep = function(stepIndex) {
     overlayContext.clearRect(markedStep - 1, 0, markedStep + 1, overlayCanvas.height);
@@ -181,6 +214,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
       // get just the corresponding row for this step
       var imageData = context.getImageData(stepIndex, 0, 1, canvas.height);
       var data = imageData.data;
+      var heightScale = getHeightScale();
 
       step = [];
       for (var y = 0, numOsc = numOscillators.get(); y < numOsc; y++) {
@@ -219,7 +253,8 @@ function CanvasSource(canvas, overlayId, numOscillators) {
     },
     numSteps: numSteps,
     getOscillatorForY: function(y) {
-      return parseInt(y / heightScale);
+      var oscIndex = parseInt(y / getHeightScale());
+      return oscIndex;
     }
   }
 }

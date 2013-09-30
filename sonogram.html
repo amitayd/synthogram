@@ -18,45 +18,24 @@
       <div class='horizontalControls'>
         <h1 class='logo'>SonoSynth</h1>
         <div class='control'>
-          <div class='controlTop'>
-            <input type="text" value="100" class="dial" id='knb_volume' data-label='Volume' data-tip='Master' />  
-          </div>
-          <div class='controlText'>
-            <label class='controlLabel' for='volumedial'>Volume</label>
-          </div>
+          <input type="text" value="100" class="dial" id='knb_volume' data-label='Volume' title='Master' />  
         </div>
 
         <div class='control'>
-          <div class='controlTop'>
-            <input type="text" value="100" class="dial" id='knb_delayTime' />  
-          </div>
-          <div class='controlText'>
-            <label class='controlLabel' for='knb_delayTime'>Dl Tm.</label>
-          </div>
+          <input type="text" value="100" class="dial" id='knb_delayTime' data-label='Delay T' title='Delay Time' />  
         </div> 
 
 
         <div class='control'>
-          <div class='controlTop'>
-            <input type="text" value="100" class="dial" id='knb_delayFeedbackGain' />  
-          </div>
-          <div class='controlText'>
-            <label class='controlLabel' for='knb_delayFeedbackGain'>Dl FG</label>
-          </div>
+          <input type="text" value="100" class="dial" id='knb_delayFeedbackGain' data-label='Delay FG' title='Delay Feedback gain' />  
         </div> 
 
         <div class='control'>
-          <div class='controlTop'>
-            <input type="text" value="100" class="dial" id='knb_delayWetGain' />  
-          </div>
-          <div class='controlText'>
-            <label class='controlLabel' for='knb_delayFeedbackGain'>Dl WG</label>
-          </div>
+          <input type="text" value="100" class="dial" id='knb_delayWetGain'  data-label='Delay WG' title='Delay wet gain' />  
         </div>                     
                  
 
-        <div class='control'>
-          <div class='controlTop buttonset'>
+        <div class='control  buttonset'>
             <div id='oscillatorType'>
               <input type='radio' id='sine' name='radio' checked />
               <label for="sine">sine</label>
@@ -67,11 +46,8 @@
               <input type='radio' id='triangle' name='radio' />
               <label for="triangle">triangle</label>
             </div>              
-          </div>
-          <div class='controlText'>
+
             <label class='controlLabel' for='oscillatorType'>Wave shape</label>
-          </div>
-          
         </div> 
       </div><!-- End synth -->
     </div>
@@ -79,6 +55,9 @@
       <div class='compSide'>
         <button id='save'>Save</button> 
         <button id='saveNew'>SaveNew</button> 
+        <input id='numOscillators'></input> 
+        <input id='startFrequency'></input> 
+        <input id='musicalScale'></input> 
         <div id='freqData'>Freq: <span id='freqHertz'></span> HZ</div>
 
 

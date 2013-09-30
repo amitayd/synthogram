@@ -19,6 +19,20 @@ function init() {
   $('#save').button();
   $('#saveNew').button();
 
+
+  var bindInputToProperty = function(selector, propName) {
+    var element = $(selector);
+    element.val(sonoModel.getVal(propName));
+    element.bind('change', function() {
+      var value = element.val();
+      sonoModel.get(propName).set(parseInt(value));
+    });
+
+  };
+
+  bindInputToProperty('#numOscillators', 'numOscillators');
+  bindInputToProperty('#startFrequency', 'startFrequency');
+
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
   stepSelector[0].addEventListener('mousedown', function(e) {
@@ -60,10 +74,15 @@ function init() {
     var id = 'knb_' + property.name;
     var element = $('#' + id);
 
-    //var label = $("<label class='controlLabel' />")
-    //label.attr({for: id});
-    //label.text(element.attr('data-label'));
-    //element.after(label);
+    var label = $("<label class='controlLabel' />")
+    label.attr({
+      for: id,
+      title: element.attr('title')
+    });
+    label.text(element.attr('data-label'));
+    element.after(label);
+    element.tooltip();
+    label.tooltip();
 
     element.bind('change', function() {
       property.set(parseInt(element.val()) / scale);
@@ -86,18 +105,6 @@ function init() {
   createKnob(sonoModel.get('delayTime'), 0, 1000, 1000);
   createKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100);
   createKnob(sonoModel.get('delayWetGain'), 0, 100, 100);
-
-  var bindInputToProperty = function(obj, property) {
-    console.log(property);
-
-    function bind() {
-      console.log("changing");
-      obj[property] = parseInt(document.getElementById(property).value);
-    }
-
-    bind();
-    document.getElementById(property).addEventListener('change', bind, false);
-  }
 
   $('#wPaint').wPaint({
     path: 'lib/wpaint/',
