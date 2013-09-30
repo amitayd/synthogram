@@ -91,7 +91,7 @@ function init() {
   }
 
   $('#wPaint').wPaint({
-    path: 'js/wpaint/',
+    path: 'lib/wpaint/',
     menuOffsetLeft: 0, // left offset of primary menu
     menuOffsetTop: -45,
     lineWidth: '1', // starting line width
