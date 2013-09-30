@@ -144,7 +144,8 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     //console.log('getOscillatorData', oscillatorNum)
     var oscillator = oscillators[oscillatorNum];
     return {
-      frequency: oscillator.frequency
+      frequency: oscillator.frequency,
+      name: oscillator.name
     };
   }
 
@@ -153,7 +154,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   var gainThreshold = 0.001;
   var play = function(step) {
     for (var i = 0; i < oscillators.length; i++) {
-      // TODO: better gain normalization (perhaps based on the number of active oscilators?)
+      // TODO: better gain normalization (perhaps based on the number of active oscillators?)
       var normalizedGain = step[i] * 0.1;
       if (Math.abs(oscillators[i].gain.value - normalizedGain) > gainThreshold) {
         //console.log('set gain', oscillators[i].frequency, normalizedGain, oscillators[i].gain.value);

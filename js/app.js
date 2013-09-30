@@ -155,12 +155,14 @@ function init() {
 
 
   var freqHerz = $('#freqHertz');
+  var freqName = $('#freqName');
   var wPaintCanvas = $('.wPaint-canvas');
   wPaintCanvas.bind('mousemove', function(e) {
     var y = e.pageY - wPaintCanvas.offset().top;
     var oscNum = source.getOscillatorForY(y);
     var oscData = synth.getOscillatorData(oscNum);
     freqHerz.text(Math.round(oscData.frequency).toFixed(1));
+    freqName.text(oscData.name);
   }).bind("mouseout", function() {
     freqHerz.text('--')
   });
