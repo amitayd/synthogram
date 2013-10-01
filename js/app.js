@@ -1,6 +1,7 @@
 /*exported  synthogram_init */
+
 function synthogram_init() {
-  $.fn.btn = $.fn.button.noConflict(); 
+  $.fn.btn = $.fn.button.noConflict();
   $.fn.btn = $.fn.tooltip.noConflict();
   var sonoModel = new Model({
     stepDuration: 100,
@@ -216,18 +217,17 @@ function synthogram_init() {
 
   }
 
+  var loadRoute = '#load/';
 
   var saveImage = function(key) {
+    key = key || getRandomKey();
     var img = $("#wPaint").wPaint("image");
-    var navJson = JSON.stringify({
-      imageKey: key
-    });
-    console.log("Saving", navJson, img);
+    console.log("Saving",  img);
 
     imagesDataRef.child(key).set(img, function() {
       console.log('saved', arguments);
+      window.location.hash = loadRoute + key;
     });
-    window.location.hash = encodeURIComponent(navJson);
   };
 
   document.getElementById('saveNew').addEventListener('click', function() {
@@ -237,46 +237,45 @@ function synthogram_init() {
 
 
   document.getElementById('save').addEventListener('click', function() {
-    var key = getHashParameters().imageKey;
+    var key = getHashParameters();;
     saveImage(key);
   }, false);
 
+
+
   var getHashParameters = function() {
     var hash = window.location.hash;
-    if (hash.length > 2) {
-      var navJson = JSON.parse(decodeURIComponent(hash.substring(1)));
-      return navJson;
-    } else {
-      return {
-        imageKey: getRandomKey()
-      };
+    var key = null;
+    if (hash.indexOf(loadRoute) === 0) {
+      var key = hash.substring(loadRoute.length);
     }
+
+    console.log('getHashParameters', key);
+    return key;
   };
 
-  var loadFromHash = function() {
+  var loadInitialImage = function() {
     //http://192.168.2.109:8000/sonogram.html#%7B%22imgKey%22%3A%22sonogram_image_abb14b488e7b%22%7D
-    try {
-      var hash = window.location.hash;
-      if (hash.length > 2) {
-        var navJson = JSON.parse(decodeURIComponent(hash.substring(1)));
-        console.log('navigating', navJson);
 
-        imagesDataRef.child(navJson.imageKey).on('value', function(data) {
-          console.log('loaded', data.val());
-          $('#wPaint').wPaint('image', data.val());
-        });
-      }
-    } catch (e) {
-      console.log('error loading hash', e);
+    var key = getHashParameters();
+    console.log('loadInitialImage', key);
+    if (key) {
+      imagesDataRef.child(key).on('value', function(data) {
+        console.log('loaded', data.val());
+        $('#wPaint').wPaint('image', data.val());
+      });
+    } else {
+      var defaultImage = $('#defaultImage').attr('src');
+      //console.log('defaultImage', defaultImage);
+      $('#wPaint').wPaint('image', defaultImage);
     }
   };
 
-  window.onhashchange = loadFromHash;
-  loadFromHash();
+  //window.onhashchange = loadFromHash;
+  loadInitialImage();
 
   document.getElementById('oscillatorType').addEventListener('change', function() {
     var option = $('input:checked', '#oscillatorType')[0].id;
     synth.setOscillatorsType(option);
   }, false);
 }
-
