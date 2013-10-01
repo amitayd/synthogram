@@ -157,8 +157,8 @@ function synthogram_init() {
     path: 'lib/wpaint/',
     menuOffsetLeft: 0, // left offset of primary menu
     menuOffsetTop: -45,
-    lineWidth: '1', // starting line width
-    fillStyle: '#FFFFFF', // starting fill style
+    lineWidth: '4', // starting line width
+    fillStyle: 'blue', // starting fill style
     strokeStyle: '#000000', // start stroke style    
     menuHandle: false,
   });
