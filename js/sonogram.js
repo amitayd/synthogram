@@ -1,18 +1,53 @@
+/*exported OscSynth, CanvasSource, Sequencer */
+
 function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctaves,
   volume, delayTime, delayFeedbackGain, delayWetGain) {
 
 
   var createAudioContext = function() {
     if (window.webkitAudioContext) {
-      return new webkitAudioContext()
+      return new window.webkitAudioContext();
     } else if (window.AudioContext) {
-      return new AudioContext()
+      return new window.AudioContext();
     } else {
-      alert("Web Audio not supported")
       throw new Error("Web Audio not supported (could not create audio context");
     }
   };
 
+  function bindParameterToProperty(parameter, property) {
+    parameter.value = property.get();
+    property.addChangeListener(function(value) {
+      parameter.value = value;
+      console.log('set Parameter value', parameter.value);
+
+    });
+  }
+
+  // from http://www.html5rocks.com/en/tutorials/casestudies/jamwithchrome-audio/
+  function SlapbackDelayNode(audioContext, delayTime, delayFeedbackGain, delayWetGain) {
+    //create the nodes we’ll use
+    this.input = audioContext.createGain();
+    var output = audioContext.createGain(),
+      delay = audioContext.createDelay(),
+      feedback = audioContext.createGain(),
+      wetLevel = audioContext.createGain();
+
+    bindParameterToProperty(delay.delayTime, delayTime);
+    bindParameterToProperty(feedback.gain, delayFeedbackGain);
+    bindParameterToProperty(wetLevel.gain, delayWetGain);
+
+    //set up the routing
+    this.input.connect(delay);
+    this.input.connect(output);
+    delay.connect(feedback);
+    delay.connect(wetLevel);
+    feedback.connect(delay);
+    wetLevel.connect(output);
+
+    this.connect = function(target) {
+      output.connect(target);
+    };
+  }
 
   var oscillators = [];
   var context = createAudioContext();
@@ -21,7 +56,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   bindParameterToProperty(masterGain.gain, volume);
   masterGain.connect(context.destination);
 
-  var compressor = context.createDynamicsCompressor()
+  var compressor = context.createDynamicsCompressor();
   compressor.connect(masterGain);
 
   var delayNode = new SlapbackDelayNode(context, delayTime, delayFeedbackGain, delayWetGain);
@@ -47,7 +82,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     oscillators = [];
 
     init();
-  }
+  };
 
   startNote.addChangeListener(rebuildOscillators);
   startOctave.addChangeListener(rebuildOscillators);
@@ -98,12 +133,12 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   };
 
   function setOscillatorsType(oscillatorType) {
-    console.log("setOscillatorsType", oscillatorType)
+    console.log("setOscillatorsType", oscillatorType);
     for (var i = 0; i < oscillators.length; i++) {
       var osc = oscillators[i].oscillator;
       osc.type = oscillatorType;
     }
-  };
+  }
 
 
   function getFrequency(n, startFrequency) {
@@ -121,20 +156,20 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     for (var octave = startOctave; octave < startOctave + numOctaves; octave++) {
       var noteLatin = startNote + octave;
       var n = Note.fromLatin(noteLatin);
-      if (scale == 'quarter notes') {
-        for (var i = 0; i < 12; i++) {
+      if (scale === 'quarter notes') {
+        for (var quarterIndex = 0; quarterIndex < 12; quarterIndex++) {
           frequencies.push({
-            value: getFrequency(i, n.frequency()),
-            name: n.latin() + octave + '_' + (i+1)
-          });        
+            value: getFrequency(quarterIndex, n.frequency()),
+            name: n.latin() + octave + '_' + (quarterIndex + 1)
+          });
         }
       } else {
         var majorScale = n.scale(scale);
         // then loop through scale array for each note object 
-        for (var i = 0; i < majorScale.length - 1; i++) {
+        for (var noteIndex = 0; noteIndex < majorScale.length - 1; noteIndex++) {
           frequencies.push({
-            value: majorScale[i].frequency(),
-            name: majorScale[i].latin() + octave
+            value: majorScale[noteIndex].frequency(),
+            name: majorScale[noteIndex].latin() + octave
           });
         }
       }
@@ -166,43 +201,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     }
   };
 
-  function bindParameterToProperty(parameter, property) {
-    parameter.value = property.get();
-    property.addChangeListener(function(value) {
-      parameter.value = value;
-      console.log('set Parameter value', parameter.value);
-
-    });
-  }
-
-  // from http://www.html5rocks.com/en/tutorials/casestudies/jamwithchrome-audio/
-
-  function SlapbackDelayNode(audioContext, delayTime, delayFeedbackGain, delayWetGain) {
-    //create the nodes we’ll use
-    this.input = audioContext.createGain();
-    var output = audioContext.createGain(),
-      delay = audioContext.createDelay(),
-      feedback = audioContext.createGain(),
-      wetLevel = audioContext.createGain();
-
-    bindParameterToProperty(delay.delayTime, delayTime);
-    bindParameterToProperty(feedback.gain, delayFeedbackGain);
-    bindParameterToProperty(wetLevel.gain, delayWetGain);
-
-    //set up the routing
-    this.input.connect(delay);
-    this.input.connect(output);
-    delay.connect(feedback);
-    delay.connect(wetLevel);
-    feedback.connect(delay);
-    wetLevel.connect(output);
-
-    this.connect = function(target) {
-      output.connect(target);
-    };
-  };
-
-
 
   init();
 
@@ -212,7 +210,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     compressor: compressor,
     masterGain: masterGain.gain,
     getOscillatorData: getOscillatorData,
-  }
+  };
 }
 
 
@@ -227,7 +225,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
 
   var getHeightScale = function() {
     return canvas.height / numOscillators.get();
-  }
+  };
 
   var markStep = function(stepIndex) {
     overlayContext.clearRect(markedStep - 1, 0, markedStep + 1, overlayCanvas.height);
@@ -236,7 +234,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
     overlayContext.lineTo(stepIndex, overlayCanvas.height);
     overlayContext.stroke();
     markedStep = stepIndex;
-  }
+  };
 
 
   return {
@@ -246,12 +244,12 @@ function CanvasSource(canvas, overlayId, numOscillators) {
       var data = imageData.data;
       var heightScale = getHeightScale();
 
-      step = [];
+      var step = [];
       for (var y = 0, numOsc = numOscillators.get(); y < numOsc; y++) {
 
         // Use scaling by averging the pixels in the scale
-        var scaledY = parseInt(y * heightScale);
-        var scaledYEnd = parseInt((y + 1) * heightScale);
+        var scaledY = parseInt(y * heightScale, 10);
+        var scaledYEnd = parseInt((y + 1) * heightScale, 10);
         var pixelsToSum = scaledYEnd - scaledY;
         var ampSum = 0;
         while (scaledY < scaledYEnd) {
@@ -263,7 +261,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
 
           // compute amplitude as the avg of all colors divided by alpha          
           var amp = 0;
-          if (alpha != 0) {
+          if (alpha !== 0) {
 
             amp = (255 - ((red + green + blue) / 3)) * (alpha / 255);
             if (amp > 255 || amp < 0) {
@@ -273,8 +271,8 @@ function CanvasSource(canvas, overlayId, numOscillators) {
           ampSum += amp;
           scaledY++;
         }
-        var amp = ampSum / pixelsToSum / 255;
-        step.push(amp);
+        var finalAmp = ampSum / pixelsToSum / 255;
+        step.push(finalAmp);
       }
 
       markStep(stepIndex);
@@ -283,10 +281,10 @@ function CanvasSource(canvas, overlayId, numOscillators) {
     },
     numSteps: numSteps,
     getOscillatorForY: function(y) {
-      var oscIndex = parseInt(y / getHeightScale());
+      var oscIndex = parseInt(y / getHeightScale(), 10);
       return oscIndex;
     }
-  }
+  };
 }
 
 
@@ -301,15 +299,15 @@ function Sequencer(synth, source, stepDuration) {
     if (isPlaying) {
       currStep = (currStep + 1) % numSteps;
     }
-  }
+  };
 
   var jumpToStep = function(newStep) {
-    newStep = parseInt(newStep);
+    newStep = parseInt(newStep, 10);
     //console.log('jumpToStep', newStep);
     currStep = newStep;
     var step = source.getStep(currStep);
     synth.play(step);
-  }
+  };
 
   var start = function() {
     console.log('seq.play');
@@ -332,25 +330,11 @@ function Sequencer(synth, source, stepDuration) {
   var pauseToggle = function() {
     isPlaying = !isPlaying;
     console.log('pauseToggle', isPlaying);
-  }
+  };
 
   return {
     start: start,
     pauseToggle: pauseToggle,
     jumpToStep: jumpToStep
-  }
-}
-
-function getScaledImageData(origCanvasId, width, height) {
-  origCanvas = document.getElementById(origCanvasId).getContext('2d');
-
-  var tempCanvas = document.createElement('canvas');
-  var tempContext = prevCanvas.getContext('2d');
-  tempContext.webkitImageSmoothingEnabled = false;
-  tempContext.mozImageSmoothingEnabled = false;
-  tempContext.imageSmoothingEnabled = false;
-
-  tempContext.drawImage(origCanvas.canvas, 0, 0, width, height);
-  return tempContext.getImageData(0, 0, width, height);
-  //return prevCanvas.getImageData(0, 0, width, height);
+  };
 }

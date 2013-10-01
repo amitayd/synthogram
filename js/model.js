@@ -5,7 +5,9 @@ function ModelProperty(name, value, changeListeners) {
 }
 
 ModelProperty.prototype.set = function(value) {
-  if (value == this.value) return;
+  if (value === this.value) {
+    return;
+  }
   console.log('set', this.name, value);
   this.value = value;
   var listeners = this.changeListeners;
@@ -16,7 +18,7 @@ ModelProperty.prototype.set = function(value) {
 
 ModelProperty.prototype.get = function() {
   return this.value;
-}
+};
 
 
 ModelProperty.prototype.addChangeListener = function(listener) {
@@ -44,17 +46,3 @@ Model.prototype.get = function(propName) {
 Model.prototype.getVal = function(propName) {
   return this.get(propName).get();
 };
-
-Model.prototype.getProps = function(propertyNames) {
-  var properties = {};
-
-  for (var propName in this.properties) {
-    properties[propName] = this.get(propName);
-  };
-
-  return properties;
-};
-
-
-
-

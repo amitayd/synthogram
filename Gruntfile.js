@@ -36,7 +36,7 @@ module.exports = function(grunt) {
         eqeqeq: true,
         immed: true,
         latedef: true,
-        newcap: true,
+        newcap: false,
         noarg: true,
         sub: true,
         undef: true,
@@ -45,7 +45,18 @@ module.exports = function(grunt) {
         eqnull: true,
         browser: true,
         globals: {
-          jQuery: true
+          jQuery: true,
+          '$': true,
+          Model: true,
+          CanvasSource:true,
+          OscSynth: true,
+          MUSIC: true,
+          console: true,
+          Sequencer: true,
+          Firebase: true,
+          Note: true,
+          ok: true,
+          test: true,
         }
       },
       gruntfile: {
@@ -56,7 +67,7 @@ module.exports = function(grunt) {
       }
     },
     qunit: {
-      files: ['test/**/*.html']
+      files: ['./*tests.html']
     },
     watch: {
       gruntfile: {

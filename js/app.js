@@ -1,5 +1,5 @@
-function init() {
-
+/*exported  synthogram_init */
+function synthogram_init() {
   var sonoModel = new Model({
     stepDuration: 100,
     volume: 0.5,
@@ -23,7 +23,7 @@ function init() {
   $('#saveNew').button();
 
   var createLabel = function(element) {
-    var label = $("<label class='controlLabel' />")
+    var label = $("<label class='controlLabel' />");
     label.attr({
       for: element.attr('id'),
       title: element.attr('title')
@@ -35,7 +35,7 @@ function init() {
   };
 
 
-  var bindInputToProperty = function(selector, propName, isInteger, values, label) {
+  var bindInputToProperty = function(selector, propName, isInteger, values) {
     var element = $(selector);
     if (values) {
       $.each(values, function(key, value) {
@@ -49,7 +49,7 @@ function init() {
     element.bind('change', function() {
       var value = element.val();
       if (isInteger) {
-        value = parseInt(value);
+        value = parseInt(value, 10);
       }
       sonoModel.get(propName).set(value);
     });
@@ -63,7 +63,7 @@ function init() {
     }
 
     return $.map(obj, function(element, index) {
-      return index
+      return index;
     }).sort(SortByName);
   };
 
@@ -82,7 +82,7 @@ function init() {
     sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
   });
 
-  stepSelector.bind('mouseup', function(e) {
+  stepSelector.bind('mouseup', function() {
     isSelectorClicked = false;
   });
 
@@ -109,22 +109,22 @@ function init() {
   $('#stepDuration').bind('change', function() {
     console.log(1 / $(this).val());
     sonoModel.get('stepDuration').set(1 / $(this).val() * 1000);
-  })
+  });
   $('#stepDuration').val(sonoModel.getVal('stepDuration'));
   $('#stepDuration').bindMobileEvents();
 
 
   var createKnob = function(property, min, max, scale, step) {
-    var scale = scale || 1;
-    var step = step || 1;
+    scale = scale || 1;
+    step = step || 1;
     var id = 'knb_' + property.name;
     var element = $('#' + id);
     element.tooltip();
 
 
-    createLabel(element)
+    createLabel(element);
     element.bind('change', function() {
-      property.set(parseInt(element.val()) / scale);
+      property.set(parseInt(element.val(), 10) / scale);
     });
     element.val(property.get() * scale);
     element.knob({
@@ -137,10 +137,10 @@ function init() {
       change: function(val) {
         // fix for the even returning values not rounded
         var valRounded = Math.floor(val - (val % step)) / scale;
-        property.set(valRounded);;
+        property.set(valRounded);
       }
     });
-  }
+  };
 
   createKnob(sonoModel.get('volume'), 0, 100, 100, 5);
   createKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 10);
@@ -171,7 +171,7 @@ function init() {
     freqHerz.text(oscData.frequency.toFixed(2));
     freqName.text(oscData.name);
   }).bind("mouseout", function() {
-    freqHerz.text('--')
+    freqHerz.text('--');
   });
 
 
@@ -200,7 +200,7 @@ function init() {
 
   var getRandomKey = function() {
     var r6 = function() {
-      return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1)
+      return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
     };
     return r6() + r6();
   };
@@ -226,7 +226,7 @@ function init() {
       console.log('saved', arguments);
     });
     window.location.hash = encodeURIComponent(navJson);
-  }
+  };
 
   document.getElementById('saveNew').addEventListener('click', function() {
     var key = getRandomKey();
@@ -274,4 +274,3 @@ function init() {
   }, false);
 }
 
-window.addEventListener('load', init, false);
