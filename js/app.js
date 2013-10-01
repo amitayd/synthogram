@@ -1,7 +1,7 @@
 /*exported  synthogram_init */
 function synthogram_init() {
   var sonoModel = new Model({
-    stepDuration: 100,
+    stepDuration: 10,
     volume: 0.5,
     numOscillators: 80,
     startFrequency: 55,
@@ -110,7 +110,7 @@ function synthogram_init() {
     console.log(1 / $(this).val());
     sonoModel.get('stepDuration').set(1 / $(this).val() * 1000);
   });
-  $('#stepDuration').val(sonoModel.getVal('stepDuration'));
+  $('#stepDuration').val(1000 / sonoModel.getVal('stepDuration'));
   $('#stepDuration').bindMobileEvents();
 
 
