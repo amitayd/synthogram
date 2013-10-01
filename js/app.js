@@ -1,5 +1,7 @@
 /*exported  synthogram_init */
 function synthogram_init() {
+  $.fn.btn = $.fn.button.noConflict(); 
+  $.fn.btn = $.fn.tooltip.noConflict();
   var sonoModel = new Model({
     stepDuration: 100,
     volume: 0.5,
@@ -253,15 +255,19 @@ function synthogram_init() {
 
   var loadFromHash = function() {
     //http://192.168.2.109:8000/sonogram.html#%7B%22imgKey%22%3A%22sonogram_image_abb14b488e7b%22%7D
-    var hash = window.location.hash;
-    if (hash.length > 2) {
-      var navJson = JSON.parse(decodeURIComponent(hash.substring(1)));
-      console.log('navigating', navJson);
+    try {
+      var hash = window.location.hash;
+      if (hash.length > 2) {
+        var navJson = JSON.parse(decodeURIComponent(hash.substring(1)));
+        console.log('navigating', navJson);
 
-      imagesDataRef.child(navJson.imageKey).on('value', function(data) {
-        console.log('loaded', data.val());
-        $('#wPaint').wPaint('image', data.val());
-      });
+        imagesDataRef.child(navJson.imageKey).on('value', function(data) {
+          console.log('loaded', data.val());
+          $('#wPaint').wPaint('image', data.val());
+        });
+      }
+    } catch (e) {
+      console.log('error loading hash', e);
     }
   };
 

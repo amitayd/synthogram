@@ -1,119 +1,194 @@
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="description" content="Sonogram Synth - snyhesize and play painted sounds, using HTML5 canvas and web audio API" />
-  <meta name="author" content="Amitay Dobo" />
-  <title>Sonogram synth</title>
-  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-  <link rel="stylesheet" href="css/sonogram.css" />
-  <link href="http://codeorigin.jquery.com/ui/1.10.3/themes/trontastic/jquery-ui.css" rel="stylesheet">
-  <link rel="Stylesheet" type="text/css" href="lib/wpaint/wPaint.min.css" />
-  <link rel="Stylesheet" type="text/css" href="lib/wpaint/lib/wColorPicker.min.css" />
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.png">
+    <meta name="description" content="Synthogram - snyhesize and play painted sounds, using HTML5 canvas and web audio API" />
+    <meta name="author" content="Amitay Dobo" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <link rel="stylesheet" href="css/sonogram.css" />
+    <link href="http://codeorigin.jquery.com/ui/1.10.3/themes/trontastic/jquery-ui.css" rel="stylesheet">
+    <link rel="Stylesheet" type="text/css" href="lib/wpaint/wPaint.min.css" />
+    <link rel="Stylesheet" type="text/css" href="lib/wpaint/lib/wColorPicker.min.css" />    
 
-</head>
-<body>
-  <div id='mainContainer'>
-    <div id='synth' class='componenet'>
-      <div class='horizontalControls'>
-        <h1 class='logo'>SonoSynth</h1>
-        <div class='control'>
-          <input type="text" value="100" class="dial" id='knb_volume' data-label='Volume' title='Master' />  
+    <title>Synthogram - Draw the music (or noise...)</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <!-- Static navbar -->
+    <div class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">SonoSynth</a>
         </div>
-
-        <div class='control'>
-          <input type="text" value="100" class="dial" id='knb_delayTime' data-label='Delay T' title='Delay Time' />  
-        </div> 
-
-
-        <div class='control'>
-          <input type="text" value="100" class="dial" id='knb_delayFeedbackGain' data-label='Delay FG' title='Delay Feedback gain' />  
-        </div> 
-
-        <div class='control'>
-          <input type="text" value="100" class="dial" id='knb_delayWetGain'  data-label='Delay WG' title='Delay wet gain' />  
-        </div>                     
-                 
-
-        <div class='control  buttonset'>
-          <label class='controlLabel' for='oscillatorType'>Wave shape</label>
-            <div id='oscillatorType'>
-              <input type='radio' id='sine' name='radio' checked />
-              <label for="sine">sine</label>
-              <input type='radio' id='square' name='radio'/>
-              <label for="square">square</label>
-              <input type='radio' id='sawtooth' name='radio'/>
-              <label for="sawtooth">sawtooth</label>
-              <input type='radio' id='triangle' name='radio' />
-              <label for="triangle">triangle</label>
-            </div>              
-        </div> 
-      </div><!-- End synth -->
-    </div>
-    <div id='sonogram' class='componenet'>
-      <div class='compSide'>
-        <button id='save'>Save</button> 
-        <button id='saveNew'>SaveNew</button> 
-        <div class='control noteControls'>
-          <select id='startNote' data-label='Starting Note'></select>
-          <select id='startOctave' data-label='Starting Octave'></select> 
-          <select id='musicalScale' data-label='Musical scale'></select> 
-          <select id='numOctaves' data-label='Number of octaves'></select> 
-        </div>
-        <div id='freqData'>Note:<span id='freqName'></span> Freq: <span id='freqHertz'></span> HZ</div>
-
-
-        <!-- TODO: clean up this markup mess!!! -->
-        <div id='stepDurationSlider' style="position:absolute;height:220px; left:10px;margin-top:40px;">
-            <label for='stepDuration' style="position: absolute; right:-15px; top: px; width: 30px; text-shadow:none; color:black; font-weight:normal; background-color:yellow;" class="controlLabel">PPS</label>          
-            <input id='stepDuration' style="position: absolute; right:-15px; bottom:-20px; width: 30px; height: 10px; font-size:10px;" value=''></input>   
-        </div>
-      </div>
-      <div class='compMain'>
-        <canvas id="overlay" width="500" height="240"></canvas>
-        <div id="wPaint" style="position:relative; width:500px; height:240px; background-color:white;margin-top:50px"></div>
-
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#help">Help</a></li>
+            <li class="hidden">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right hidden">
+            <li><a href="../navbar/">Default</a></li>
+            <li class="active"><a href="./">Static top</a></li>
+            <li><a href="../navbar-fixed-top/">Fixed top</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
       </div>
     </div>
-    <div id='sequencer' class='componenet'>
-      <div class='compSide'>
-        <div class='horizontalControls'>
-          <div class='control'>
-            <button id='pauseToggle'>play/pause</button> 
-          </div>
-          <div class='control'>
 
+    <div class="container"> <!-- SYNTH -->
+      <div id='mainContainer'>
+          <div id='synth' class='componenet'>
+            <div class='horizontalControls'>
+              <div class='topKnobs horizontalControls'>
+                <div class='control'>
+                  <input type="text" value="100" class="dial" id='knb_volume' data-label='Volume' title='Master Volume' />  
+                </div>
+
+                <div class='control'>
+                  <input type="text" value="100" class="dial" id='knb_delayTime' data-label='Delay T' title='Delay Time' />  
+                </div> 
+
+
+                <div class='control'>
+                  <input type="text" value="100" class="dial" id='knb_delayFeedbackGain' data-label='Delay FG' title='Delay Feedback gain' />  
+                </div> 
+
+                <div class='control'>
+                  <input type="text" value="100" class="dial" id='knb_delayWetGain'  data-label='Delay WG' title='Delay wet gain' />  
+                </div>
+              </div>      
+                       
+
+              <div class='control buttonset waveShape'>
+                <label class='controlLabel' for='oscillatorType'>Wave shape</label>
+                  <div id='oscillatorType'>
+                    <input type='radio' id='sine' name='radio' checked />
+                    <label for="sine">sine</label>
+                    <input type='radio' id='square' name='radio'/>
+                    <label for="square">square</label>
+                    <input type='radio' id='sawtooth' name='radio'/>
+                    <label for="sawtooth">sawtooth</label>
+                    <input type='radio' id='triangle' name='radio' />
+                    <label for="triangle">triangle</label>
+                  </div>              
+              </div> 
+            </div><!-- End synth -->
           </div>
+          <div id='sonogram' class='componenet'>
+            <div class='compSide'>
+              <button id='save'>Save</button> 
+              <button id='saveNew'>SaveNew</button> 
+              <div class='control noteControls'>
+                <select id='startNote' data-label='Starting Note'></select>
+                <select id='startOctave' data-label='Starting Octave'></select> 
+                <select id='musicalScale' data-label='Musical scale'></select> 
+                <select id='numOctaves' data-label='Number of octaves'></select> 
+              </div>
+              <div id='freqData'>Note:<span id='freqName'></span> Freq: <span id='freqHertz'></span> HZ</div>
+
+
+              <!-- TODO: clean up this markup mess!!! -->
+              <div id='stepDurationSlider' style="position:absolute;height:220px; left:10px;margin-top:40px;">
+                  <label for='stepDuration' style="position: absolute; right:-15px; top: px; width: 30px; text-shadow:none; color:black; font-weight:normal; background-color:yellow;" class="controlLabel">PPS</label>          
+                  <input id='stepDuration' style="position: absolute; right:-15px; bottom:-20px; width: 30px; height: 10px; font-size:10px;" value=''></input>   
+              </div>
+            </div>
+            <div class='compMain'>
+              <canvas id="overlay" width="500" height="240"></canvas>
+              <div id="wPaint" style="position:relative; width:500px; height:240px; background-color:white;margin-top:50px"></div>
+
+            </div>
+          </div>
+          <div id='sequencer' class='componenet'>
+            <div class='compSide'>
+              <div class='horizontalControls'>
+                <div class='control'>
+                  <button id='pauseToggle'>play/pause</button> 
+                </div>
+                <div class='control'>
+
+                </div>
+              </div>
+            </div>
+            <div class='compMain'>
+              <div style='height:50px;width:500px; background-color:white' id="stepSelector">Click or drag here to change the position live</div>
+            </div>
+          </div>         
         </div>
-      </div>
-      <div class='compMain'>
-        <div style='height:50px;width:500px; background-color:white' id="stepSelector">Click or drag here to change the position live</div>
-      </div>
-    </div>         
+        <br />
+    </div> <!-- END SYNTH -->
+    <div class='container'> <!-- Container -->
 
-  </div>
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <a name='about'><h1>About</h1></a>
+        <p>TODO</p>
+      </div>
 
-  
-  <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
-  <script src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>  
-  <script src='https://cdn.firebase.com/v0/firebase.js'></script>
-  <!-- build:js dist/synthogram.js -->
-  <script src="lib/music.js"></script>
-  <script src="lib/WAAPISim/waapisim.js"></script>
-  <script src="lib/jquery.knob.js"></script>
-  <script src="lib/wpaint/wPaint.min.js"></script>
-  <script src="lib/wpaint/lib/wColorPicker.min.js"></script>
-  <script type="text/javascript" src="lib/wpaint/plugins/main/wPaint.menu.main.min.js"></script>
-  <script type="text/javascript" src="lib/wpaint/plugins/text/wPaint.menu.text.min.js"></script>
-  <script type="text/javascript" src="lib/wpaint/plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
-  <script src='js/model.js'></script>
-  <script src='js/sonogram.js'></script>
-  <script src='js/app.js'></script>
-  <!-- endbuild -->
-  
-  <script>
+    </div> <!-- /container -->
+
+    <div class='container'> <!-- Container -->
+
+      <!-- Main component for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <a name='help'><h1>Help</h1></a>
+        <p>TODO</p>
+      </div>
+
+    </div> <!-- /container -->    
+
+    <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>  
+    <script src='https://cdn.firebase.com/v0/firebase.js'></script>
+    <!-- build:js dist/synthogram.js -->
+    <script src="lib/music.js"></script>
+    <script src="lib/WAAPISim/waapisim.js"></script>
+    <script src="lib/jquery.knob.js"></script>
+    <script src="lib/wpaint/wPaint.min.js"></script>
+    <script src="lib/wpaint/lib/wColorPicker.min.js"></script>
+    <script type="text/javascript" src="lib/wpaint/plugins/main/wPaint.menu.main.min.js"></script>
+    <script type="text/javascript" src="lib/wpaint/plugins/text/wPaint.menu.text.min.js"></script>
+    <script type="text/javascript" src="lib/wpaint/plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
+    <script src='js/model.js'></script>
+    <script src='js/sonogram.js'></script>
+    <script src='js/app.js'></script>
+    <!-- endbuild -->
+
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+
+    <script>
     window.addEventListener('load', synthogram_init, false);
-  </script>
-
-</body>
+    </script>
+  </body>
 </html>

@@ -51,12 +51,20 @@
 .horizontalControls > * {
   float: left;
   margin-right:10px;
-  height:75px;
 }
 
 .horizontalControls {
-  width: 900px;
   overflow: none;
+  height:90px;
+}
+
+.topKnobs {
+
+}
+
+.waveShape {
+  position: absolute;
+  right: 0px;
 }
 
 #synth {
@@ -87,7 +95,7 @@
 
 .buttonset {
   top: 10px;
-  position: relative;
+  /*position: relative;*/
 }
 
 #freqData {
