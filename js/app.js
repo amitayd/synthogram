@@ -237,7 +237,7 @@ function synthogram_init() {
 
 
   document.getElementById('save').addEventListener('click', function() {
-    var key = getHashParameters();;
+    var key = getHashParameters();
     saveImage(key);
   }, false);
 
@@ -247,7 +247,7 @@ function synthogram_init() {
     var hash = window.location.hash;
     var key = null;
     if (hash.indexOf(loadRoute) === 0) {
-      var key = hash.substring(loadRoute.length);
+      key = hash.substring(loadRoute.length);
     }
 
     console.log('getHashParameters', key);
