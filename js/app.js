@@ -1,7 +1,7 @@
 /*exported  synthogram_init */
 function synthogram_init() {
   var sonoModel = new Model({
-    stepDuration: 10,
+    stepDuration: 100,
     volume: 0.5,
     numOscillators: 80,
     startFrequency: 55,
@@ -9,9 +9,9 @@ function synthogram_init() {
     delayFeedbackGain: 0.25,
     delayWetGain: 0.3,
     startNote: 'C',
-    startOctave: 2,
+    startOctave: 4,
     musicalScale: 'major',
-    numOctaves: 6
+    numOctaves: 2
   });
 
 

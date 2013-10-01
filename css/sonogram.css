@@ -42,7 +42,7 @@
   position: relative;
   border: 1px solid black;
   background: -webkit-gradient(linear, 0 0, 0 100%, 363636(#5C5C5C), to(#363636));
-  background: -webkit-linear-gradient(#5C5C5C 0%, #001e96 100%);
+  background: -webkit-linear-gradient(#5C5C5C 0%, #363636 100%);
   background: -moz-linear-gradient(#5C5C5C 0%, #363636 100%);
   background: -o-linear-gradient(#5C5C5C 0%, #363636 100%);
   background: linear-gradient(#5C5C5C 0%, #363636 100%);
