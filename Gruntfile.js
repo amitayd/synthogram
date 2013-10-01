@@ -5,30 +5,39 @@ module.exports = function(grunt) {
   grunt.initConfig({
     // Metadata.
     pkg: grunt.file.readJSON('package.json'),
-    banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-      '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-      '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-      '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
-      ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
+    banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %>\n' + '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' + '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' + ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
+    useminPrepare: {
+      html: 'sonogram.html',
+      uglify: 'uglify',
+      dest: 'dist',
+    },
+    copy: {
+      main: {
+        files: [{
+          expand: false,
+          src: ['sonogram.html'],
+          dest: 'sonogram.min.html',
+          filter: 'isFile'
+        }]
+      }
+    },
+    usemin: {
+      html: ['sonogram.min.html'],
+      options: {
+        dirs: ['temp', 'dist']
+      },
+    },
     concat: {
       options: {
         banner: '<%= banner %>',
         stripBanners: true
       },
-      dist: {
-        src: ['lib/<%= pkg.name %>.js'],
-        dest: 'dist/<%= pkg.name %>.js'
-      }
     },
     uglify: {
       options: {
         banner: '<%= banner %>'
       },
-      dist: {
-        src: '<%= concat.dist.dest %>',
-        dest: 'dist/<%= pkg.name %>.min.js'
-      }
     },
     jshint: {
       options: {
@@ -48,7 +57,7 @@ module.exports = function(grunt) {
           jQuery: true,
           '$': true,
           Model: true,
-          CanvasSource:true,
+          CanvasSource: true,
           OscSynth: true,
           MUSIC: true,
           console: true,
@@ -87,8 +96,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-usemin');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'qunit', 'useminPrepare', 'concat', 'uglify', 'copy:main', 'usemin']);
 
 };
