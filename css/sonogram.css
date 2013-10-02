@@ -114,10 +114,10 @@
   position: absolute;
 }
 
-#pauseToggle {
+#bottomButtons {
   right: 5px;
   top: 5px;
-  position: absolute;
+  position: absolute;  
 }
 
 .noteControls {

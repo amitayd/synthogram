@@ -64,11 +64,15 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
   var inputForOscillators = delayNode.input;
 
-
-
-  volume.addChangeListener(function(val) {
-    masterGain.gain.value = val;
-  });
+  var construct = function() {
+    volume.addChangeListener(function(val) {
+      masterGain.gain.value = val;
+    });
+    startNote.addChangeListener(rebuildOscillators);
+    startOctave.addChangeListener(rebuildOscillators);
+    musicalScale.addChangeListener(rebuildOscillators);
+    numOctaves.addChangeListener(rebuildOscillators);
+  };
 
   var rebuildOscillators = function() {
     console.log('rebuildOscillators');
@@ -83,11 +87,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
     init();
   };
-
-  startNote.addChangeListener(rebuildOscillators);
-  startOctave.addChangeListener(rebuildOscillators);
-  musicalScale.addChangeListener(rebuildOscillators);
-  numOctaves.addChangeListener(rebuildOscillators);
 
   var init = function() {
     console.log("initializing");
@@ -201,7 +200,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     }
   };
 
-
+  construct();
   init();
 
   return {

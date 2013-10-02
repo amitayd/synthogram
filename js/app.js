@@ -22,6 +22,7 @@ function synthogram_init() {
   $("#drawingTool").buttonset();
   $('#clearCanvas').button();
   $('#pauseToggle').button();
+  $('#mute').button();
   $('#save').button();
   $('#saveNew').button();
 
@@ -99,10 +100,12 @@ function synthogram_init() {
 
 
 
+  var pps = 1000 /sonoModel.getVal('stepDuration');
+  $('#stepDuration').val(pps);
   $('#stepDurationSlider').slider({
     min: 1,
-    max: 400,
-    value: 100,
+    max: 100,
+    value: pps,
     orientation: 'vertical',
     change: function(event, ui) {
       $("#stepDuration").val(ui.value);
@@ -113,7 +116,6 @@ function synthogram_init() {
     console.log(1 / $(this).val());
     sonoModel.get('stepDuration').set(1 / $(this).val() * 1000);
   });
-  $('#stepDuration').val(1000 / sonoModel.getVal('stepDuration'));
   $('#stepDuration').bindMobileEvents();
 
 
@@ -214,6 +216,16 @@ function synthogram_init() {
   };
 
   document.getElementById('pauseToggle').addEventListener('click', sequencer.pauseToggle, false);
+  document.getElementById('mute').addEventListener('click', function() {
+    // TODO change to a real stop
+    var volumeValue = 0;
+    // Unmute if needed
+    if (sonoModel.getVal('volume') === 0) {
+      // TODO: yuck
+      var volumeValue = parseInt($('#knb_volume').val()) / 100;
+    }
+    sonoModel.get('volume').set(volumeValue);
+  }, false);
 
   // TODO: move firebase part to load Async
   try {
@@ -227,7 +239,7 @@ function synthogram_init() {
   var saveImage = function(key) {
     key = key || getRandomKey();
     var img = $("#wPaint").wPaint("image");
-    console.log("Saving",  img);
+    console.log("Saving", img);
 
     imagesDataRef.child(key).set(img, function() {
       console.log('saved', arguments);
@@ -273,6 +285,8 @@ function synthogram_init() {
       var defaultImage = $('#defaultImage').attr('src');
       //console.log('defaultImage', defaultImage);
       $('#wPaint').wPaint('image', defaultImage);
+      //Kind of a hack
+      $('#wPaint').wPaint('_addUndo');
     }
   };
 
