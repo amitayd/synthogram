@@ -139,6 +139,10 @@
   width: 150px;
 }
 
+.controlButton {
+  width: 70px;
+}
+
 INPUT {
   width: 30px;
 }

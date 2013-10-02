@@ -24,6 +24,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   }
 
   // from http://www.html5rocks.com/en/tutorials/casestudies/jamwithchrome-audio/
+
   function SlapbackDelayNode(audioContext, delayTime, delayFeedbackGain, delayWetGain) {
     //create the nodes we’ll use
     this.input = audioContext.createGain();
@@ -291,7 +292,7 @@ function Sequencer(synth, source, stepDuration) {
 
   var currStep = 0;
   var numSteps = source.numSteps;
-  var isPlaying = true;
+  var isPlaying = false;
   var isStarted = false;
 
   var moveToNextStep = function() {
@@ -334,6 +335,9 @@ function Sequencer(synth, source, stepDuration) {
   return {
     start: start,
     pauseToggle: pauseToggle,
-    jumpToStep: jumpToStep
+    jumpToStep: jumpToStep,
+    isPlaying: function() {
+      return isPlaying;
+    }
   };
 }

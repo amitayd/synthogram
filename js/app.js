@@ -22,9 +22,26 @@ function synthogram_init() {
   $("#drawingTool").buttonset();
   $('#clearCanvas').button();
   $('#pauseToggle').button();
+  $('#pauseToggle').tooltip({
+    position: {
+      my: "left+15 center",
+      at: "top"
+    }
+  });
   $('#mute').button();
   $('#save').button();
   $('#saveNew').button();
+
+
+
+  window.setTimeout(function() {
+    console.log('open');
+    $('#pauseToggle').tooltip('open');
+    window.setTimeout(function() {
+      console.log('close');
+      $('#pauseToggle').tooltip('close');
+    }, 5000);
+  }, 3000);
 
   var createLabel = function(element) {
     var label = $("<label class='controlLabel' />");
@@ -100,7 +117,7 @@ function synthogram_init() {
 
 
 
-  var pps = 1000 /sonoModel.getVal('stepDuration');
+  var pps = 1000 / sonoModel.getVal('stepDuration');
   $('#stepDuration').val(pps);
   $('#stepDurationSlider').slider({
     min: 1,
@@ -215,17 +232,26 @@ function synthogram_init() {
     return r6() + r6();
   };
 
-  document.getElementById('pauseToggle').addEventListener('click', sequencer.pauseToggle, false);
+  document.getElementById('pauseToggle').addEventListener('click', function() {
+    sequencer.pauseToggle();
+    $('#pauseToggle').button('option', 'label', sequencer.isPlaying() ? 'Pause' : 'Play');
+  }, false);
   document.getElementById('mute').addEventListener('click', function() {
     // TODO change to a real stop
     var volumeValue = 0;
     // Unmute if needed
     if (sonoModel.getVal('volume') === 0) {
       // TODO: yuck
-      var volumeValue = parseInt($('#knb_volume').val()) / 100;
+      volumeValue = parseInt($('#knb_volume').val(), 10) / 100;
     }
     sonoModel.get('volume').set(volumeValue);
   }, false);
+
+  sonoModel.get('volume').addChangeListener(function(value) {
+    if (value > 0) {
+      $('#mute').button('option', 'label', 'Unmute');
+    }
+  });
 
   // TODO: move firebase part to load Async
   try {
@@ -277,7 +303,8 @@ function synthogram_init() {
     var key = getHashParameters();
     console.log('loadInitialImage', key);
     if (key) {
-      imagesDataRef.child(key).on('value', function(data) {
+      console.log('getting for value', key);
+      imagesDataRef.child(key).once().on('value', function(data) {
         console.log('loaded', data.val());
         $('#wPaint').wPaint('image', data.val());
       });
