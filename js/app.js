@@ -133,10 +133,14 @@ function synthogram_init() {
     element.knob({
       width: 50,
       height: 50,
+      fgColor: 'ffec03',
+      inputColor: '#ffec03',
+      thickness: 0.3,
+      bgColor: '#202020',
+      displayPrevious: true,
       step: step,
       min: min,
       max: max,
-      fgColor: 'black',
       change: function(val) {
         // fix for the even returning values not rounded
         var valRounded = Math.floor(val - (val % step)) / scale;
@@ -175,6 +179,7 @@ function synthogram_init() {
     freqName.text(oscData.name);
   }).bind("mouseout", function() {
     freqHerz.text('--');
+    freqName.text('--');
   });
 
 

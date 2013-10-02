@@ -19,16 +19,6 @@
 
 }
 
-.controlTop {
-  height:50px;
-
-}
-
-.controlText {
-  overflow: auto ;
-  bottom: 0px;
-}
-
 .controlLabel {
   background-color: yellow;
   padding: 2px;
@@ -39,6 +29,8 @@
 
 
 .componenet {
+  -moz-border-radius: 15px;
+  border-radius: 15px;
   position: relative;
   border: 1px solid black;
   background: -webkit-gradient(linear, 0 0, 0 100%, 363636(#5C5C5C), to(#363636));
@@ -59,7 +51,8 @@
 }
 
 .topKnobs {
-
+  left: 5px;
+  position: relative;
 }
 
 .waveShape {
@@ -121,7 +114,11 @@
   position: absolute;
 }
 
-
+#pauseToggle {
+  right: 5px;
+  top: 5px;
+  position: absolute;
+}
 
 .noteControls {
   top: 100px;
@@ -144,4 +141,8 @@
 
 INPUT {
   width: 30px;
+}
+
+SELECT{
+  width: 100%;
 }
