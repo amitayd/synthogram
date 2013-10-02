@@ -30,15 +30,18 @@
 
     <!-- Static navbar -->
   <ul class="nav nav-tabs">
-    <a class="navbar-brand" href="#synth" data-toggle="tab">SonoSynth</a>
-    <li class="active"><a href="#synth" data-toggle="tab">Synthesize!</a></li>
+    <a class="navbar-brand" href="#synthTab" data-toggle="tab" id='synthTabButton'>SonoSynth</a>
+    <li class="active"><a href="#synthTab" data-toggle="tab">Synthesize!</a></li>
     <li><a href="#about" data-toggle="tab">About</a></li>
     <li><a href="#help" data-toggle="tab">Help</a></li>
     <li><a href="#feedback" data-toggle="tab">Give feedback</a></li>
   </ul>
 
 <div class="tab-content">
-  <div class="tab-pane active" id="synth">
+  <div class="tab-pane fade" id="loadingMessage">
+    loading
+  </div>
+  <div class="tab-pane fade in active" id="synthTab">
     <div class="container" style='margin-top:5px;'> <!-- SYNTH -->
       <div id='mainContainer'>
           <div id='synth' class='componenet'>
@@ -122,15 +125,15 @@
         <br />
     </div> <!-- END SYNTH -->    
   </div>
-  <div class="tab-pane" id="about">
+  <div class="tab-pane fade" id="about">
     <h1>About</h1>
 
   </div>
-  <div class="tab-pane" id="help">
+  <div class="tab-pane fade" id="help">
     <h1>Help</h1>
     
   </div>
-  <div class="tab-pane" id="feedback">
+  <div class="tab-pane fade" id="feedback">
       <h1>Feedback</h1>
   </div>
 </div>
