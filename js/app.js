@@ -41,6 +41,7 @@ function synthogram_init() {
     window.setTimeout(function() {
       console.log('close');
       $('#pauseToggle').tooltip('close');
+      $('#pauseToggle').tooltip('disable');
     }, 5000);
   }, 3000);
 
