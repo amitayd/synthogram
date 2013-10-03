@@ -14,7 +14,8 @@ function synthogram_init() {
     startNote: 'C',
     startOctave: 4,
     musicalScale: 'major',
-    numOctaves: 2
+    numOctaves: 2,
+    waveShape: 'sine'
   });
 
 
@@ -121,7 +122,7 @@ function synthogram_init() {
   $('#stepDuration').val(pps);
   $('#stepDurationSlider').slider({
     min: 1,
-    max: 100,
+    max: 120,
     value: pps,
     orientation: 'vertical',
     change: function(event, ui) {
@@ -216,7 +217,8 @@ function synthogram_init() {
     sonoModel.get('volume'),
     sonoModel.get('delayTime'),
     sonoModel.get('delayFeedbackGain'),
-    sonoModel.get('delayWetGain')
+    sonoModel.get('delayWetGain'),
+    sonoModel.get('waveShape')
   );
 
   var sequencer = Sequencer(synth, source,
@@ -248,9 +250,7 @@ function synthogram_init() {
   }, false);
 
   sonoModel.get('volume').addChangeListener(function(value) {
-    if (value > 0) {
-      $('#mute').button('option', 'label', 'Unmute');
-    }
+    $('#mute').button('option', 'label',  value === 0 ?'Unmute' : 'Mute');
   });
 
   // TODO: move firebase part to load Async
@@ -322,6 +322,6 @@ function synthogram_init() {
 
   document.getElementById('oscillatorType').addEventListener('change', function() {
     var option = $('input:checked', '#oscillatorType')[0].id;
-    synth.setOscillatorsType(option);
+    sonoModel.get('waveShape').set(option);
   }, false);
 }

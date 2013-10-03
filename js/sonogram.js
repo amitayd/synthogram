@@ -1,7 +1,7 @@
 /*exported OscSynth, CanvasSource, Sequencer */
 
 function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctaves,
-  volume, delayTime, delayFeedbackGain, delayWetGain) {
+  volume, delayTime, delayFeedbackGain, delayWetGain, waveShape) {
 
 
   var createAudioContext = function() {
@@ -73,6 +73,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     startOctave.addChangeListener(rebuildOscillators);
     musicalScale.addChangeListener(rebuildOscillators);
     numOctaves.addChangeListener(rebuildOscillators);
+    waveShape.addChangeListener(setOscillatorsType);
   };
 
   var rebuildOscillators = function() {
@@ -110,7 +111,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
       gainNode = context.createGain();
 
     // Set the type and frequency of the oscillator.
-    oscillator.type = "sine";
+    oscillator.type = waveShape.get();
     oscillator.frequency.value = frequency.value;
 
     // Set volume of the oscillator.
@@ -132,11 +133,11 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     };
   };
 
-  function setOscillatorsType(oscillatorType) {
+  function setOscillatorsType() {
     console.log("setOscillatorsType", oscillatorType);
     for (var i = 0; i < oscillators.length; i++) {
       var osc = oscillators[i].oscillator;
-      osc.type = oscillatorType;
+      osc.type = waveShape.get();
     }
   }
 
