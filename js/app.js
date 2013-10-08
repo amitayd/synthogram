@@ -1,6 +1,9 @@
 /*exported  synthogram_init */
 
 function synthogram_init() {
+
+  // MODEL CREATION
+
   $.fn.btn = $.fn.button.noConflict();
   $.fn.btn = $.fn.tooltip.noConflict();
   var sonoModel = new Model({
@@ -15,13 +18,28 @@ function synthogram_init() {
     startOctave: 4,
     musicalScale: 'major',
     numOctaves: 2,
-    waveShape: 'sine'
+    waveShape: 'sine',
+    isPlaying: false
   });
 
 
+  var getKeys = function(obj) {
+    return $.map(obj, function(element, index) {
+      return index;
+    }).sort();
+  };
+
+  var musicalScales = getKeys(MUSIC.scales);
+  musicalScales.push('quarter notes');
+
+
+  // END MODEL CREATION
+
+
+  // SET UP UI
+
   $("#oscillatorType").buttonset();
   $("#drawingTool").buttonset();
-  $('#clearCanvas').button();
   $('#pauseToggle').button();
   $('#pauseToggle').tooltip({
     position: {
@@ -34,69 +52,12 @@ function synthogram_init() {
   $('#saveNew').button();
 
 
+  $('#pauseToggle').sgStartupTooltip(3000, 5000);
 
-  window.setTimeout(function() {
-    console.log('open');
-    $('#pauseToggle').tooltip('open');
-    window.setTimeout(function() {
-      console.log('close');
-      $('#pauseToggle').tooltip('close');
-      $('#pauseToggle').tooltip('disable');
-    }, 5000);
-  }, 3000);
-
-  var createLabel = function(element) {
-    var label = $("<label class='controlLabel' />");
-    label.attr({
-      for: element.attr('id'),
-      title: element.attr('title')
-    });
-    label.text(element.attr('data-label'));
-    element.before(label);
-
-    label.tooltip();
-  };
-
-
-  var bindInputToProperty = function(selector, propName, isInteger, values) {
-    var element = $(selector);
-    if (values) {
-      $.each(values, function(key, value) {
-        element
-          .append($("<option></option>")
-            .attr("value", value)
-            .text(value));
-      });
-    }
-    element.val(sonoModel.getVal(propName));
-    element.bind('change', function() {
-      var value = element.val();
-      if (isInteger) {
-        value = parseInt(value, 10);
-      }
-      sonoModel.get(propName).set(value);
-    });
-
-    createLabel(element);
-  };
-
-  var getKeys = function(obj) {
-    function SortByName(a, b) {
-      return ((a < b) ? -1 : ((a > b) ? 1 : 0));
-    }
-
-    return $.map(obj, function(element, index) {
-      return index;
-    }).sort(SortByName);
-  };
-
-  var musicalScales = getKeys(MUSIC.scales);
-  musicalScales.push('quarter notes');
-
-  bindInputToProperty('#startNote', 'startNote', false, getKeys(MUSIC.notes));
-  bindInputToProperty('#startOctave', 'startOctave', true, [0, 1, 2, 3, 4, 5, 6, 7]);
-  bindInputToProperty('#musicalScale', 'musicalScale', false, musicalScales);
-  bindInputToProperty('#numOctaves', 'numOctaves', true, [1, 2, 3, 4, 5, 6]);
+  $('#startNote').sgDropdown(sonoModel.get('startNote'), getKeys(MUSIC.notes));
+  $('#startOctave').sgDropdown(sonoModel.get('startOctave'), [0, 1, 2, 3, 4, 5, 6, 7]);
+  $('#musicalScale').sgDropdown(sonoModel.get('musicalScale'), musicalScales);
+  $('#numOctaves').sgDropdown(sonoModel.get('numOctaves'), [1, 2, 3, 4, 5, 6]);
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
@@ -117,63 +78,12 @@ function synthogram_init() {
 
   stepSelector.bindMobileEvents();
 
+  $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
 
-
-  var pps = 1000 / sonoModel.getVal('stepDuration');
-  $('#stepDuration').val(pps);
-  $('#stepDurationSlider').slider({
-    min: 1,
-    max: 120,
-    value: pps,
-    orientation: 'vertical',
-    change: function(event, ui) {
-      $("#stepDuration").val(ui.value);
-      $("#stepDuration").trigger("change");
-    }
-  });
-  $('#stepDuration').bind('change', function() {
-    console.log(1 / $(this).val());
-    sonoModel.get('stepDuration').set(1 / $(this).val() * 1000);
-  });
-  $('#stepDuration').bindMobileEvents();
-
-
-  var createKnob = function(property, min, max, scale, step) {
-    scale = scale || 1;
-    step = step || 1;
-    var id = 'knb_' + property.name;
-    var element = $('#' + id);
-    element.tooltip();
-
-
-    createLabel(element);
-    element.bind('change', function() {
-      property.set(parseInt(element.val(), 10) / scale);
-    });
-    element.val(property.get() * scale);
-    element.knob({
-      width: 50,
-      height: 50,
-      fgColor: 'ffec03',
-      inputColor: '#ffec03',
-      thickness: 0.3,
-      bgColor: '#202020',
-      displayPrevious: true,
-      step: step,
-      min: min,
-      max: max,
-      change: function(val) {
-        // fix for the even returning values not rounded
-        var valRounded = Math.floor(val - (val % step)) / scale;
-        property.set(valRounded);
-      }
-    });
-  };
-
-  createKnob(sonoModel.get('volume'), 0, 100, 100, 5);
-  createKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 10);
-  createKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
-  createKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
+  $('#knb_volume').sgKnob(sonoModel.get('volume'), 0, 100, 100, 5);
+  $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 100, 100, 5);
+  $('#knb_delayFeedbackGain').sgKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
+  $('#knb_delayWetGain').sgKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
 
 
   // override some wPaint settings
@@ -203,17 +113,50 @@ function synthogram_init() {
     freqName.text('--');
   });
 
-
-
-
   var source = CanvasSource(wPaintCanvas[0], 'overlay',
     sonoModel.get('numOscillators')
   );
 
   $('#overlay').on('touchstart touchmove touchend touchcancel', function(e) {
-      return false;
+    return false;
 
   });
+
+  $('#oscillatorType').on('change', function() {
+    var option = $('input:checked', '#oscillatorType')[0].id;
+    sonoModel.get('waveShape').set(option);
+  });
+
+  sonoModel.get('waveShape').addChangeListener(function(value) {
+    // Check the correct button on change
+    $('#'+value).attr("checked","checked").button('refresh');
+  });
+
+  $('#mute').on('click', function() {
+    var volumeValue = 0;
+    // Unmute if needed
+    if (sonoModel.getVal('volume') === 0) {
+      // TODO: yuck
+      volumeValue = parseInt($('#knb_volume').val(), 10) / 100;
+    }
+    sonoModel.get('volume').set(volumeValue);
+  });
+
+  sonoModel.get('volume').addChangeListener(function(value) {
+    $('#mute').button('option', 'label', value === 0 ? 'Unmute' : 'Mute');
+  });
+
+  $('#pauseToggle').on('click', function() {
+    sonoModel.get('isPlaying').set(!sonoModel.getVal('isPlaying'));
+    $('#pauseToggle').button('option', 'label', sonoModel.getVal('isPlaying') ? 'Play' : 'Pause');
+  });
+
+
+
+  //END SETUP UI
+
+
+  // START COMPONENETS
 
   var synth = OscSynth(
     sonoModel.get('numOscillators'),
@@ -232,33 +175,11 @@ function synthogram_init() {
     sonoModel.get('stepDuration')
   );
 
+  sonoModel.get('isPlaying').addChangeListener(function(value) {
+    sequencer.setIsPlaying(value);
+  })
+
   sequencer.start();
-
-  var getRandomKey = function() {
-    var r6 = function() {
-      return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
-    };
-    return r6() + r6();
-  };
-
-  document.getElementById('pauseToggle').addEventListener('click', function() {
-    sequencer.pauseToggle();
-    $('#pauseToggle').button('option', 'label', sequencer.isPlaying() ? 'Pause' : 'Play');
-  }, false);
-  document.getElementById('mute').addEventListener('click', function() {
-    // TODO change to a real stop
-    var volumeValue = 0;
-    // Unmute if needed
-    if (sonoModel.getVal('volume') === 0) {
-      // TODO: yuck
-      volumeValue = parseInt($('#knb_volume').val(), 10) / 100;
-    }
-    sonoModel.get('volume').set(volumeValue);
-  }, false);
-
-  sonoModel.get('volume').addChangeListener(function(value) {
-    $('#mute').button('option', 'label', value === 0 ? 'Unmute' : 'Mute');
-  });
 
   // TODO: move firebase part to load Async
   try {
@@ -270,26 +191,53 @@ function synthogram_init() {
   var loadRoute = '#load/';
 
   var saveImage = function(key) {
+    var getRandomKey = function() {
+      var r6 = function() {
+        return Math.floor((1 + Math.random()) * 0x1000000).toString(16).substring(1);
+      };
+      return r6() + r6();
+    };
     key = key || getRandomKey();
     var img = $("#wPaint").wPaint("image");
-    console.log("Saving", img);
 
-    imagesDataRef.child(key).set(img, function() {
-      console.log('saved', arguments);
+    var settingsToSave = [
+      'stepDuration',
+      'startFrequency',
+      'delayTime',
+      'delayFeedbackGain',
+      'delayWetGain',
+      'startNote',
+      'startOctave',
+      'musicalScale',
+      'numOctaves',
+      'waveShape',
+      'isPlaying'
+    ];
+
+    var saveData = {
+      img: img,
+      settings: {},
+      saveDate: new Date().toISOString()
+    };
+
+    $.each(settingsToSave, function(index, settingKey) {
+      saveData.settings[settingKey] = sonoModel.getVal(settingKey);
+    });
+
+
+    imagesDataRef.child(key).set(saveData, function() {
+      console.log('saved', saveData);
       window.location.hash = loadRoute + key;
     });
   };
 
-  document.getElementById('saveNew').addEventListener('click', function() {
-    var key = getRandomKey();
-    saveImage(key);
-  }, false);
+  $('#saveNew').on('click', function() {
+    saveImage(null);
+  });
 
-
-  document.getElementById('save').addEventListener('click', function() {
-    var key = getHashParameters();
-    saveImage(key);
-  }, false);
+  $('#save').on('click', function() {
+    saveImage(getHashParameters());
+  });
 
 
 
@@ -304,7 +252,7 @@ function synthogram_init() {
     return key;
   };
 
-  var loadInitialImage = function() {
+  var loadImage = function() {
     //http://192.168.2.109:8000/sonogram.html#%7B%22imgKey%22%3A%22sonogram_image_abb14b488e7b%22%7D
 
     var key = getHashParameters();
@@ -312,8 +260,15 @@ function synthogram_init() {
     if (key) {
       console.log('getting for value', key);
       imagesDataRef.child(key).once('value', function(data) {
-        console.log('loaded', data.val());
-        $('#wPaint').wPaint('image', data.val());
+        var saveData = data.val();
+        console.log('loaded', saveData);
+        $('#wPaint').wPaint('image', saveData.img);
+        $.each(saveData.settings, function(key, value) {
+          if (sonoModel.exists(key)) {
+            sonoModel.get(key).set(value);
+          }
+        });
+
       });
     } else {
       var defaultImage = $('#defaultImage').attr('src');
@@ -324,11 +279,6 @@ function synthogram_init() {
     }
   };
 
-  //window.onhashchange = loadFromHash;
-  loadInitialImage();
-
-  document.getElementById('oscillatorType').addEventListener('change', function() {
-    var option = $('input:checked', '#oscillatorType')[0].id;
-    sonoModel.get('waveShape').set(option);
-  }, false);
+  window.onhashchange = loadImage;
+  loadImage();
 }

@@ -328,14 +328,14 @@ function Sequencer(synth, source, stepDuration) {
     loop();
   };
 
-  var pauseToggle = function() {
-    isPlaying = !isPlaying;
+  var setIsPlaying = function(isPlayingParam) {
+    isPlaying = isPlayingParam;
     console.log('pauseToggle', isPlaying);
   };
 
   return {
     start: start,
-    pauseToggle: pauseToggle,
+    setIsPlaying: setIsPlaying,
     jumpToStep: jumpToStep,
     isPlaying: function() {
       return isPlaying;

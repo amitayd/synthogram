@@ -36,7 +36,7 @@ function Model(defaultProperties) {
 }
 
 Model.prototype.get = function(propName) {
-  if (!(propName in this.properties)) {
+  if (!this.exists(propName)) {
     throw new Error('property ' + propName + ' not in model.');
   } 
   
@@ -45,4 +45,8 @@ Model.prototype.get = function(propName) {
 
 Model.prototype.getVal = function(propName) {
   return this.get(propName).get();
+};
+
+Model.prototype.exists = function(propName) {
+  return (propName in this.properties);
 };
