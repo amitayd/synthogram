@@ -209,6 +209,12 @@ function synthogram_init() {
   var source = CanvasSource(wPaintCanvas[0], 'overlay',
     sonoModel.get('numOscillators')
   );
+
+  $('#overlay').on('touchstart touchmove touchend touchcancel', function(e) {
+      return false;
+
+  });
+
   var synth = OscSynth(
     sonoModel.get('numOscillators'),
     sonoModel.get('startNote'),
@@ -251,7 +257,7 @@ function synthogram_init() {
   }, false);
 
   sonoModel.get('volume').addChangeListener(function(value) {
-    $('#mute').button('option', 'label',  value === 0 ?'Unmute' : 'Mute');
+    $('#mute').button('option', 'label', value === 0 ? 'Unmute' : 'Mute');
   });
 
   // TODO: move firebase part to load Async
