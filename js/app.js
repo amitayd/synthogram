@@ -311,7 +311,7 @@ function synthogram_init() {
     console.log('loadInitialImage', key);
     if (key) {
       console.log('getting for value', key);
-      imagesDataRef.child(key).once().on('value', function(data) {
+      imagesDataRef.child(key).once('value', function(data) {
         console.log('loaded', data.val());
         $('#wPaint').wPaint('image', data.val());
       });
