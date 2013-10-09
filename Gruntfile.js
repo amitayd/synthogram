@@ -16,14 +16,17 @@ module.exports = function(grunt) {
       main: {
         files: [{
           expand: false,
-          src: ['sonogram.html'],
-          dest: 'sonogram.min.html',
+          src: ['index.html'],
+          dest: 'dist/',
           filter: 'isFile'
-        }]
+        }, {
+          src: ['lib/**', 'css/**'],
+          dest: 'dist/',
+        },]
       }
     },
     usemin: {
-      html: ['sonogram.min.html'],
+      html: ['dist/index.html'],
       options: {
         dirs: ['temp', 'dist']
       },
