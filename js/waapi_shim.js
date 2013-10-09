@@ -1,10 +1,7 @@
 // Based on https://github.com/g200kg/WAAPISim
 
-if (typeof(AudioContext) == "undefined" && typeof(webkitAudioContext) !== "undefined") {
-
-  if (!webkitAudioContext.prototype.createOscillator) {
-    return;
-  };
+if (typeof(AudioContext) == "undefined" && typeof(webkitAudioContext) !== "undefined"
+  && typeof webkitAudioContext.prototype.createOscillator !== 'undefined') {
   if (typeof(webkitAudioContext.prototype.createGain) === "undefined") {
     webkitAudioContext.prototype.createScriptProcessor = webkitAudioContext.prototype.createJavaScriptNode;
     webkitAudioContext.prototype.createGain = (function() {
