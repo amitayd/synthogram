@@ -1,19 +1,21 @@
+/*global  webkitAudioContext */
+
 // Based on https://github.com/g200kg/WAAPISim
 
-if (typeof(AudioContext) == "undefined" && typeof(webkitAudioContext) !== "undefined"
-  && typeof webkitAudioContext.prototype.createOscillator !== 'undefined') {
+if (typeof(AudioContext) === "undefined" && typeof(webkitAudioContext) !== "undefined" &&
+  typeof webkitAudioContext.prototype.createOscillator !== 'undefined') {
   if (typeof(webkitAudioContext.prototype.createGain) === "undefined") {
     webkitAudioContext.prototype.createScriptProcessor = webkitAudioContext.prototype.createJavaScriptNode;
-    webkitAudioContext.prototype.createGain = (function() {
+    webkitAudioContext.prototype.createGain = function() {
       var o = webkitAudioContext.prototype.createGainNode.call(this);
       return o;
-    });
-    webkitAudioContext.prototype.createDelay = (function() {
+    };
+    webkitAudioContext.prototype.createDelay = function() {
       var o = webkitAudioContext.prototype.createDelayNode.call(this);
       return o;
-    });
+    };
     webkitAudioContext.prototype._createOscillator = webkitAudioContext.prototype.createOscillator;
-    webkitAudioContext.prototype.createOscillator = (function() {
+    webkitAudioContext.prototype.createOscillator = function() {
       var o = webkitAudioContext.prototype._createOscillator.call(this);
       o.start = o.noteOn;
       o.stop = o.noteOff;
@@ -26,32 +28,33 @@ if (typeof(AudioContext) == "undefined" && typeof(webkitAudioContext) !== "undef
         };
 
         var translatedType = typeToInt[oscType];
-        return o.type = translatedType;
+        o.type = translatedType;
       };
       return o;
-    });
+    };
     webkitAudioContext.prototype._createBufferSource = webkitAudioContext.prototype.createBufferSource;
-    webkitAudioContext.prototype.createBufferSource = (function() {
+    webkitAudioContext.prototype.createBufferSource = function() {
       var o = webkitAudioContext.prototype._createBufferSource.call(this);
       o.start = function(w, off, dur) {
-        if (off === undefined)
+        if (off === undefined) {
           o.noteOn(w);
-        else
+        } else {
           o.noteGrainOn(w, off, dur);
+        }
       };
       o.stop = o.noteOff;
       return o;
-    });
+    };
     webkitAudioContext.prototype._createBiquadFilter = webkitAudioContext.prototype.createBiquadFilter;
-    webkitAudioContext.prototype.createBiquadFilter = (function() {
+    webkitAudioContext.prototype.createBiquadFilter = function() {
       var o = webkitAudioContext.prototype._createBiquadFilter.call(this);
       return o;
-    });
+    };
     webkitAudioContext.prototype._createDynamicsCompressor = webkitAudioContext.prototype.createDynamicsCompressor;
-    webkitAudioContext.prototype.createDynamicsCompressor = (function() {
+    webkitAudioContext.prototype.createDynamicsCompressor = function() {
       var o = webkitAudioContext.prototype._createDynamicsCompressor.call(this);
       return o;
-    });
+    };
   }
 
   window.AudioContext = webkitAudioContext;

@@ -122,9 +122,8 @@ function synthogram_init() {
     sonoModel.get('numOscillators')
   );
 
-  $('.transparentOverlay').on('touchstart touchmove touchend touchcancel', function(e) {
+  $('.transparentOverlay').on('touchstart touchmove touchend touchcancel', function() {
     return false;
-
   });
 
 
@@ -179,7 +178,7 @@ function synthogram_init() {
 
   // START COMPONENETS
 
-  if (typeof AudioContext == 'undefined') {
+  if (typeof AudioContext === 'undefined') {
     // No Audio Context - show error
     $("#notSupportedModal").dialog({
         height: 200,
@@ -208,7 +207,7 @@ function synthogram_init() {
 
   sonoModel.get('isPlaying').addChangeListener(function(value) {
     sequencer.setIsPlaying(value);
-  })
+  });
 
   sequencer.start();
 

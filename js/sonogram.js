@@ -132,7 +132,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   };
 
   function setOscillatorsType() {
-    console.log("setOscillatorsType", oscillatorType);
     for (var i = 0; i < oscillators.length; i++) {
       var osc = oscillators[i].oscillator;
       // Hack for the webkit shim
