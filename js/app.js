@@ -99,13 +99,22 @@ function synthogram_init() {
   });
 
 
+  var getOscDataForY = function(y) {
+    var oscNum = source.getOscillatorForY(y);
+    var oscData = synth.getOscillatorData(oscNum);
+    return oscData;
+  };
+
   var freqHerz = $('#freqHertz');
   var freqName = $('#freqName');
   var wPaintCanvas = $('.wPaint-canvas');
   wPaintCanvas.bind('mousemove', function(e) {
     var y = e.pageY - wPaintCanvas.offset().top;
-    var oscNum = source.getOscillatorForY(y);
-    var oscData = synth.getOscillatorData(oscNum);
+    console.log(y, wPaintCanvas.height());
+    if (y >= wPaintCanvas.height() || y < 0) {
+      return;
+    }
+    var oscData = getOscDataForY(y);
     freqHerz.text(oscData.frequency.toFixed(2));
     freqName.text(oscData.name);
   }).bind("mouseout", function() {
@@ -127,9 +136,7 @@ function synthogram_init() {
     var xStep = 10;
     var yStep = Number($('#overlayGrid').attr('height')) / sonoModel.getVal('numOscillators');
     var legendFunc = function(y) {
-      var oscNum = source.getOscillatorForY(y);
-      var oscData = synth.getOscillatorData(oscNum); 
-      console.log('get legend for', y, oscData.name);
+      var oscData = getOscDataForY(y);
       return oscData.name;     
     };
 

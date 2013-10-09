@@ -138,7 +138,6 @@
       ctx.fillRect(x, 0, 1, height);
     }
     for (var y = 0; y < height; y += yStep) {
-      console.log('y', y);
       ctx.fillRect(0, parseInt(y, 10), width, 1);
     }
   };
