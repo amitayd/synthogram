@@ -100,6 +100,9 @@ function synthogram_init() {
 
 
   var getOscDataForY = function(y) {
+    if (!synth) {
+      return {};
+    }
     var oscNum = source.getOscillatorForY(y);
     var oscData = synth.getOscillatorData(oscNum);
     return oscData;
@@ -182,6 +185,11 @@ function synthogram_init() {
 
 
   // START COMPONENETS
+  
+  if (typeof AudioContext == 'undefined') {
+    // No Audio Context - show error
+    return;
+  }
 
   var synth = OscSynth(
     sonoModel.get('numOscillators'),

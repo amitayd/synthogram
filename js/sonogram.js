@@ -5,9 +5,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
 
   var createAudioContext = function() {
-    if (window.webkitAudioContext) {
-      return new window.webkitAudioContext();
-    } else if (window.AudioContext) {
+    if (window.AudioContext) {
       return new window.AudioContext();
     } else {
       throw new Error("Web Audio not supported (could not create audio context");
@@ -137,7 +135,12 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     console.log("setOscillatorsType", oscillatorType);
     for (var i = 0; i < oscillators.length; i++) {
       var osc = oscillators[i].oscillator;
-      osc.type = waveShape.get();
+      // Hack for the webkit shim
+      if (osc.typeByName) {
+        osc.typeByName(waveShape.get());
+      } else {
+        osc.type = waveShape.get();
+      }
     }
   }
 
