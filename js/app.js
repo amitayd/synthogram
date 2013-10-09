@@ -51,9 +51,6 @@ function synthogram_init() {
   $('#save').button();
   $('#saveNew').button();
 
-
-  $('#pauseToggle').sgStartupTooltip(3000, 5000);
-
   $('#startNote').sgDropdown(sonoModel.get('startNote'), getKeys(MUSIC.notes));
   $('#startOctave').sgDropdown(sonoModel.get('startOctave'), [0, 1, 2, 3, 4, 5, 6, 7]);
   $('#musicalScale').sgDropdown(sonoModel.get('musicalScale'), musicalScales);
@@ -100,9 +97,6 @@ function synthogram_init() {
 
 
   var getOscDataForY = function(y) {
-    if (!synth) {
-      return {};
-    }
     var oscNum = source.getOscillatorForY(y);
     var oscData = synth.getOscillatorData(oscNum);
     return oscData;
@@ -140,7 +134,7 @@ function synthogram_init() {
     var yStep = Number($('#overlayGrid').attr('height')) / sonoModel.getVal('numOscillators');
     var legendFunc = function(y) {
       var oscData = getOscDataForY(y);
-      return oscData.name;     
+      return oscData.name;
     };
 
     console.log('drawing grid', xStep, yStep);
@@ -157,7 +151,7 @@ function synthogram_init() {
 
   sonoModel.get('waveShape').addChangeListener(function(value) {
     // Check the correct button on change
-    $('#'+value).attr("checked","checked").button('refresh');
+    $('#' + value).attr("checked", "checked").button('refresh');
   });
 
   $('#mute').on('click', function() {
@@ -185,9 +179,14 @@ function synthogram_init() {
 
 
   // START COMPONENETS
-  
+
   if (typeof AudioContext == 'undefined') {
     // No Audio Context - show error
+    $("#notSupportedModal").dialog({
+        height: 200,
+        width: 350,
+        modal: true
+      });
     return;
   }
 
@@ -320,4 +319,5 @@ function synthogram_init() {
 
   //window.onhashchange = loadImage;
   loadImage();
+  $('#pauseToggle').sgStartupTooltip(3000, 5000);
 }
