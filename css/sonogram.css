@@ -1,4 +1,7 @@
-#overlay { position: absolute; top: 50px; left: 0px; z-index: 50; pointer-events: none; }
+#overlay { }
+.transparentOverlay { position: absolute; top: 50px; left: 0px; z-index: 50; pointer-events: none; }
+
+#gridLabels {left: 0px;}
 
 #mainContainer {
   width: 720px;

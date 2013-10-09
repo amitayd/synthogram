@@ -93,7 +93,7 @@ function synthogram_init() {
     menuOffsetLeft: 0, // left offset of primary menu
     menuOffsetTop: -45,
     lineWidth: '4', // starting line width
-    fillStyle: 'blue', // starting fill style
+    fillStyle: '#0000FF', // starting fill style
     strokeStyle: '#000000', // start stroke style    
     menuHandle: false,
   });
@@ -117,10 +117,28 @@ function synthogram_init() {
     sonoModel.get('numOscillators')
   );
 
-  $('#overlay').on('touchstart touchmove touchend touchcancel', function(e) {
+  $('.transparentOverlay').on('touchstart touchmove touchend touchcancel', function(e) {
     return false;
 
   });
+
+
+  var drawGrid = function() {
+    var xStep = 10;
+    var yStep = Number($('#overlayGrid').attr('height')) / sonoModel.getVal('numOscillators');
+    var legendFunc = function(y) {
+      var oscNum = source.getOscillatorForY(y);
+      var oscData = synth.getOscillatorData(oscNum); 
+      console.log('get legend for', y, oscData.name);
+      return oscData.name;     
+    };
+
+    console.log('drawing grid', xStep, yStep);
+    $('#overlayGrid').sgGrid(xStep, yStep);
+    $('#gridLabels').sgGridLabels(yStep, legendFunc);
+
+  };
+
 
   $('#oscillatorType').on('change', function() {
     var option = $('input:checked', '#oscillatorType')[0].id;
@@ -279,6 +297,12 @@ function synthogram_init() {
     }
   };
 
-  window.onhashchange = loadImage;
+  sonoModel.get('numOscillators').addChangeListener(drawGrid);
+  sonoModel.get('startNote').addChangeListener(drawGrid);
+  sonoModel.get('startOctave').addChangeListener(drawGrid);
+  sonoModel.get('musicalScale').addChangeListener(drawGrid);
+  drawGrid();
+
+  //window.onhashchange = loadImage;
   loadImage();
 }

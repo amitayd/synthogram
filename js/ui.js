@@ -126,4 +126,41 @@
     });
   };
 
+  $.fn.sgGrid = function(xStep, yStep) {
+    var canvas = $(this)[0];
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+    var width = canvas.width; 
+    var height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+    for (var x = 0; x < width; x += xStep) {
+      ctx.fillRect(x, 0, 1, height);
+    }
+    for (var y = 0; y < height; y += yStep) {
+      console.log('y', y);
+      ctx.fillRect(0, parseInt(y, 10), width, 1);
+    }
+  };
+
+  $.fn.sgGridLabels = function(yStep, legendFunc) {
+    var canvas = $(this)[0];
+    var height = canvas.height;
+
+    var ctx = canvas.getContext('2d');
+
+    var fontSize = parseInt(yStep / 1.2, 10);
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    ctx.font = fontSize + 'px Calibri';    
+
+    ctx.clearRect(0, 0, canvas.width, height);
+
+    for (var y = yStep/2; y < canvas.height; y += yStep) {
+      var legend = legendFunc(y);
+      ctx.fillText(legend, 2, y+ 3);
+    }    
+  };  
+
+
+
 })(jQuery);
