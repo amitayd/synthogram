@@ -107,7 +107,6 @@ function synthogram_init() {
   var wPaintCanvas = $('.wPaint-canvas');
   wPaintCanvas.bind('mousemove', function(e) {
     var y = e.pageY - wPaintCanvas.offset().top;
-    console.log(y, wPaintCanvas.height());
     if (y >= wPaintCanvas.height() || y < 0) {
       return;
     }
