@@ -28,13 +28,15 @@
       var x = e.pageX - (e.pageX % width);
       var y = e.pageY - (e.pageY % height);
 
+      var fixedHeight = Math.floor(y + height - Math.floor(y));
+
 
       //this.ctx.fillRect(x+1, y+1, width-2, height-2);
       this.ctx.strokeStyle = this.options.strokeStyle;
       this.ctx.fillStyle = this.options.strokeStyle;
       //this.ctx.fillRect(x, y, width, height);
-      this.ctx.fillRect(Math.floor(x), Math.floor(y), Math.ceil(width), Math.ceil(height));
-      console.log('draw Note', e.pageX, e.pageY);
+      this.ctx.fillRect(Math.floor(x), Math.floor(y), Math.floor(width), fixedHeight);
+      console.log('draw note', Math.floor(x), Math.floor(y), Math.floor(width), fixedHeight, width, height);
     },
     _drawNoteMove: function(e) {
       this._drawNoteDown(e);

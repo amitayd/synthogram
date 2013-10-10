@@ -251,8 +251,8 @@ function CanvasSource(canvas, overlayId, numOscillators) {
       for (var y = 0, numOsc = numOscillators.get(); y < numOsc; y++) {
 
         // Use scaling by averging the pixels in the scale
-        var scaledY = parseInt(y * heightScale, 10);
-        var scaledYEnd = parseInt((y + 1) * heightScale, 10);
+        var scaledY = Math.floor(y * heightScale);
+        var scaledYEnd = Math.floor((y + 1) * heightScale);
         var pixelsToSum = scaledYEnd - scaledY;
         var ampSum = 0;
         while (scaledY < scaledYEnd) {

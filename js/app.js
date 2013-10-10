@@ -138,8 +138,8 @@ function synthogram_init() {
     console.log('drawing grid', xStep, yStep);
     $('#overlayGrid').sgGrid(xStep, yStep);
     $('#gridLabels').sgGridLabels(yStep, legendFunc);
-    $('#wPaint').wPaint('snapGridVertical', yStep/2);
-    $('#wPaint').wPaint('snapGridHorizontal', xStep/2);
+    $('#wPaint').wPaint('snapGridVertical', yStep);
+    $('#wPaint').wPaint('snapGridHorizontal', xStep);
 
   };
 
@@ -170,7 +170,7 @@ function synthogram_init() {
 
   $('#pauseToggle').on('click', function() {
     sonoModel.get('isPlaying').set(!sonoModel.getVal('isPlaying'));
-    $('#pauseToggle').button('option', 'label', sonoModel.getVal('isPlaying') ? 'Play' : 'Pause');
+    $('#pauseToggle').button('option', 'label', sonoModel.getVal('isPlaying') ? 'Pause' : 'Play');
   });
 
 
