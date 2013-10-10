@@ -49,7 +49,7 @@
                 </div>              
               </div> 
               <button id="save">Save</button> 
-              <button id="saveNew">Save New</button> 
+              <button id="saveNew">Save Copy</button> 
             </div>
             <!-- End synth -->
           </div>
@@ -64,14 +64,14 @@
               </div>
               <div class="topKnobs horizontalControls">
               <div class="control">
-                <input type="text" value="100" class="dial" id="knb_delayWetGain" data-label="WG" title="Delay wet gain" />  
+                <input type="text" value="100" class="dial" id="knb_delayTime" data-label="Time" title="Delay Time" />  
               </div>
               <div class="control">
-                <input type="text" value="100" class="dial" id="knb_delayFeedbackGain" data-label="FG" title="Delay Feedback gain" />  
+                <input type="text" value="100" class="dial" id="knb_delayWetGain" data-label="Depth" title="Delay wet gain" />  
               </div>
               <div class="control">
-                <input type="text" value="100" class="dial" id="knb_delayTime" data-label="T" title="Delay Time" />  
-              </div>  
+                <input type="text" value="100" class="dial" id="knb_delayFeedbackGain" data-label="Feedback" title="Delay Feedback gain" />  
+              </div>
               <h5 class="section-label">Delay</h5>
               </div>              
               <div id="stepDurationSlider">
@@ -82,53 +82,33 @@
             <div class="compMain">
               <canvas id="overlay" class='transparentOverlay' width="500" height="240"></canvas>
               <canvas id="overlayGrid" class='transparentOverlay' width="500" height="240"></canvas>
-              <canvas id="gridLabels" class='transparentOverlay' width="500" height="240"></canvas>          
-              <ol class="note-legend">
-                <li>A</li>
-                <li>A#</li>
-                <li>Ab</li>
-                <li>B</li>
-                <li>B#</li>
-                <li>Bb</li>
-                <li>C</li>
-                <li>C#</li>
-                <li>Cb</li>
-                <li>D</li>
-                <li>D#</li>
-                <li>Db</li>
-                <li>E</li>
-                <li>E#</li>
-                <li>Eb</li>
-                <li>Gb</li>
-                <li>F</li>
-                <li>F#</li>
-                <li>Fb</li>
-                <li>G</li>
-                <li>G#</li>
-              </ol>
-              <div id="wPaint" style="position:relative; width:500px; height:240px; background-color: #fff; margin-top:50px"></div>
+              <canvas id="gridLabels" class='note-legend' width="20" height="240"></canvas>          
+              <div id="wPaint" style="position:absolute; width:500px; height:240px; background-color: #fff; margin-top:50px; left:20px;"></div>
             </div>
           </div>
           <div id="sequencer" class="componenet">
             <div class="compSide"></div>
             <div class="compMain">
-              <div style="width:500px; background-color: #fff; display: none;" id="stepSelector">Click or drag here to change the position live</div> 
+              <div style="width:500px; height:20px; background-color: #fff; margin-left:20px" id="stepSelector">Click or drag to change to position</div> 
               <div class="horizontalControls" id="bottomButtons">
-                <div class="media-control">   
+                <div class="media-control" style="display: none">   
                   <div class="progressbar"><span style="width: 25%"></span></div>
                 </div>
                 <div class="media-control"> 
-                  <div class="button play"><a href="#noop"></a></div>
-                  <div class="button pause"><a href="#noop"></a></div>  
-                  <div class="button repeat"><a href="#noop"></a></div>
-                  <div class="button volume"><a href="#noop"></a></div>
-                  <div class="button volume mute"><a href="#noop"></a></div>
-                </div>  
+                  <button class="media-button" id="pauseToggle" title="Play"></button>
+                  <span class="spacer"></span>
+                  <button class="media-button" id="volumeDown" title="Volume down"></button>
+                  <span class="media-button" id="volumeValue">--</span>
+                  <button class="media-button" id="volumeUp" title="Volume up"></button>
+                  <button class="media-button" id="mute" title="Mute"></button>
+                  
+
+                </div>                  
                 <div class="control" style="display: none;">
                   <button id="mute" class="controlButton">Mute</button> 
                 </div>
                 <div class="control" style="display: none;">
-                  <button id="pauseToggle" class="controlButton" title="Click here to start playing!">Play</button> 
+                  
                 </div>                        
                 <div class="control" style="display: none;">
                   <input type="text" value="100" class="dial" id="knb_volume" data-label="Volume" title="Master Volume" />  

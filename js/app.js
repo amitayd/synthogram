@@ -40,14 +40,32 @@ function synthogram_init() {
 
   $("#oscillatorType").buttonset();
   $("#drawingTool").buttonset();
-  $('#pauseToggle').button();
+  $('#pauseToggle').button({
+    icons: {
+      primary: "ui-icon-play"
+    }
+  });
   $('#pauseToggle').tooltip({
     position: {
       my: "left+15 center",
       at: "top"
     }
   });
-  $('#mute').button();
+  $('#mute').button({
+    icons: {
+      primary: "ui-icon-cancel"
+    }
+  });
+  $('#volumeUp').button({
+    icons: {
+      primary: "ui-icon-volume-on"
+    }
+  });
+  $('#volumeDown').button({
+    icons: {
+      primary: "ui-icon-volume-off"
+    }
+  });
   $('#save').button();
   $('#saveNew').button();
 
@@ -55,6 +73,21 @@ function synthogram_init() {
   $('#startOctave').sgDropdown(sonoModel.get('startOctave'), [0, 1, 2, 3, 4, 5, 6, 7]);
   $('#musicalScale').sgDropdown(sonoModel.get('musicalScale'), musicalScales);
   $('#numOctaves').sgDropdown(sonoModel.get('numOctaves'), [1, 2, 3, 4, 5, 6]);
+
+
+  $('#volumeUp').on('mousedown', function() {
+    var value = Math.min(1, sonoModel.getVal('volume') + 0.05);
+    sonoModel.get('volume').set(value);
+  });
+
+  $('#volumeDown').on('mousedown', function() {
+    sonoModel.get('volume').set(Math.max(0, sonoModel.getVal('volume') - 0.05));
+  });  
+
+  sonoModel.get('volume').addChangeListener(function(value) {
+    $('#volumeValue').text(Math.floor(value * 100));
+  });
+  $('#volumeValue').text(sonoModel.getVal('volume') * 100);
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
@@ -77,7 +110,7 @@ function synthogram_init() {
 
   $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
 
-  $('#knb_volume').sgKnob(sonoModel.get('volume'), 0, 100, 100, 5);
+  //$('#knb_volume').sgKnob(sonoModel.get('volume'), 0, 100, 100, 5);
   $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 5);
   $('#knb_delayFeedbackGain').sgKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
   $('#knb_delayWetGain').sgKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
@@ -87,7 +120,7 @@ function synthogram_init() {
   $.fn.wPaint.menus.text.items.fontSize.range = [8, 9, 10, 12, 14, 16, 20, 24, 30, 40, 50, 60];
   $('#wPaint').wPaint({
     path: 'lib/wpaint/',
-    menuOffsetLeft: 0, // left offset of primary menu
+    menuOffsetLeft: -20, // left offset of primary menu
     menuOffsetTop: -45,
     lineWidth: '4', // starting line width
     fillStyle: '#0000FF', // starting fill style
@@ -165,12 +198,16 @@ function synthogram_init() {
   });
 
   sonoModel.get('volume').addChangeListener(function(value) {
-    $('#mute').button('option', 'label', value === 0 ? 'Unmute' : 'Mute');
+    $('#mute').button('option', 'icons', {
+      primary: value === 0 ? 'ui-icon-radio-off' : 'ui-icon-cancel'
+    });
   });
 
   $('#pauseToggle').on('click', function() {
     sonoModel.get('isPlaying').set(!sonoModel.getVal('isPlaying'));
-    $('#pauseToggle').button('option', 'label', sonoModel.getVal('isPlaying') ? 'Pause' : 'Play');
+    $('#pauseToggle').button('option', 'icons', {
+      primary: sonoModel.getVal('isPlaying') ? 'ui-icon-pause' : ' ui-icon-play'
+    });
   });
 
 
@@ -183,10 +220,10 @@ function synthogram_init() {
   if (typeof AudioContext === 'undefined') {
     // No Audio Context - show error
     $("#notSupportedModal").dialog({
-        height: 200,
-        width: 350,
-        modal: true
-      });
+      height: 200,
+      width: 350,
+      modal: true
+    });
     return;
   }
 

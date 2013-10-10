@@ -149,14 +149,15 @@
 
     var ctx = canvas.getContext('2d');
 
-    var fontSize = parseInt(yStep / 1.2, 10);
-    ctx.fillStyle = 'rgba(0,0,0,0.4)';
-    ctx.font = fontSize + 'px Calibri';    
+    
+    ctx.fillStyle = this.css('color');
+    ctx.font = this.css('font-size') + ' Calibri';    
 
     ctx.clearRect(0, 0, canvas.width, height);
 
     for (var y = yStep/2; y < canvas.height; y += yStep) {
       var legend = legendFunc(y);
+      console.log('legend', legend, 2, y+3);
       ctx.fillText(legend, 2, y+ 3);
     }    
   };  
