@@ -50,6 +50,7 @@
 
       property.addChangeListener(function(value) {
         element.val(value * scale);
+        element.trigger('change');
       });
     });
   };

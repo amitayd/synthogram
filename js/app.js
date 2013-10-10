@@ -159,7 +159,7 @@ function synthogram_init() {
     // Unmute if needed
     if (sonoModel.getVal('volume') === 0) {
       // TODO: yuck
-      volumeValue = parseInt($('#knb_volume').val(), 10) / 100;
+      volumeValue = 0.5;
     }
     sonoModel.get('volume').set(volumeValue);
   });
