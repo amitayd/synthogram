@@ -78,7 +78,7 @@ function synthogram_init() {
   $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
 
   $('#knb_volume').sgKnob(sonoModel.get('volume'), 0, 100, 100, 5);
-  $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 100, 100, 5);
+  $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 5);
   $('#knb_delayFeedbackGain').sgKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
   $('#knb_delayWetGain').sgKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
 
@@ -138,6 +138,8 @@ function synthogram_init() {
     console.log('drawing grid', xStep, yStep);
     $('#overlayGrid').sgGrid(xStep, yStep);
     $('#gridLabels').sgGridLabels(yStep, legendFunc);
+    $('#wPaint').wPaint('snapGridVertical', yStep/2);
+    $('#wPaint').wPaint('snapGridHorizontal', xStep/2);
 
   };
 
