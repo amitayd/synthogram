@@ -157,7 +157,6 @@
 
     for (var y = yStep/2; y < canvas.height; y += yStep) {
       var legend = legendFunc(y);
-      console.log('legend', legend, 2, y+3);
       ctx.fillText(legend, 2, y+ 3);
     }    
   };  
