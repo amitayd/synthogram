@@ -8,7 +8,7 @@ function synthogram_init() {
   $.fn._button = $.fn.button.noConflict();
   $.fn._tooltip = $.fn.tooltip.noConflict();
   var sonoModel = new Model({
-    stepDuration: 100,
+    stepDuration: 33.33,
     volume: 0.5,
     numOscillators: 80,
     startFrequency: 55,
