@@ -1,4 +1,5 @@
 /*exported  synthogram_init */
+/*globals  Muscula */
 
 function synthogram_init() {
 
@@ -82,7 +83,7 @@ function synthogram_init() {
 
   $('#volumeDown').on('mousedown', function() {
     sonoModel.get('volume').set(Math.max(0, sonoModel.getVal('volume') - 0.05));
-  });  
+  });
 
   sonoModel.get('volume').addChangeListener(function(value) {
     $('#volumeValue').text(Math.floor(value * 100));
@@ -91,21 +92,6 @@ function synthogram_init() {
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
-  stepSelector.bind('mousedown', function(e) {
-    isSelectorClicked = true;
-    sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
-  });
-
-  stepSelector.bind('mouseup', function() {
-    isSelectorClicked = false;
-  });
-
-  stepSelector.bind('mousemove', function(e) {
-    if (isSelectorClicked) {
-      sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
-    }
-  });
-
   stepSelector.bindMobileEvents();
 
   $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
@@ -130,6 +116,12 @@ function synthogram_init() {
 
 
   var getOscDataForY = function(y) {
+    if (!synth) {
+      return {
+        name: '--',
+        frequency: 0
+      };
+    }
     var oscNum = source.getOscillatorForY(y);
     var oscData = synth.getOscillatorData(oscNum);
     return oscData;
@@ -219,6 +211,7 @@ function synthogram_init() {
 
   if (typeof AudioContext === 'undefined') {
     // No Audio Context - show error
+    Muscula.errors.push(new Error('Browser not supported for Synthogram'));
     $("#notSupportedModal").dialog({
       height: 200,
       width: 350,
@@ -353,8 +346,22 @@ function synthogram_init() {
   sonoModel.get('startOctave').addChangeListener(drawGrid);
   sonoModel.get('musicalScale').addChangeListener(drawGrid);
   drawGrid();
+  stepSelector.bind('mousedown', function(e) {
+    isSelectorClicked = true;
+    sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
+  });
+
+  stepSelector.bind('mouseup', function() {
+    isSelectorClicked = false;
+  });
+
+  stepSelector.bind('mousemove', function(e) {
+    if (isSelectorClicked) {
+      sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
+    }
+  });
 
   //window.onhashchange = loadImage;
   loadImage();
-  $('#pauseToggle').sgStartupTooltip(3000, 5000);
+  $('#pauseToggle').sgStartupTooltip(2000, 3000);
 }

@@ -1,4 +1,5 @@
 /*exported  synthogram_init */
+/*globals  Muscula */
 
 function synthogram_init() {
 
