@@ -7,22 +7,26 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %>\n' + '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' + '* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' + ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
+    clean: ['dist'],
     useminPrepare: {
-      html: 'sonogram.html',
+      html: 'index.html',
       uglify: 'uglify',
-      dest: 'dist',
+      options: {
+        dest: 'dist'
+      }
     },
     copy: {
       main: {
         files: [{
-          expand: false,
           src: ['index.html'],
-          dest: 'dist/',
-          filter: 'isFile'
+          dest: 'dist/index.html',
         }, {
-          src: ['lib/**', 'css/**'],
+          src: ['index.html'],
+          dest: 'dist/index.orig.html',
+        }, {
+          src: ['lib/**', 'css/**', 'js/**'],
           dest: 'dist/',
-        },]
+        }, ]
       }
     },
     usemin: {
@@ -101,8 +105,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-usemin');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'useminPrepare', 'concat', 'uglify', 'copy:main', 'usemin']);
+  grunt.registerTask('default', ['clean', 'jshint', 'qunit', 'useminPrepare', 'concat', 'uglify', 'copy:main', 'usemin']);
 
 };
