@@ -34,8 +34,9 @@
 .compMain {position: absolute; top: 1px; left: 1px; width: 530px;}
 .buttonset {top: 10px; }
 #freqData {background-color: #b8ec79; top: 3px; right: 1px; width: 100%; position: absolute; border-radius: 4px; padding: 2px;}
-#save {top: 10px; left: 5px; width: 90px; position: absolute;}
-#saveNew {top: 10px; left: 100px; width: 100px; position: absolute;}
+#new {top: 10px; left: 5px; width: 90px; position: absolute;}
+#save {top: 10px; left: 100px; width: 90px; position: absolute;}
+#saveNew {top: 10px; left: 195px; width: 100px; position: absolute;}
 #bottomButtons {position: absolute;}
 .noteControls {top: 200px; right: 5px; width: 103px; float: right; margin-top: 30px;}
 .logo {display: block; color: black; text-shadow: 2px 2px gray; font: bold 1.8em Arial, sans-serif; position: relative; text-align: center; text-transform: uppercase; width: 150px;}

@@ -66,7 +66,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
   var construct = function() {
     volume.addChangeListener(function(val) {
-      console.log('volume', isSynthPlaying.get());
       if (isSynthPlaying.get()) {
         masterGain.gain.value = val;
       }
@@ -107,11 +106,8 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   var isSynthPlayingChange = function(value) {
     if (value) {
       masterGain.gain.value = volume.get();
-      console.log('playing', volume.get());
-      //masterGain.connect(context.destination);
     } else {
       masterGain.gain.value = 0;
-      //masterGain.disconnect();
     }
   };
 

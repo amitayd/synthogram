@@ -75,6 +75,7 @@ function synthogram_init() {
   });
   $('#save').button();
   $('#saveNew').button();
+  $('#new').button();
 
   $('#startNote').sgDropdown(sonoModel.get('startNote'), getKeys(MUSIC.notes));
   $('#startOctave').sgDropdown(sonoModel.get('startOctave'), [0, 1, 2, 3, 4, 5, 6, 7]);
@@ -327,6 +328,10 @@ function synthogram_init() {
     saveImage(getHashParameters());
   });
 
+  $('#new').on('click', function() {
+    $('#wPaint').wPaint('clear');
+  });
+
 
 
   var getHashParameters = function() {
@@ -362,8 +367,10 @@ function synthogram_init() {
       var defaultImage = $('#defaultImage').attr('src');
       //console.log('defaultImage', defaultImage);
       $('#wPaint').wPaint('image', defaultImage);
-      //Kind of a hack
-      $('#wPaint').wPaint('_addUndo');
+      //A hack
+      window.setTimeout(function() {
+        $('#wPaint').wPaint('_addUndo');
+      });
     }
   };
 
