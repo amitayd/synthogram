@@ -211,7 +211,9 @@ function synthogram_init() {
 
   if (typeof AudioContext === 'undefined') {
     // No Audio Context - show error
-    Muscula.errors.push(new Error('Browser not supported for Synthogram'));
+    if (typeof Muscula !== 'undefined') {
+      Muscula.errors.push(new Error('Browser not supported for Synthogram'));
+    }
     $("#notSupportedModal").dialog({
       height: 200,
       width: 350,
