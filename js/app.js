@@ -116,7 +116,7 @@ function synthogram_init() {
 
 
   var getOscDataForY = function(y) {
-    if (!synth) {
+    if (typeof synth === 'undefined') {
       return {
         name: '--',
         frequency: 0
