@@ -20,7 +20,8 @@ function synthogram_init() {
     musicalScale: 'major',
     numOctaves: 2,
     waveShape: 'sine',
-    isPlaying: false
+    isPlaying: false,
+    isSynthPlaying: false,
   });
 
 
@@ -41,12 +42,17 @@ function synthogram_init() {
 
   $("#oscillatorType").buttonset();
   $("#drawingTool").buttonset();
-  $('#pauseToggle').button({
+  $('#pause').button({
+    icons: {
+      primary: "ui-icon-pause"
+    }
+  });
+  $('#stopPlayToggle').button({
     icons: {
       primary: "ui-icon-play"
     }
   });
-  $('#pauseToggle').tooltip({
+  $('#stopPlayToggle').tooltip({
     position: {
       my: "left+15 center",
       at: "top"
@@ -195,11 +201,29 @@ function synthogram_init() {
     });
   });
 
-  $('#pauseToggle').on('click', function() {
+  $('#pause').on('click', function() {
     sonoModel.get('isPlaying').set(!sonoModel.getVal('isPlaying'));
-    $('#pauseToggle').button('option', 'icons', {
-      primary: sonoModel.getVal('isPlaying') ? 'ui-icon-pause' : ' ui-icon-play'
+  });
+
+  $('#stopPlayToggle').on('click', function() {
+    var isSynthPlaying = !sonoModel.getVal('isSynthPlaying');
+    sonoModel.get('isSynthPlaying').set(isSynthPlaying);
+    sonoModel.get('isPlaying').set(isSynthPlaying);
+  });
+
+  sonoModel.get('isSynthPlaying').addChangeListener(function() {
+    var isSynthPlaying = sonoModel.getVal('isSynthPlaying');
+    $('#stopPlayToggle').button('option', 'icons', {
+      primary: isSynthPlaying ? 'ui-icon-stop' : ' ui-icon-play'
     });
+  });
+
+  $('body').on('keydown', function(e) {
+    console.log('keydown', e.keyCode);
+    if (e.keyCode === 32) { //spacebar
+      $('#stopPlayToggle').trigger('click');
+    }
+
   });
 
 
@@ -232,7 +256,8 @@ function synthogram_init() {
     sonoModel.get('delayTime'),
     sonoModel.get('delayFeedbackGain'),
     sonoModel.get('delayWetGain'),
-    sonoModel.get('waveShape')
+    sonoModel.get('waveShape'),
+    sonoModel.get('isSynthPlaying')
   );
 
   var sequencer = Sequencer(synth, source,
@@ -275,7 +300,6 @@ function synthogram_init() {
       'musicalScale',
       'numOctaves',
       'waveShape',
-      'isPlaying'
     ];
 
     var saveData = {
@@ -365,5 +389,5 @@ function synthogram_init() {
 
   //window.onhashchange = loadImage;
   loadImage();
-  $('#pauseToggle').sgStartupTooltip(2000, 3000);
+  $('#stopPlayToggle').sgStartupTooltip(2000, 3000);
 }

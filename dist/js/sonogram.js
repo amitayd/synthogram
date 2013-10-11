@@ -1,7 +1,7 @@
 /*exported OscSynth, CanvasSource, Sequencer */
 
 function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctaves,
-  volume, delayTime, delayFeedbackGain, delayWetGain, waveShape) {
+  volume, delayTime, delayFeedbackGain, delayWetGain, waveShape, isSynthPlaying) {
 
 
   var createAudioContext = function() {
@@ -52,7 +52,8 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   var context = createAudioContext();
 
   var masterGain = context.createGain();
-  bindParameterToProperty(masterGain.gain, volume);
+  //bindParameterToProperty(masterGain.gain, volume);
+  masterGain.gain.value = 0;
   masterGain.connect(context.destination);
 
   var compressor = context.createDynamicsCompressor();
@@ -65,13 +66,17 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
   var construct = function() {
     volume.addChangeListener(function(val) {
-      masterGain.gain.value = val;
+      console.log('volume', isSynthPlaying.get());
+      if (isSynthPlaying.get()) {
+        masterGain.gain.value = val;
+      }
     });
     startNote.addChangeListener(rebuildOscillators);
     startOctave.addChangeListener(rebuildOscillators);
     musicalScale.addChangeListener(rebuildOscillators);
     numOctaves.addChangeListener(rebuildOscillators);
     waveShape.addChangeListener(setOscillatorsType);
+    isSynthPlaying.addChangeListener(isSynthPlayingChange);
   };
 
   var rebuildOscillators = function() {
@@ -99,6 +104,16 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     numOscillators.set(frequencies.length);
   };
 
+  var isSynthPlayingChange = function(value) {
+    if (value) {
+      masterGain.gain.value = volume.get();
+      console.log('playing', volume.get());
+      //masterGain.connect(context.destination);
+    } else {
+      masterGain.gain.value = 0;
+      //masterGain.disconnect();
+    }
+  };
 
 
   var createOscillator = function(frequency) {
@@ -211,7 +226,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     play: play,
     setOscillatorsType: setOscillatorsType,
     compressor: compressor,
-    masterGain: masterGain.gain,
     getOscillatorData: getOscillatorData,
   };
 }
