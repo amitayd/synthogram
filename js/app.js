@@ -220,7 +220,6 @@ function synthogram_init() {
   });
 
   $('body').on('keydown', function(e) {
-    console.log('keydown', e.keyCode);
     if (e.keyCode === 32) { //spacebar
       $('#stopPlayToggle').trigger('click');
     }
