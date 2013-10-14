@@ -86,7 +86,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
       console.log('initializing from user interaction');
       var oscillator = context.createOscillator();
       var gainNode = context.createGain();
-      gainNode.gain.value = 0.3;
+      gainNode.gain.value = 0.0;
       oscillator.connect(gainNode);
       gainNode.connect(context.destination);
       oscillator.start(0);
@@ -95,7 +95,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
         gainNode.disconnect();
         oscillator.disconnect();
 
-      }, 2000);
+      }, 100);
     }
   };
 
