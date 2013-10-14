@@ -50,6 +50,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
   var oscillators = [];
   var context = createAudioContext();
+  var initializedOnUserInput = false;
 
   var masterGain = context.createGain();
   //bindParameterToProperty(masterGain.gain, volume);
@@ -76,6 +77,26 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     numOctaves.addChangeListener(rebuildOscillators);
     waveShape.addChangeListener(setOscillatorsType);
     isSynthPlaying.addChangeListener(isSynthPlayingChange);
+  };
+
+  // Ugly hack for iOS devices, which require a note played by user interaction to enable audio.
+  // It seems like it requires an start (noteOn) triggered by a click.
+  var initializeFromUserInput = function() {
+    if (!initializedOnUserInput) {
+      console.log('initializing from user interaction');
+      var oscillator = context.createOscillator();
+      var gainNode = context.createGain();
+      gainNode.gain.value = 0.3;
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      oscillator.start(0);
+      initializedOnUserInput = true;
+      window.setTimeout(function() {
+        gainNode.disconnect();
+        oscillator.disconnect();
+
+      }, 2000);
+    }
   };
 
   var rebuildOscillators = function() {
@@ -105,6 +126,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
   var isSynthPlayingChange = function(value) {
     if (value) {
+      initializeFromUserInput();
       masterGain.gain.value = volume.get();
     } else {
       masterGain.gain.value = 0;
@@ -222,7 +244,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     play: play,
     setOscillatorsType: setOscillatorsType,
     compressor: compressor,
-    getOscillatorData: getOscillatorData,
+    getOscillatorData: getOscillatorData
   };
 }
 
