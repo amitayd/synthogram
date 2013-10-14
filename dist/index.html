@@ -19,6 +19,21 @@
       <script src="../../assets/js/html5shiv.js"></script>
       <script src="../../assets/js/respond.min.js"></script>
     <![endif]-->
+    <!-- Muscula error reporting-->
+    <script type='text/javascript'>
+    window.Muscula = { settings:{
+        logId:"599f6c48-f235-4665-a7a9-ba06dbc32626", suppressErrors: false, branding: 'none'
+    }};
+    (function () {
+        var m = document.createElement('script'); m.type = 'text/javascript'; m.async = true;
+        m.src = (window.location.protocol == 'https:' ? 'https:' : 'http:') +
+            '//musculahq.appspot.com/Muscula2.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(m, s);
+        window.Muscula.run=function(c){eval(c);window.Muscula.run=function(){};};
+        window.Muscula.errors=[];window.onerror=function(){window.Muscula.errors.push(arguments);
+        return window.Muscula.settings.suppressErrors===undefined;}
+    })();
+    </script>    
   </head>
   <body>
     <!-- Static navbar -->
@@ -141,21 +156,6 @@
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
       ga('create', 'UA-44508092-1', 'www.synthogram.com');
       ga('send', 'pageview');
-    </script>
-    <!-- Muscula error reporting-->
-    <script type='text/javascript'>
-    window.Muscula = { settings:{
-        logId:"599f6c48-f235-4665-a7a9-ba06dbc32626", suppressErrors: false, branding: 'none'
-    }};
-    (function () {
-        var m = document.createElement('script'); m.type = 'text/javascript'; m.async = true;
-        m.src = (window.location.protocol == 'https:' ? 'https:' : 'http:') +
-            '//musculahq.appspot.com/Muscula2.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(m, s);
-        window.Muscula.run=function(c){eval(c);window.Muscula.run=function(){};};
-        window.Muscula.errors=[];window.onerror=function(){window.Muscula.errors.push(arguments);
-        return window.Muscula.settings.suppressErrors===undefined;}
-    })();
     </script>
     <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>  
