@@ -3,8 +3,6 @@
 
 function synthogram_init() {
 
-  var HORIZONTAL_SLIDER_OFFSET = 0;
-
   // MODEL CREATION
 
   $.fn._button = $.fn.button.noConflict();
@@ -105,9 +103,9 @@ function synthogram_init() {
   stepSelector.bindMobileEventsPreventMouse();
 
   var stepSelectorChange = function(e) {
-    var step = e.pageX - stepSelector.offset().left - HORIZONTAL_SLIDER_OFFSET;
+    var step = e.pageX - stepSelector.offset().left;
     console.log(step);
-    sonoModel.get('currentStep').set(Math.floor(Math.min(Math.max(step,0), source.numSteps)));
+    sonoModel.get('currentStep').set(Math.floor(Math.min(Math.max(step, 0), source.numSteps)));
   };
 
   stepSelector.bind('mousedown', function(e) {
@@ -259,22 +257,28 @@ function synthogram_init() {
     var isMouseDown;
     var interval;
     var lastCoordinates;
-    var firstClick = true;
 
     var getCoordinates = function(e) {
+      var coordinates = {};
       if (!e) {
         // TODO: change to some deepCopy
-        return {
-          x: sonoModel.getVal('currentStep') + Math.ceil(lastCoordinates.size / 2) + 1,
+        coordinates = {
+          x: sonoModel.getVal('currentStep') + Math.ceil(lastCoordinates.size / 2),
           y: lastCoordinates.y,
           size: lastCoordinates.size,
         };
+      } else {
+        coordinates.size = Math.floor(((e.pageX - el.offset().left) / el.width()) * 20);
+        coordinates.size = Math.max(coordinates.size, 1);
+        coordinates.x = sonoModel.getVal('currentStep') + Math.ceil(coordinates.size / 2);
+        coordinates.y = e.pageY - el.offset().top;
       }
-      var coordinates = {};
-      coordinates.size = Math.floor(((e.pageX - el.offset().left) / el.width()) * 20);
-      coordinates.size = Math.max(coordinates.size, 0);
-      coordinates.x = sonoModel.getVal('currentStep') + Math.ceil(coordinates.size / 2) + 1;
-      coordinates.y = e.pageY - el.offset().top;
+
+      // Not entirely sure why needed, but other wise small lines are now played.
+      if (coordinates.size < 2) {
+        coordinates.x = coordinates.x + 0.5;
+      }
+
 
       return coordinates;
     };
@@ -313,11 +317,8 @@ function synthogram_init() {
     });
 
     el.on('mousedown', function(e) {
-      if (firstClick) {
-        sonoModel.get('isPlaying').set(true);
-        sonoModel.get('isSynthPlaying').set(true);
-        firstClick = false;
-      }
+      sonoModel.get('isPlaying').set(true);
+      sonoModel.get('isSynthPlaying').set(true);
       var coordinates = getCoordinates(e);
       updateWPaint("paintAtCoordinatesDown", coordinates);
       drawCursor(e);
@@ -345,11 +346,6 @@ function synthogram_init() {
       $('.livePadCursor').css({
         'top': top,
         'left': left,
-        /*        'width': cursorSize,
-        'height': cursorSize,
-        '-webkit-border-radius': cursorSize/2,
-        '-moz-border-radius': cursorSize/2,
-        'border-radius': cursorSize/2,*/
       });
       $('.livePadCursor').show();
     };

@@ -8,7 +8,7 @@ ModelProperty.prototype.set = function(value) {
   if (value === this.value) {
     return;
   }
-  console.log('set', this.name, value);
+  //console.log('set', this.name, value);
   this.value = value;
   var listeners = this.changeListeners;
   for (var i = 0; i < listeners.length; i++) {
