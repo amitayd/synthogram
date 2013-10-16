@@ -3,6 +3,8 @@
 
 function synthogram_init() {
 
+  var HORIZONTAL_SLIDER_OFFSET = 0;
+
   // MODEL CREATION
 
   $.fn._button = $.fn.button.noConflict();
@@ -22,6 +24,7 @@ function synthogram_init() {
     waveShape: 'sine',
     isPlaying: false,
     isSynthPlaying: false,
+    currentStep: 0,
   });
 
 
@@ -100,6 +103,32 @@ function synthogram_init() {
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
   stepSelector.bindMobileEventsPreventMouse();
+
+  var stepSelectorChange = function(e) {
+    var step = e.pageX - stepSelector.offset().left - HORIZONTAL_SLIDER_OFFSET;
+    console.log(step);
+    sonoModel.get('currentStep').set(Math.floor(Math.min(Math.max(step,0), source.numSteps)));
+  };
+
+  stepSelector.bind('mousedown', function(e) {
+    isSelectorClicked = true;
+    stepSelectorChange(e);
+  });
+
+  stepSelector.bind('mouseup', function() {
+    isSelectorClicked = false;
+  });
+
+  stepSelector.bind('mousemove', function(e) {
+    if (isSelectorClicked) {
+      stepSelectorChange(e);
+    }
+  });
+
+  sonoModel.get('currentStep').addChangeListener(function(value) {
+    $('#stepSelector .fill').css('width', value);
+    $('#stepSelector .slider-handle').css('left', value);
+  });
 
   $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
 
@@ -236,7 +265,7 @@ function synthogram_init() {
       if (!e) {
         // TODO: change to some deepCopy
         return {
-          x: sequencer.getCurrentStep() + Math.ceil(lastCoordinates.size / 2) + 1,
+          x: sonoModel.getVal('currentStep') + Math.ceil(lastCoordinates.size / 2) + 1,
           y: lastCoordinates.y,
           size: lastCoordinates.size,
         };
@@ -244,7 +273,7 @@ function synthogram_init() {
       var coordinates = {};
       coordinates.size = Math.floor(((e.pageX - el.offset().left) / el.width()) * 20);
       coordinates.size = Math.max(coordinates.size, 0);
-      coordinates.x = sequencer.getCurrentStep() + Math.ceil(coordinates.size / 2) + 1;
+      coordinates.x = sonoModel.getVal('currentStep') + Math.ceil(coordinates.size / 2) + 1;
       coordinates.y = e.pageY - el.offset().top;
 
       return coordinates;
@@ -316,7 +345,7 @@ function synthogram_init() {
       $('.livePadCursor').css({
         'top': top,
         'left': left,
-/*        'width': cursorSize,
+        /*        'width': cursorSize,
         'height': cursorSize,
         '-webkit-border-radius': cursorSize/2,
         '-moz-border-radius': cursorSize/2,
@@ -365,7 +394,7 @@ function synthogram_init() {
   );
 
   var sequencer = Sequencer(synth, source,
-    sonoModel.get('stepDuration')
+    sonoModel.get('stepDuration'), sonoModel.get('currentStep')
   );
 
   sonoModel.get('isPlaying').addChangeListener(function(value) {
@@ -471,7 +500,6 @@ function synthogram_init() {
       //console.log('defaultImage', defaultImage);
       $('#wPaint').wPaint('image', defaultImage);
       //A hack
-      console.log('wtf');
       window.setTimeout(function() {
         console.log('addUndo');
         $('#wPaint').wPaint('_addUndo');
@@ -484,20 +512,8 @@ function synthogram_init() {
   sonoModel.get('startOctave').addChangeListener(drawGrid);
   sonoModel.get('musicalScale').addChangeListener(drawGrid);
   drawGrid();
-  stepSelector.bind('mousedown', function(e) {
-    isSelectorClicked = true;
-    sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
-  });
 
-  stepSelector.bind('mouseup', function() {
-    isSelectorClicked = false;
-  });
 
-  stepSelector.bind('mousemove', function(e) {
-    if (isSelectorClicked) {
-      sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
-    }
-  });
 
   //window.onhashchange = loadImage;
   loadImage();
