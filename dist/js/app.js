@@ -22,6 +22,7 @@ function synthogram_init() {
     waveShape: 'sine',
     isPlaying: false,
     isSynthPlaying: false,
+    currentStep: 0,
   });
 
 
@@ -99,7 +100,33 @@ function synthogram_init() {
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
-  stepSelector.bindMobileEvents();
+  stepSelector.bindMobileEventsPreventMouse();
+
+  var stepSelectorChange = function(e) {
+    var step = e.pageX - stepSelector.offset().left;
+    console.log(step);
+    sonoModel.get('currentStep').set(Math.floor(Math.min(Math.max(step, 0), source.numSteps)));
+  };
+
+  stepSelector.bind('mousedown', function(e) {
+    isSelectorClicked = true;
+    stepSelectorChange(e);
+  });
+
+  stepSelector.bind('mouseup', function() {
+    isSelectorClicked = false;
+  });
+
+  stepSelector.bind('mousemove', function(e) {
+    if (isSelectorClicked) {
+      stepSelectorChange(e);
+    }
+  });
+
+  sonoModel.get('currentStep').addChangeListener(function(value) {
+    $('#stepSelector .fill').css('width', value);
+    $('#stepSelector .slider-handle').css('left', value);
+  });
 
   $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
 
@@ -113,7 +140,7 @@ function synthogram_init() {
   $.fn.wPaint.menus.text.items.fontSize.range = [8, 9, 10, 12, 14, 16, 20, 24, 30, 40, 50, 60];
   $('#wPaint').wPaint({
     path: 'lib/wpaint/',
-    menuOffsetLeft: -20, // left offset of primary menu
+    menuOffsetLeft: -120, // left offset of primary menu
     menuOffsetTop: -45,
     lineWidth: '4', // starting line width
     fillStyle: '#0000FF', // starting fill style
@@ -160,7 +187,7 @@ function synthogram_init() {
 
 
   var drawGrid = function() {
-    var xStep = 10;
+    var xStep = 8;
     var yStep = Number($('#overlayGrid').attr('height')) / sonoModel.getVal('numOscillators');
     var legendFunc = function(y) {
       var oscData = getOscDataForY(y);
@@ -223,8 +250,110 @@ function synthogram_init() {
     if (e.keyCode === 32) { //spacebar
       $('#stopPlayToggle').trigger('click');
     }
-
   });
+
+
+  var livePad = function livePad(el) {
+    var isMouseDown;
+    var interval;
+    var lastCoordinates;
+
+    var getCoordinates = function(e) {
+      var coordinates = {};
+      if (!e) {
+        // TODO: change to some deepCopy
+        coordinates = {
+          x: sonoModel.getVal('currentStep') + Math.ceil(lastCoordinates.size / 2),
+          y: lastCoordinates.y,
+          size: lastCoordinates.size,
+        };
+      } else {
+        coordinates.size = Math.floor(((e.pageX - el.offset().left) / el.width()) * 20);
+        coordinates.size = Math.max(coordinates.size, 1);
+        coordinates.x = sonoModel.getVal('currentStep') + Math.ceil(coordinates.size / 2);
+        coordinates.y = e.pageY - el.offset().top;
+      }
+
+      // Not entirely sure why needed, but other wise small lines are now played.
+      if (coordinates.size < 2) {
+        coordinates.x = coordinates.x + 0.5;
+      }
+
+
+      return coordinates;
+    };
+
+    var drawMove = function(e) {
+      if (isMouseDown) {
+        var coordinates = getCoordinates(e);
+        if (lastCoordinates.x > coordinates.x) {
+          updateWPaint("paintAtCoordinatesUp");
+          updateWPaint("paintAtCoordinatesDown", coordinates);
+        } else {
+          updateWPaint("paintAtCoordinatesMove", coordinates);
+        }
+        if (e) {
+          drawCursor(e);
+        }
+      }
+
+    };
+
+    var updateWPaint = function(method, coordinates) {
+      $('#wPaint').wPaint(method, coordinates);
+      if (coordinates) {
+        lastCoordinates = coordinates;
+      }
+    };
+
+
+    $('body').on('mousedown', function() {
+      isMouseDown = true;
+    });
+
+    $('body').on('mouseup', function() {
+      isMouseDown = false;
+      window.clearInterval(interval);
+    });
+
+    el.on('mousedown', function(e) {
+      sonoModel.get('isPlaying').set(true);
+      sonoModel.get('isSynthPlaying').set(true);
+      var coordinates = getCoordinates(e);
+      updateWPaint("paintAtCoordinatesDown", coordinates);
+      drawCursor(e);
+      window.clearInterval(interval);
+      interval = window.setInterval(drawMove, 20);
+    });
+
+    el.on('mouseup', function() {
+      updateWPaint("paintAtCoordinatesUp");
+      window.clearInterval(interval);
+      $('.livePadCursor').hide();
+    });
+
+    el.on('mousemove', function(e) {
+      drawMove(e);
+    });
+
+    el.bindMobileEventsPreventMouse();
+
+
+    var drawCursor = function(e) {
+      var cursorSize = 60;
+      var top = (e.pageY - el.offset().top - cursorSize / 2);
+      var left = (e.pageX - el.offset().left - cursorSize / 2);
+      $('.livePadCursor').css({
+        'top': top,
+        'left': left,
+      });
+      $('.livePadCursor').show();
+    };
+  };
+
+  livePad($('#livePad'));
+
+
 
 
 
@@ -261,7 +390,7 @@ function synthogram_init() {
   );
 
   var sequencer = Sequencer(synth, source,
-    sonoModel.get('stepDuration')
+    sonoModel.get('stepDuration'), sonoModel.get('currentStep')
   );
 
   sonoModel.get('isPlaying').addChangeListener(function(value) {
@@ -368,8 +497,9 @@ function synthogram_init() {
       $('#wPaint').wPaint('image', defaultImage);
       //A hack
       window.setTimeout(function() {
+        console.log('addUndo');
         $('#wPaint').wPaint('_addUndo');
-      });
+      }, 10);
     }
   };
 
@@ -378,20 +508,8 @@ function synthogram_init() {
   sonoModel.get('startOctave').addChangeListener(drawGrid);
   sonoModel.get('musicalScale').addChangeListener(drawGrid);
   drawGrid();
-  stepSelector.bind('mousedown', function(e) {
-    isSelectorClicked = true;
-    sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
-  });
 
-  stepSelector.bind('mouseup', function() {
-    isSelectorClicked = false;
-  });
 
-  stepSelector.bind('mousemove', function(e) {
-    if (isSelectorClicked) {
-      sequencer.jumpToStep(e.pageX - stepSelector.offset().left);
-    }
-  });
 
   //window.onhashchange = loadImage;
   loadImage();

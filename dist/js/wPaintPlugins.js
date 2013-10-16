@@ -43,7 +43,37 @@
     },
     _drawNoteUp: function() {
       this._addUndo();
-    }       
+    },
+    paintAtCoordinatesDown: function(params) {
+      this.ctx.lineJoin = 'round';
+      this.ctx.lineCap = 'round';
+      this.ctx.strokeStyle = this.options.strokeStyle;
+      this.ctx.fillStyle = this.options.strokeStyle;
+      this.ctx.lineWidth = params.size;
+      
+      this.ctx.beginPath();
+      this.ctx.arc(params.x, params.y, params.size / 2, 0, Math.PI * 2, true);
+      this.ctx.closePath();
+      this.ctx.fill();
 
+      this.ctx.beginPath();
+      this.ctx.moveTo(params.x, params.y);
+    },
+
+    paintAtCoordinatesMove: function(params) {
+      this.ctx.lineWidth = params.size;
+      this.ctx.lineTo(params.x, params.y);
+      this.ctx.stroke();
+
+      this.ctx.closePath();
+      this.ctx.fill();
+      this.ctx.beginPath();
+      this.ctx.moveTo(params.x, params.y);
+    },
+
+    paintAtCoordinatesUp: function() {
+      this.ctx.closePath();
+      this._addUndo();
+    }        
   });
 })(jQuery);

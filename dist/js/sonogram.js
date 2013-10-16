@@ -299,9 +299,6 @@ function CanvasSource(canvas, overlayId, numOscillators) {
           if (alpha !== 0) {
 
             amp = (255 - ((red + green + blue) / 3)) * (alpha / 255);
-            if (amp > 255 || amp < 0) {
-              console.log(red, green, blue, alpha, amp);
-            }
           }
           ampSum += amp;
           scaledY++;
@@ -323,24 +320,22 @@ function CanvasSource(canvas, overlayId, numOscillators) {
 }
 
 
-function Sequencer(synth, source, stepDuration) {
+function Sequencer(synth, source, stepDuration, currentStep) {
 
-  var currStep = 0;
   var numSteps = source.numSteps;
   var isPlaying = false;
   var isStarted = false;
 
+
   var moveToNextStep = function() {
     if (isPlaying) {
-      currStep = (currStep + 1) % numSteps;
+      currentStep.set((currentStep.get() + 1) % numSteps);
     }
   };
 
-  var jumpToStep = function(newStep) {
+  var playStep = function(newStep) {
     newStep = parseInt(newStep, 10);
-    //console.log('jumpToStep', newStep);
-    currStep = newStep;
-    var step = source.getStep(currStep);
+    var step = source.getStep(currentStep.get());
     synth.play(step);
   };
 
@@ -353,8 +348,6 @@ function Sequencer(synth, source, stepDuration) {
     isStarted = true;
 
     function loop() {
-      var step = source.getStep(currStep);
-      synth.play(step);
       moveToNextStep();
       window.setTimeout(loop, stepDuration.get());
     }
@@ -367,10 +360,11 @@ function Sequencer(synth, source, stepDuration) {
     console.log('pauseToggle', isPlaying);
   };
 
+  currentStep.addChangeListener(playStep);
+
   return {
     start: start,
     setIsPlaying: setIsPlaying,
-    jumpToStep: jumpToStep,
     isPlaying: function() {
       return isPlaying;
     }

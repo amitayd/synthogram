@@ -131,7 +131,7 @@
     var canvas = $(this)[0];
     var ctx = canvas.getContext('2d');
     ctx.fillStyle = 'rgba(0,0,0,0.2)';
-    var width = canvas.width; 
+    var width = canvas.width;
     var height = canvas.height;
 
     ctx.clearRect(0, 0, width, height);
@@ -149,17 +149,52 @@
 
     var ctx = canvas.getContext('2d');
 
-    
+
     ctx.fillStyle = this.css('color');
-    ctx.font = this.css('font-size') + ' Calibri';    
+    ctx.font = this.css('font-size') + ' Calibri';
 
     ctx.clearRect(0, 0, canvas.width, height);
 
-    for (var y = yStep/2; y < canvas.height; y += yStep) {
+    for (var y = yStep / 2; y < canvas.height; y += yStep) {
       var legend = legendFunc(y);
-      ctx.fillText(legend, 2, y+ 3);
-    }    
-  };  
+      ctx.fillText(legend, 2, y + 3);
+    }
+  };
+
+  $.fn.bindMobileEventsPreventMouse = function() {
+    $(this).on('touchstart touchmove touchend touchcancel', function() {
+      var touches = event.changedTouches,
+        first = touches[0],
+        type = '';
+
+      switch (event.type) {
+        case 'touchstart':
+          type = 'mousedown';
+          event.preventDefault();
+          break;
+        case 'touchmove':
+          type = 'mousemove';
+          event.preventDefault();
+          break;
+        case 'touchend':
+          type = 'mouseup';
+          event.preventDefault();
+          break;
+        default:
+          return;
+      }
+
+      var simulatedEvent = document.createEvent('MouseEvent');
+
+      simulatedEvent.initMouseEvent(
+        type, true, true, window, 1,
+        first.screenX, first.screenY, first.clientX, first.clientY,
+        false, false, false, false, 0 /*left*/ , null
+      );
+
+      first.target.dispatchEvent(simulatedEvent);
+    });
+  };
 
 
 
