@@ -99,7 +99,7 @@ function synthogram_init() {
 
   var isSelectorClicked = false;
   var stepSelector = $('#stepSelector');
-  stepSelector.bindMobileEvents();
+  stepSelector.bindMobileEventsPreventMouse();
 
   $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
 
@@ -113,7 +113,7 @@ function synthogram_init() {
   $.fn.wPaint.menus.text.items.fontSize.range = [8, 9, 10, 12, 14, 16, 20, 24, 30, 40, 50, 60];
   $('#wPaint').wPaint({
     path: 'lib/wpaint/',
-    menuOffsetLeft: -20, // left offset of primary menu
+    menuOffsetLeft: -120, // left offset of primary menu
     menuOffsetTop: -45,
     lineWidth: '4', // starting line width
     fillStyle: '#0000FF', // starting fill style
@@ -160,7 +160,7 @@ function synthogram_init() {
 
 
   var drawGrid = function() {
-    var xStep = 10;
+    var xStep = 8;
     var yStep = Number($('#overlayGrid').attr('height')) / sonoModel.getVal('numOscillators');
     var legendFunc = function(y) {
       var oscData = getOscDataForY(y);
@@ -223,8 +223,112 @@ function synthogram_init() {
     if (e.keyCode === 32) { //spacebar
       $('#stopPlayToggle').trigger('click');
     }
-
   });
+
+
+  var livePad = function livePad(el) {
+    var isMouseDown;
+    var interval;
+    var lastCoordinates;
+    var firstClick = true;
+
+    var getCoordinates = function(e) {
+      if (!e) {
+        // TODO: change to some deepCopy
+        return {
+          x: sequencer.getCurrentStep() + Math.ceil(lastCoordinates.size / 2) + 1,
+          y: lastCoordinates.y,
+          size: lastCoordinates.size,
+        };
+      }
+      var coordinates = {};
+      coordinates.size = Math.floor(((e.pageX - el.offset().left) / el.width()) * 20);
+      coordinates.size = Math.max(coordinates.size, 0);
+      coordinates.x = sequencer.getCurrentStep() + Math.ceil(coordinates.size / 2) + 1;
+      coordinates.y = e.pageY - el.offset().top;
+
+      return coordinates;
+    };
+
+    var drawMove = function(e) {
+      if (isMouseDown) {
+        var coordinates = getCoordinates(e);
+        if (lastCoordinates.x > coordinates.x) {
+          updateWPaint("paintAtCoordinatesUp");
+          updateWPaint("paintAtCoordinatesDown", coordinates);
+        } else {
+          updateWPaint("paintAtCoordinatesMove", coordinates);
+        }
+        if (e) {
+          drawCursor(e);
+        }
+      }
+
+    };
+
+    var updateWPaint = function(method, coordinates) {
+      $('#wPaint').wPaint(method, coordinates);
+      if (coordinates) {
+        lastCoordinates = coordinates;
+      }
+    };
+
+
+    $('body').on('mousedown', function() {
+      isMouseDown = true;
+    });
+
+    $('body').on('mouseup', function() {
+      isMouseDown = false;
+      window.clearInterval(interval);
+    });
+
+    el.on('mousedown', function(e) {
+      if (firstClick) {
+        sonoModel.get('isPlaying').set(true);
+        sonoModel.get('isSynthPlaying').set(true);
+        firstClick = false;
+      }
+      var coordinates = getCoordinates(e);
+      updateWPaint("paintAtCoordinatesDown", coordinates);
+      drawCursor(e);
+      window.clearInterval(interval);
+      interval = window.setInterval(drawMove, 20);
+    });
+
+    el.on('mouseup', function() {
+      updateWPaint("paintAtCoordinatesUp");
+      window.clearInterval(interval);
+      $('.livePadCursor').hide();
+    });
+
+    el.on('mousemove', function(e) {
+      drawMove(e);
+    });
+
+    el.bindMobileEventsPreventMouse();
+
+
+    var drawCursor = function(e) {
+      var cursorSize = 60;
+      var top = (e.pageY - el.offset().top - cursorSize / 2);
+      var left = (e.pageX - el.offset().left - cursorSize / 2);
+      $('.livePadCursor').css({
+        'top': top,
+        'left': left,
+/*        'width': cursorSize,
+        'height': cursorSize,
+        '-webkit-border-radius': cursorSize/2,
+        '-moz-border-radius': cursorSize/2,
+        'border-radius': cursorSize/2,*/
+      });
+      $('.livePadCursor').show();
+    };
+  };
+
+  livePad($('#livePad'));
+
+
 
 
 
@@ -367,9 +471,11 @@ function synthogram_init() {
       //console.log('defaultImage', defaultImage);
       $('#wPaint').wPaint('image', defaultImage);
       //A hack
+      console.log('wtf');
       window.setTimeout(function() {
+        console.log('addUndo');
         $('#wPaint').wPaint('_addUndo');
-      });
+      }, 10);
     }
   };
 

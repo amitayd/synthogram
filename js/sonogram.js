@@ -373,6 +373,9 @@ function Sequencer(synth, source, stepDuration) {
     jumpToStep: jumpToStep,
     isPlaying: function() {
       return isPlaying;
+    },
+    getCurrentStep: function() {
+      return currStep;
     }
   };
 }
