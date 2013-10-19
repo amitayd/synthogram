@@ -19,67 +19,42 @@ module.exports = function(grunt) {
       main: {
         files: [{
           src: ['index.html'],
-          dest: 'dist/index.html',
+          dest: 'dist/index.html'
         }, {
           src: ['index.html'],
-          dest: 'dist/index.orig.html',
+          dest: 'dist/index.orig.html'
         }, {
           src: ['lib/**', 'css/**', 'js/**'],
-          dest: 'dist/',
-        }, ]
+          dest: 'dist/'
+        }]
       }
     },
     usemin: {
       html: ['dist/index.html'],
       options: {
         dirs: ['temp', 'dist']
-      },
+      }
     },
     concat: {
       options: {
         banner: '<%= banner %>',
         stripBanners: true
-      },
+      }
     },
     uglify: {
       options: {
         banner: '<%= banner %>'
-      },
+      }
     },
     jshint: {
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: false,
-        noarg: true,
-        sub: true,
-        undef: true,
-        unused: true,
-        boss: true,
-        eqnull: true,
-        browser: true,
-        globals: {
-          jQuery: true,
-          '$': true,
-          Model: true,
-          CanvasSource: true,
-          OscSynth: true,
-          MUSIC: true,
-          console: true,
-          Sequencer: true,
-          Firebase: true,
-          Note: true,
-          ok: true,
-          test: true,
-        }
-      },
       gruntfile: {
         src: 'Gruntfile.js'
       },
-      lib_test: {
+      libTest: {
         src: ['js/**/*.js', 'test/**/*.js']
+      },
+      options: {
+        jshintrc: '.jshintrc'
       }
     },
     qunit: {
@@ -90,9 +65,9 @@ module.exports = function(grunt) {
         files: '<%= jshint.gruntfile.src %>',
         tasks: ['jshint:gruntfile']
       },
-      lib_test: {
-        files: '<%= jshint.lib_test.src %>',
-        tasks: ['jshint:lib_test', 'qunit']
+      libTest: {
+        files: '<%= jshint.libTest.src %>',
+        tasks: ['jshint:libTest', 'qunit']
       }
     }
   });

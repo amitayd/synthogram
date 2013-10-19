@@ -1,7 +1,6 @@
-/*exported  synthogram_init */
-/*globals  Muscula */
-
-function synthogram_init() {
+/*exported  synthogramInit */
+/*globals  Muscula, $, window, Model, MUSIC, CanvasSource, OscSynth, Sequencer, Firebase */
+function synthogramInit() {
 
   // MODEL CREATION
 
@@ -22,7 +21,7 @@ function synthogram_init() {
     waveShape: 'sine',
     isPlaying: false,
     isSynthPlaying: false,
-    currentStep: 0,
+    currentStep: 0
   });
 
 
@@ -144,8 +143,8 @@ function synthogram_init() {
     menuOffsetTop: -45,
     lineWidth: '4', // starting line width
     fillStyle: '#0000FF', // starting fill style
-    strokeStyle: '#000000', // start stroke style    
-    menuHandle: false,
+    strokeStyle: '#000000', // start stroke style
+    menuHandle: false
   });
 
 
@@ -177,7 +176,7 @@ function synthogram_init() {
     freqName.text('--');
   });
 
-  var source = CanvasSource(wPaintCanvas[0], 'overlay',
+  var source = new CanvasSource(wPaintCanvas[0], 'overlay',
     sonoModel.get('numOscillators')
   );
 
@@ -265,7 +264,7 @@ function synthogram_init() {
         coordinates = {
           x: sonoModel.getVal('currentStep') + Math.ceil(lastCoordinates.size / 2),
           y: lastCoordinates.y,
-          size: lastCoordinates.size,
+          size: lastCoordinates.size
         };
       } else {
         coordinates.size = Math.floor(((e.pageX - el.offset().left) / el.width()) * 20);
@@ -345,7 +344,7 @@ function synthogram_init() {
       var left = (e.pageX - el.offset().left - cursorSize / 2);
       $('.livePadCursor').css({
         'top': top,
-        'left': left,
+        'left': left
       });
       $('.livePadCursor').show();
     };
@@ -375,7 +374,7 @@ function synthogram_init() {
     return;
   }
 
-  var synth = OscSynth(
+  var synth = new OscSynth(
     sonoModel.get('numOscillators'),
     sonoModel.get('startNote'),
     sonoModel.get('startOctave'),
@@ -389,7 +388,7 @@ function synthogram_init() {
     sonoModel.get('isSynthPlaying')
   );
 
-  var sequencer = Sequencer(synth, source,
+  var sequencer = new Sequencer(synth, source,
     sonoModel.get('stepDuration'), sonoModel.get('currentStep')
   );
 
@@ -428,7 +427,7 @@ function synthogram_init() {
       'startOctave',
       'musicalScale',
       'numOctaves',
-      'waveShape',
+      'waveShape'
     ];
 
     var saveData = {

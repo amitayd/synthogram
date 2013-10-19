@@ -1,4 +1,4 @@
-/*global  webkitAudioContext */
+/*global  webkitAudioContext, window */
 
 // Based on https://github.com/g200kg/WAAPISim
 

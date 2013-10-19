@@ -12,7 +12,7 @@ ModelProperty.prototype.set = function(value) {
   this.value = value;
   var listeners = this.changeListeners;
   for (var i = 0; i < listeners.length; i++) {
-      listeners[i].call(this, this.value);
+    listeners[i].call(this, this.value);
   }
 };
 

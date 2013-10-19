@@ -1,3 +1,5 @@
+/* global jQuery*/
+
 (function($) {
 
   // setup menu
@@ -14,7 +16,7 @@
   // extend defaults
   $.extend($.fn.wPaint.defaults, {
     snapGridVertical: 5, // current font size for text input
-    snapGridHorizontal: 10, // active font family for text input
+    snapGridHorizontal: 10 // active font family for text input
   });
 
   // extend functions

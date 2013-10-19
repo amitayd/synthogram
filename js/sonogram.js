@@ -1,4 +1,5 @@
 /*exported OscSynth, CanvasSource, Sequencer */
+/*globals window, console, document, Note */
 
 function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctaves,
   volume, delayTime, delayFeedbackGain, delayWetGain, waveShape, isSynthPlaying) {
@@ -160,7 +161,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
       gain: gainNode.gain,
       gainNode: gainNode,
       frequency: frequency.value,
-      name: frequency.name,
+      name: frequency.name
     };
   };
 

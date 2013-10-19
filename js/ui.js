@@ -1,12 +1,15 @@
-(function($) {
+/*exported  synthogramInit */
+/*globals  jQuery, window, document*/
+
+(function ($) {
 
   /* create a label based on an elements title and data-label attributes */
-  $.fn.sgLabel = function() {
-    return this.each(function() {
+  $.fn.sgLabel = function () {
+    return this.each(function () {
 
       var label = $("<label class='controlLabel' />");
       label.attr({
-        for: $(this).attr('id'),
+        'for': $(this).attr('id'),
         title: $(this).attr('title')
       });
       label.text($(this).attr('data-label'));
@@ -17,15 +20,15 @@
   };
 
 
-  $.fn.sgKnob = function(property, min, max, scale, step) {
+  $.fn.sgKnob = function (property, min, max, scale, step) {
 
-    return this.each(function() {
+    return this.each(function () {
       scale = scale || 1;
       step = step || 1;
       var element = $(this);
       element.tooltip();
       element.sgLabel();
-      element.bind('change', function() {
+      element.bind('change', function () {
         property.set(parseInt(element.val(), 10) / scale);
       });
 
@@ -41,26 +44,26 @@
         step: step,
         min: min,
         max: max,
-        change: function(val) {
+        change: function (val) {
           // fix for the even returning values not rounded
           var valRounded = Math.floor(val - (val % step)) / scale;
           property.set(valRounded);
         }
       });
 
-      property.addChangeListener(function(value) {
+      property.addChangeListener(function (value) {
         element.val(value * scale);
         element.trigger('change');
       });
     });
   };
 
-  $.fn.sgDropdown = function(property, values) {
+  $.fn.sgDropdown = function (property, values) {
     var isInteger = (typeof property.get() === 'number');
 
-    return this.each(function() {
+    return this.each(function () {
       var element = $(this);
-      $.each(values, function(key, value) {
+      $.each(values, function (key, value) {
         element
           .append($("<option></option>")
             .attr("value", value)
@@ -68,7 +71,7 @@
       });
 
       element.val(property.get());
-      element.bind('change', function() {
+      element.bind('change', function () {
         var value = element.val();
         if (isInteger) {
           value = parseInt(value, 10);
@@ -78,7 +81,7 @@
 
       element.sgLabel();
 
-      property.addChangeListener(function(value) {
+      property.addChangeListener(function (value) {
         element.val(value);
       });
     });
@@ -87,7 +90,7 @@
 
 
   // TODO: make more general
-  $.fn.sgStepDurationSlider = function(property) {
+  $.fn.sgStepDurationSlider = function (property) {
 
     var pps = 1000 / property.get('stepDuration');
     $('#stepDuration').val(pps);
@@ -96,29 +99,29 @@
       max: 120,
       value: pps,
       orientation: 'vertical',
-      change: function(event, ui) {
+      change: function (event, ui) {
         $("#stepDuration").val(ui.value);
         $("#stepDuration").trigger("change");
       }
     });
-    $('#stepDuration').bind('change', function() {
+    $('#stepDuration').bind('change', function () {
       property.set(1 / $(this).val() * 1000);
     });
     $('#stepDuration').bindMobileEvents();
 
-    property.addChangeListener(function(value) {
+    property.addChangeListener(function (value) {
       $('#stepDuration').val(1000 / value);
       $('#stepDurationSlider').slider('value', 1000 / value);
     });
   };
 
-  $.fn.sgStartupTooltip = function(delayTime, displayTime) {
-    return this.each(function() {
+  $.fn.sgStartupTooltip = function (delayTime, displayTime) {
+    return this.each(function () {
       var el = $(this);
-      window.setTimeout(function() {
+      window.setTimeout(function () {
         console.log('open', $(this));
         el.tooltip('open');
-        window.setTimeout(function() {
+        window.setTimeout(function () {
           console.log('close');
           el.tooltip('close');
           el.tooltip('disable');
@@ -127,7 +130,7 @@
     });
   };
 
-  $.fn.sgGrid = function(xStep, yStep) {
+  $.fn.sgGrid = function (xStep, yStep) {
     var canvas = $(this)[0];
     var ctx = canvas.getContext('2d');
     ctx.fillStyle = 'rgba(0,0,0,0.2)';
@@ -143,7 +146,7 @@
     }
   };
 
-  $.fn.sgGridLabels = function(yStep, legendFunc) {
+  $.fn.sgGridLabels = function (yStep, legendFunc) {
     var canvas = $(this)[0];
     var height = canvas.height;
 
@@ -161,27 +164,27 @@
     }
   };
 
-  $.fn.bindMobileEventsPreventMouse = function() {
-    $(this).on('touchstart touchmove touchend touchcancel', function() {
+  $.fn.bindMobileEventsPreventMouse = function () {
+    $(this).on('touchstart touchmove touchend touchcancel', function (event) {
       var touches = event.changedTouches,
         first = touches[0],
         type = '';
 
       switch (event.type) {
-        case 'touchstart':
-          type = 'mousedown';
-          event.preventDefault();
-          break;
-        case 'touchmove':
-          type = 'mousemove';
-          event.preventDefault();
-          break;
-        case 'touchend':
-          type = 'mouseup';
-          event.preventDefault();
-          break;
-        default:
-          return;
+      case 'touchstart':
+        type = 'mousedown';
+        event.preventDefault();
+        break;
+      case 'touchmove':
+        type = 'mousemove';
+        event.preventDefault();
+        break;
+      case 'touchend':
+        type = 'mouseup';
+        event.preventDefault();
+        break;
+      default:
+        return;
       }
 
       var simulatedEvent = document.createEvent('MouseEvent');
