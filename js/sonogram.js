@@ -321,7 +321,7 @@ function CanvasSource(canvas, overlayId, numOscillators) {
 }
 
 
-function Sequencer(synth, source, stepDuration, currentStep) {
+function Sequencer(synth, source, stepsPerSecond, currentStep) {
 
   var numSteps = source.numSteps;
   var isPlaying = false;
@@ -350,7 +350,7 @@ function Sequencer(synth, source, stepDuration, currentStep) {
 
     function loop() {
       moveToNextStep();
-      window.setTimeout(loop, stepDuration.get());
+      window.setTimeout(loop, 1000 / stepsPerSecond.get());
     }
 
     loop();

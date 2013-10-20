@@ -64,23 +64,22 @@
           <div id="sequencer" class="componenet">       
             <div id="progress">
               <span class="duration">0:41 / 4:39</span>
-              <div class="horizontal-slider">
+              <div class="horizontal-slider" data-prop="currentStep">
                 <div class="fill" style="width: 80px;"></div>
                 <div class="slider-handle" style="left: 80px;"></div>
               </div>  
             </div>        
             <div class="media-controls">
               <div class="media-buttons">           
-                <div class="button play" title="Play"><a href="#noop"></a></div>
-                <div class="button pause" title="Stop"><a href="#noop"></a></div> 
-                <div class="button hold" title="Hold Tune"><a href="#noop"></a></div> 
-                <div class="button hold selected" title="Continue"><a href="#noop"></a></div>             
+                <div class="button play" title="Play" data-onclass="stop" data-offclass="play" data-prop="isSynthPlaying"><a href="#noop"></a></div>
+                
+                <div class="button hold" title="Hold Tune" data-onclass="" data-offclass="selected" data-prop="isPlaying"><a href="#noop"></a></div> 
               </div>        
             </div>  
             <div class="play-controls">
               <div id="speed">
                 <label>Speed:</label>
-                <div class="horizontal-slider">
+                <div class="horizontal-slider" data-prop="stepsPerSecond">
                   <div class="fill" style="width: 30px;"></div>
                   <div class="slider-handle" style="left: 30px;"><span class="balloon">30</span></div>
                 </div>  
@@ -90,7 +89,7 @@
                   <div class="button volume volume-on" title="Volume"><a href="#noop"></a></div>  
                   <div class="button volume mute" title="Mute"><a href="#noop"></a></div>               
                 </div>  
-                <div class="horizontal-slider">
+                <div class="horizontal-slider" data-prop="volume" data-scale="100">
                   <div class="fill" style="width: 60px;"></div>
                   <div class="slider-handle" style="left: 60px;"><span class="balloon">60</span></div>
                 </div>  

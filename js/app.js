@@ -4,7 +4,7 @@ function synthogramInit() {
 
   // MODEL CREATION
   var sonoModel = new Model({
-    stepDuration: 33.33,
+    stepsPerSecond: 30,
     volume: 0.5,
     numOscillators: 80,
     startFrequency: 55,
@@ -32,10 +32,25 @@ function synthogramInit() {
   musicalScales.push('quarter notes');
 
 
+  // Property computations
+  
+  // Set the sequencer to playing stopping according to this.
+  sonoModel.get('isSynthPlaying').addChangeListener(function(value) {
+    sonoModel.get('isPlaying').set(value);
+  });
+  
+
+
   // END MODEL CREATION
 
 
   // SET UP UI
+  
+  $('.compSide').sgTab();
+  $('#harmony .tab-label').click();
+  $('.media-controls .button').sgButton(sonoModel);
+  $('.horizontal-slider').sgSlider(sonoModel);
+
 
   $('#volumeUp').on('mousedown', function() {
     var value = Math.min(1, sonoModel.getVal('volume') + 0.05);
@@ -81,7 +96,7 @@ function synthogramInit() {
     $('#stepSelector .slider-handle').css('left', value);
   });
 
-  $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
+
 
   //$('#knb_volume').sgKnob(sonoModel.get('volume'), 0, 100, 100, 5);
   $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 5);
@@ -93,8 +108,8 @@ function synthogramInit() {
   $.fn.wPaint.menus.text.items.fontSize.range = [8, 9, 10, 12, 14, 16, 20, 24, 30, 40, 50, 60];
   $('#wPaint').wPaint({
     path: 'lib/wpaint/',
-    menuOffsetLeft: -120, // left offset of primary menu
-    menuOffsetTop: -45,
+    menuOffsetLeft: -115, // left offset of primary menu
+    menuOffsetTop: -46,
     lineWidth: '4', // starting line width
     fillStyle: '#0000FF', // starting fill style
     strokeStyle: '#000000', // start stroke style
@@ -343,7 +358,7 @@ function synthogramInit() {
   );
 
   var sequencer = new Sequencer(synth, source,
-    sonoModel.get('stepDuration'), sonoModel.get('currentStep')
+    sonoModel.get('stepsPerSecond'), sonoModel.get('currentStep')
   );
 
   sonoModel.get('isPlaying').addChangeListener(function(value) {
@@ -372,7 +387,7 @@ function synthogramInit() {
     var img = $("#wPaint").wPaint("image");
 
     var settingsToSave = [
-      'stepDuration',
+      'stepsPerSecond',
       'startFrequency',
       'delayTime',
       'delayFeedbackGain',

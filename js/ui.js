@@ -199,6 +199,96 @@
     });
   };
 
+  /* create a tab in the children of the passed elements */
+  $.fn.sgTab = function () {
+    return this.each(function () {
+      var tabContainer = $(this);
+      var tabs = tabContainer.children('.sidecontent');
+      tabs.on('click', '.tab-label', function () {
+        var tab = $(this).parent();
+        // Unshow the other tabs but this one
+        tabs.not(tab).children('.tab-content').hide();
+        tabs.not(tab).children('.tab-label').removeClass('selected');
+        tabs.not(tab).css('z-index', 2);
+        // Show this tab
+        tab.children('.tab-label').addClass('selected');
+        tab.children('.tab-content').show();
+        tab.css('z-index', 1);
+      });
+    });
+  };
+
+  /* create a button */
+  $.fn.sgButton = function (model) {
+    return this.each(function () {
+      var button = $(this);
+      var property = model.get(button.data('prop'));
+
+      var setValue = function () {
+        var value = property.get();
+        button.addClass(button.data(value ? 'onclass' : 'offclass'));
+        button.removeClass(button.data(value ? 'offclass' : 'onclass'));
+      };
+
+      property.addChangeListener(function () {
+        setValue();
+      });
+
+      button.on('click', function () {
+        // Simply negate the current value;
+        property.set(!property.get());
+      });
+
+      //Set the initial state
+      setValue();
+    });
+  };
+
+  $.fn.sgSlider = function (model) {
+    return this.each(function () {
+      var slider = $(this);
+      var property = model.get(slider.data('prop'));
+      var scale = Number(slider.data('scale')) || 1;
+
+      var setValue = function () {
+        var value = Math.floor(property.get() * scale);
+        $('.fill', slider).css('width', value);
+        $('.slider-handle', slider).css('left', value);
+        $('.balloon', slider).text(value);
+      };
+
+      property.addChangeListener(function () {
+        setValue();
+      });
+
+      var sliderChange = function(e) {
+        var value = e.pageX - slider.offset().left;
+        value = Math.max(value, 0);
+        value = Math.min(value, slider.width());
+        property.set(Math.floor(value) / scale);
+      };
+
+      var isMousedown = false;
+      slider.bind('mousedown', function (e) {
+        isMousedown = true;
+        sliderChange(e);
+      });
+
+      slider.bind('mouseup', function () {
+        isMousedown = false;
+      });
+
+      slider.bind('mousemove', function (e) {
+        if (isMousedown) {
+          sliderChange(e);
+        }
+      });
+
+      slider.bindMobileEvents();
+      setValue();
+    });
+  };
+
 
 
 })(jQuery);
