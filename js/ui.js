@@ -249,6 +249,7 @@
       var slider = $(this);
       var property = model.get(slider.data('prop'));
       var scale = Number(slider.data('scale')) || 1;
+      var handleOffset = Number($('.slider-handle', slider).width()) / 2;
 
       var setValue = function () {
         var value = Math.floor(property.get() * scale);
@@ -262,7 +263,7 @@
       });
 
       var sliderChange = function(e) {
-        var value = e.pageX - slider.offset().left;
+        var value = e.pageX - slider.offset().left - handleOffset;
         value = Math.max(value, 0);
         value = Math.min(value, slider.width());
         property.set(Math.floor(value) / scale);
