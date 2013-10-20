@@ -3,9 +3,6 @@
 function synthogramInit() {
 
   // MODEL CREATION
-
-  $.fn._button = $.fn.button.noConflict();
-  $.fn._tooltip = $.fn.tooltip.noConflict();
   var sonoModel = new Model({
     stepDuration: 33.33,
     volume: 0.5,
@@ -39,49 +36,6 @@ function synthogramInit() {
 
 
   // SET UP UI
-
-  $("#oscillatorType").buttonset();
-  $("#drawingTool").buttonset();
-  $('#pause').button({
-    icons: {
-      primary: "ui-icon-pause"
-    }
-  });
-  $('#stopPlayToggle').button({
-    icons: {
-      primary: "ui-icon-play"
-    }
-  });
-  $('#stopPlayToggle').tooltip({
-    position: {
-      my: "left+15 center",
-      at: "top"
-    }
-  });
-  $('#mute').button({
-    icons: {
-      primary: "ui-icon-cancel"
-    }
-  });
-  $('#volumeUp').button({
-    icons: {
-      primary: "ui-icon-volume-on"
-    }
-  });
-  $('#volumeDown').button({
-    icons: {
-      primary: "ui-icon-volume-off"
-    }
-  });
-  $('#save').button();
-  $('#saveNew').button();
-  $('#new').button();
-
-  $('#startNote').sgDropdown(sonoModel.get('startNote'), getKeys(MUSIC.notes));
-  $('#startOctave').sgDropdown(sonoModel.get('startOctave'), [0, 1, 2, 3, 4, 5, 6, 7]);
-  $('#musicalScale').sgDropdown(sonoModel.get('musicalScale'), musicalScales);
-  $('#numOctaves').sgDropdown(sonoModel.get('numOctaves'), [1, 2, 3, 4, 5, 6]);
-
 
   $('#volumeUp').on('mousedown', function() {
     var value = Math.min(1, sonoModel.getVal('volume') + 0.05);
@@ -195,7 +149,7 @@ function synthogramInit() {
 
     console.log('drawing grid', xStep, yStep);
     $('#overlayGrid').sgGrid(xStep, yStep);
-    $('#gridLabels').sgGridLabels(yStep, legendFunc);
+    $('#gridLabelsCanvas').sgGridLabels(yStep, legendFunc);
     $('#wPaint').wPaint('snapGridVertical', yStep);
     $('#wPaint').wPaint('snapGridHorizontal', xStep);
 

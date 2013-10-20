@@ -7,20 +7,20 @@
     <meta name="description" content="Synthogram - synthesize and play painted sounds, using HTML5 canvas and web audio API" />
     <meta name="author" content="Amitay Dobo" />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <link rel="stylesheet" href="css/sonogram.css" />
+    <link rel="stylesheet" href="css/synthogram.css" />
     <link href="http://codeorigin.jquery.com/ui/1.10.3/themes/trontastic/jquery-ui.css" rel="stylesheet">
     <link rel="Stylesheet" type="text/css" href="lib/wpaint/wPaint.min.css" />
     <link rel="Stylesheet" type="text/css" href="lib/wpaint/lib/wColorPicker.min.css" />    
     <title>Synthogram - Draw the music (or noise...)</title>
     <!-- Bootstrap core CSS -->
-    <link href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <alink href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../../assets/js/html5shiv.js"></script>
       <script src="../../assets/js/respond.min.js"></script>
     <![endif]-->
     <!-- Muscula error reporting-->
-    <script type='text/javascript'>
+    <noscript type='text/javascript'>
     window.Muscula = { settings:{
         logId:"599f6c48-f235-4665-a7a9-ba06dbc32626", suppressErrors: false, branding: 'none'
     }};
@@ -33,138 +33,282 @@
         window.Muscula.errors=[];window.onerror=function(){window.Muscula.errors.push(arguments);
         return window.Muscula.settings.suppressErrors===undefined;}
     })();
-    </script>    
+    </noscript>    
   </head>
   <body>
-    <!-- Static navbar -->
-    <ul class="nav nav-tabs">
-      <li class="navbar-brand" id='synthTabButton'>Synthogram</li>
-      <li class="active"><a href="#synthTab" data-toggle="tab">Synthesize!</a></li>
-      <li><a href="#about" data-toggle="tab">About</a></li>
-      <li><a href="#help" data-toggle="tab">Help</a></li>
-      <li><a href="https://docs.google.com/forms/d/17P6cyFIypf7EbpVKh0BEXHQ6-w1oVvFfsc81KnNsLg8/viewform">Your Feedback</a></li>
-    </ul>
-    <div class="tab-content">
-      <div class="tab-pane fade in active" id="synthTab">
         <!-- SYNTH -->
         <div id="mainContainer">
           <div id="synth" class="componenet">
-            <div class="horizontalControls">          
-              <div class="control buttonset waveShape">
-                <label class="controlLabel" for="oscillatorType">Wave shape:</label>
-                <div id="oscillatorType">
-                  <input type="radio" id="sine" name="radio" checked />
-                  <label for="sine">sine</label>
-                  <input type="radio" id="square" name="radio" />
-                  <label for="square">square</label>
-                  <input type="radio" id="sawtooth" name="radio" />
-                  <label for="sawtooth">sawtooth</label>
-                  <input type="radio" id="triangle" name="radio" />
-                  <label for="triangle">triangle</label>
-                </div>              
-              </div> 
-              <button id="save">Save</button> 
-              <button id="saveNew">Save Copy</button> 
-              <button id="new">New</button> 
+            <h1>Synthogram</h1>
+            <div id="saving-box">
+              <ul>
+                <li><a href="#noop">New</a></li>
+                <li><a href="#noop">Save</a></li>
+                <li><a href="#noop">Save a copy</a></li>
+              </ul>
             </div>
-            <!-- End synth -->
           </div>
           <div id="sonogram" class="componenet">
-            <div class="compSide">              
-              <div id="freqData">Note:<span id="freqName"></span> Freq: <span id="freqHertz"></span> HZ</div>
-              <div class="control noteControls">
-              <select id="startNote" data-label="Starting Note"></select>
-              <select id="startOctave" data-label="Starting Octave"></select> 
-              <select id="musicalScale" data-label="Musical scale"></select> 
-              <select id="numOctaves" data-label="Number of octaves"></select> 
-              </div>
-              <div class="topKnobs horizontalControls">
-              <div class="control">
-                <input type="text" value="100" class="dial" id="knb_delayTime" data-label="Time" title="Delay Time" />  
-              </div>
-              <div class="control">
-                <input type="text" value="100" class="dial" id="knb_delayWetGain" data-label="Depth" title="Delay wet gain" />  
-              </div>
-              <div class="control">
-                <input type="text" value="100" class="dial" id="knb_delayFeedbackGain" data-label="Feedback" title="Delay Feedback gain" />  
-              </div>
-              <h5 class="section-label">Delay</h5>
-              </div>              
-              <div id="stepDurationSlider">
-                <label for="stepDuration" class="controlLabel" title="Speed (pixels played per second)">Speed</label>
-                <input id="stepDuration" value=""></input>   
-              </div>
-            </div>
-            <div class="compMain">
-              <div id="livePad">
-                <div class="livePadCursor"></div>
-              </div>
-              <canvas id="overlay" class='paintLayer transparentOverlay ' width="384" height="240"></canvas>
-              <canvas id="overlayGrid" class='paintLayer transparentOverlay' width="384" height="240"></canvas>
-              <canvas id="gridLabels" class='note-legend' width="20" height="240"></canvas>          
-              <div id="wPaint" class="paintLayer"></div>
-            </div>
+            <div class="compMain">          
+              <div id="wPaint-menu">Draw Menu</div>
+              <div id="livePad">livePad</div>
+              <div class="note-legend" id="gridLabels">
+                <canvas id="gridLabelsCanvas" width="20" height="240"></canvas>
+              </div>  
+              <div id="wPaint">
+                <canvas id="overlay" class='paintLayer transparentOverlay ' width="384" height="240"></canvas>
+                <canvas id="overlayGrid" class='paintLayer transparentOverlay' width="384" height="240"></canvas>
+              </div>                 
+            </div>        
           </div>
-          <div id="sequencer" class="componenet">
-            <div class="compSide"></div>
-            <div class="compMain">
-              <div id="stepSelector" style="margin-left:120px;height:20px">
+          <div id="sequencer" class="componenet">       
+            <div id="progress">
+              <span class="duration">0:41 / 4:39</span>
+              <div class="horizontal-slider">
+                <div class="fill" style="width: 80px;"></div>
+                <div class="slider-handle" style="left: 80px;"></div>
+              </div>  
+            </div>        
+            <div class="media-controls">
+              <div class="media-buttons">           
+                <div class="button play" title="Play"><a href="#noop"></a></div>
+                <div class="button pause" title="Stop"><a href="#noop"></a></div> 
+                <div class="button hold" title="Hold Tune"><a href="#noop"></a></div> 
+                <div class="button hold selected" title="Continue"><a href="#noop"></a></div>             
+              </div>        
+            </div>  
+            <div class="play-controls">
+              <div id="speed">
+                <label>Speed:</label>
                 <div class="horizontal-slider">
-                  <div class="fill" style="width: 0px;"></div>
-                  <div class="slider-handle" style="left: 0px;"></div>
+                  <div class="fill" style="width: 30px;"></div>
+                  <div class="slider-handle" style="left: 30px;"><span class="balloon">30</span></div>
+                </div>  
+              </div>
+              <div id="volume" class="volume-controls">
+                <div class="media-buttons">                                 
+                  <div class="button volume volume-on" title="Volume"><a href="#noop"></a></div>  
+                  <div class="button volume mute" title="Mute"><a href="#noop"></a></div>               
+                </div>  
+                <div class="horizontal-slider">
+                  <div class="fill" style="width: 60px;"></div>
+                  <div class="slider-handle" style="left: 60px;"><span class="balloon">60</span></div>
+                </div>  
+              </div>
+            </div>        
+          </div>
+          <div class="compSide">  
+            <div class="note">
+              <div id="freqData">Note: <span id="freqName">--</span> | Freq: <span id="freqHertz">--</span> | HZ</div>
+            </div>
+            <div id="sound" class="sidecontent">
+              <div class="tab-label boxing">Sound</div>
+              <div class="tab-content">
+                <div class="box" id="oscillatorType">
+                  <h4>Wave Shape</h4>
+                  <ul class="buttons">                  
+                    <li>
+                      <label for="sine" role="button" aria-disabled="false">sine</label>
+                      <input type="radio" id="sine" name="radio" checked="" class="ui-helper-hidden-accessible">                  
+                    </li>
+                    <li>
+                      <label for="square" role="button" aria-disabled="false">square</label>
+                      <input type="radio" id="square" name="radio" class="ui-helper-hidden-accessible">                                 
+                    </li>
+                    <li>
+                      <label for="sawtooth" role="button" aria-disabled="false">sawtooth</label>
+                      <input type="radio" id="sawtooth" name="radio" class="ui-helper-hidden-accessible">
+                    </li>
+                    <li>
+                      <label for="triangle" role="button" aria-disabled="false">triangle</label>
+                      <input type="radio" id="triangle" name="radio" class="ui-helper-hidden-accessible">                   
+                    </li>                                   
+                  </ul>             
+                </div>  
+                <div class="box" id="delay">
+                  <ul>
+                    <li>
+                      <span>Time</span>
+                      <div class="control">125</div>
+                    </li>
+                    <li>
+                      <span>Depth</span>
+                      <div class="control">30</div>
+                    </li>
+                    <li>
+                      <span>Feedback</span>
+                      <div class="control">25</div>
+                    </li>
+                  </ul>
+                  <h4>Delay</h4>
+                </div>              
+              </div>
+            </div>
+            <div id="harmony" class="sidecontent">
+              <div class="tab-label boxing selected">Harmony</div>
+              <div class="tab-content">
+                <div class="box" id="musicalScale">
+                  <h4>Musical Scale</h4>
+                  <ul>
+                    <li>
+                      <label for="harmonic-minor">harmonic minor</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="harmonic-minor" value="harmonic minor" />
+                    </li>
+                    <li>
+                      <label for="major">major</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="major" value="major" />
+                    </li>
+                    <li>
+                      <label for="major-pentatonic">major pentatonic</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="major-pentatonic" value="major pentatonic" />
+                    </li>
+                    <li>
+                      <label for="minor-pentatonic">minor pentatonic</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="minor-pentatonic" value="minor pentatonic" />
+                    </li>
+                    <li>
+                      <label for="natural-minor">natural minor</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="natural-minor" value="natural minor" />
+                    </li>
+                    <li>
+                      <label for="quarter-notes">quarter notes</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="quarter-notes" value="quarter notes" />
+                    </li>
+                  </ul>
+                </div>
+                <div class="sep"></div>
+                <div class="box" id="startNote">
+                  <h4>Starting Note</h4>
+                  <ul>                  
+                    <li>
+                      <label for="A">A</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="A" value="A" />
+                    </li>               
+                    <li>
+                      <label for="B">B</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="B" value="B" />
+                    </li>               
+                    <li>
+                      <label for="C">C</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="C" value="C" />
+                    </li>               
+                    <li>
+                      <label for="D">D</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="D" value="D" />
+                    </li>               
+                    <li>
+                      <label for="E">E</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="E" value="E" />
+                    </li>               
+                    <li>
+                      <label for="F">F</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="F" value="F" />
+                    </li>               
+                    <li>
+                      <label for="G">G</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="G" value="G" />
+                    </li>               
+                  </ul>
+                  <ul>                
+                    <li>
+                      <label for="diese">#</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="diese" value="diese" />
+                    </li>
+                    <li>
+                      <label for="bemolle">b</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="bemolle" value="bemolle" />
+                    </li>
+                  </ul>
+                </div>
+                <div class="sep"></div>
+                <div class="box" id="startOctave">
+                  <h4>Starting Octave</h4>
+                  <ul>
+                    <li>
+                      <label for="s0">0</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="s0" value="0" />
+                    </li>
+                    <li>
+                      <label for="s1">1</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="s1" value="1" />
+                    </li>
+                    <li>
+                      <label for="s2">2</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="s2" value="2" />
+                    </li>
+                    <li>
+                      <label for="s3">3</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="s3" value="3" />
+                    </li>
+                    <li>
+                      <label for="s4">4</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="s4" value="4" />
+                    </li>
+                    <li>
+                      <label for="s5">5</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="s5" value="5" />
+                    </li>
+                    <li>
+                      <label for="s6">6</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="s6" value="6" />
+                    </li>
+                    <li>
+                      <label for="s7">7</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="s7" value="7" />
+                    </li>
+                  </ul>
+                </div>    
+                <div class="sep"></div>
+                <div class="box" id="numOctaves">
+                  <h4>Number of octaves</h4>
+                  <ul>                  
+                    <li>
+                      <label for="n1">1</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="n1" value="1" />
+                    </li>
+                    <li>
+                      <label for="n2">2</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="n2" value="2" />
+                    </li>
+                    <li>
+                      <label for="n3">3</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="n3" value="3" />
+                    </li>
+                    <li>
+                      <label for="n4">4</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="n4" value="4" />
+                    </li>
+                    <li>
+                      <label for="n5">5</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="n5" value="5" />
+                    </li>
+                    <li>
+                      <label for="n6">6</label>
+                      <input class="ui-helper-hidden-accessible" type="radio" id="n6" value="6" />
+                    </li>                 
+                  </ul>               
                 </div>
               </div>
-              <div class="horizontalControls" id="bottomButtons">
-                <div class="media-control" style="display: none">   
-                  <div class="progressbar"><span style="width: 25%"></span></div>
-                </div>
-                <div class="media-control"> 
-                  <button class="media-button" id="stopPlayToggle" title="Play/Stop"></button>
-                  <button class="media-button" id="pause" title="Play"></button>
-                  <span class="spacer"></span>
-                  <button class="media-button" id="volumeDown" title="Volume down"></button>
-                  <span class="media-button" id="volumeValue">--</span>
-                  <button class="media-button" id="volumeUp" title="Volume up"></button>
-                  <button class="media-button" id="mute" title="Mute"></button>
-                  
-
-                </div>                  
-                <div class="control" style="display: none;">
-                  <button id="mute" class="controlButton">Mute</button> 
-                </div>
-                <div class="control" style="display: none;">
-                  
-                </div>                        
-                <div class="control" style="display: none;">
-                  <input type="text" value="100" class="dial" id="knb_volume" data-label="Volume" title="Master Volume" />  
-                </div>                                
-              </div>                
             </div>
-          </div>         
+          </div> 
         </div>
+
+
         <div id="notSupportedModal" title="Browser not supported" style="display: none">
           <p>Unfortunately, your browser does not support the technology needed to run the application.</p>
           <p>You can use a free, modern browser such a <a href="http://www.google.com/chrome">Google Chrome</a> to enjoy Synthogram.</p>
       </div>
-        <!-- END SYNTH -->    
-      </div>
-      <div class="tab-pane fade" id="about">
-        <h2>About</h2>
-      </div>
-      <div class="tab-pane fade" id="help">
-        <h2>Help</h2>
-      </div>
-    </div>  
-    <img id="defaultImage" src="data:image/png;base64,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" style="display:none;" />
+  
+      <img id="defaultImage" src="data:image/png;base64,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" style="display:none;" />
     <!-- Google analytics -->
-    <script>
+    <noscript>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
       ga('create', 'UA-44508092-1', 'www.synthogram.com');
       ga('send', 'pageview');
-    </script>
+    </noscript>
     <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>  
     <script src='https://cdn.firebase.com/v0/firebase.js'></script>

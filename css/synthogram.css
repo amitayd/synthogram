@@ -1,0 +1,620 @@
+.transparentOverlay {z-index: 50; pointer-events: none;}
+.paintLayer { position: absolute; top: 0px; left:0px; width: 384px; height: 240px;}
+
+/*#livePad {
+  position: absolute;
+  top: 50px;
+  left:5px;
+  width: 95px;
+  height: 240px;
+  background-color: white;
+  overflow:hidden;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  }*/
+
+.livePadCursor {
+display: none;
+position: absolute;
+width: 60px;
+height: 60px;
+-webkit-border-radius: 30px;
+-moz-border-radius: 30px;
+border-radius: 30px;
+cursor: pointer;
+background-image: -o-radial-gradient(circle, red, white 30px);
+background-image: -moz-radial-gradient(circle, red, white 30px);
+background-image: -webkit-radial-gradient(circle, red, white 30px);
+background-repeat: no-repeat;
+}
+
+
+#mainContainer {
+    width: 720px;
+    margin: 0 auto;
+    font-size: 9pt;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: #000;
+    position: relative;
+}
+#synth {
+    height:80px;
+    background-color: #000;
+    position: relative;
+}
+#sonogram {
+    height:300px;
+    width: 500px;
+    position: relative;
+}
+#sequencer {
+    height:80px;
+    width: 500px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+}
+h1 {
+    float: left;
+    width: auto;
+    margin:0;
+    padding: 0 10px;
+    font-size: 60px;
+    color: green;
+}
+#saving-box {
+    width: 145px;
+    position: absolute;
+    right:0;
+    bottom: 0;
+}
+#saving-box ul {
+    float: left;
+    width: 100%;
+    color: green;
+}
+#saving-box li {
+    float: left;
+    display: inline;
+    border: 1px solid green;
+    border-radius: 4px;
+    margin: 0 2px;
+}
+#saving-box li:hover {
+    border: 1px solid #fff;
+    background-color: green;
+}
+#saving-box a {
+    padding: 4px;
+    color: green;
+    text-decoration: none;
+}
+#saving-box li:hover a {
+    color: #000;
+}
+.compSide {
+    position: absolute;
+    right: 1px;
+    width: 200px;
+    height: 379px;
+    top: 80px;
+}
+.note {
+    background-color: green;
+    float: left;
+    width: 100%;
+    height: 40px;
+    margin-top: 6px;
+    border-radius: 10px;
+    line-height: 40px;
+    text-align: center;
+}
+#wPaint-menu {
+    text-align: center;
+    position: relative;
+    width: 500px;
+    height: 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    top: 5px;
+}
+.note-legend {
+    width:20px;
+    height: 240px;
+    position: absolute;
+    background-color: green;
+    top: 50px;
+    left: 96px;
+}
+#wPaint {
+    position: absolute;
+    width: 384px;
+    height: 240px;
+    background-color: #fff;
+    margin-top: 10px;
+    text-align: center;
+    left: 116px;
+}
+#livePad {
+    position: absolute;
+    width: 95px;
+    height: 240px;
+    background-color: #fff;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+.sidecontent {
+    width: 100%;
+    height: 328px;
+    position: absolute;
+    top: 51px;
+}
+.tab-label {
+    position: absolute;
+    width: 50%;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+    line-height: 30px;
+    background-color: green;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
+    cursor: pointer;
+}
+.tab-label:hover {
+    color: #fff;
+}
+.tab-label.selected {
+    border-bottom: 1px solid green;
+}
+#harmony {
+    z-index: 1;
+}
+#sound {
+    z-index: 2;
+}
+#harmony .tab-label {
+    left: 0;
+}
+#sound .tab-label {
+    right: 0;
+    border-right: 0px solid transparent;
+}
+.tab-content {
+    width: calc(100% - 2 * 4px);
+    top: 30px;
+    position: relative;
+    height: calc(100% - 38px);
+    padding: 4px;
+    background-color: green;
+}
+.compMain {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 530px;
+    height: 100%;
+}
+.box {
+    float: left;
+}
+#harmony .sep {
+    background-color: #000;
+    height:1px;
+    float: left;
+    width: 100%;
+    margin: 4px 0;
+    overflow: hidden;
+}
+#speed.box {
+    float: right;
+    height: 203px;
+}
+.boxing {
+    -webkit-box-sizing: border-box;
+    /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;
+    /* Firefox, other Gecko */
+    box-sizing: border-box;
+    /* Opera/IE 8+ */
+}
+h1 {
+    margin: 0;
+    line-height: 80px;
+    padding-left: 20px;
+}
+h4 {
+    margin: 0;
+    padding: 0;
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+#startNote ul, #musicalScale ul, #startOctave ul {
+    float: left;
+    width: 100%;
+}
+#startNote li, #musicalScale li, #numOctaves li {
+    float: left;
+    display: inline;
+}
+#startNote label, #musicalScale label, #oscillatorType label {
+    background-color: #000;
+    color: green;
+    border-radius: 4px;
+    padding: 2px;
+    margin: 3px 4px 3px 0;
+    text-align: center;
+    border: 1px solid #000;
+}
+#oscillatorType label {
+    width: 82px;
+    float: left;
+}
+#startNote label.selected, #musicalScale label.selected, #oscillatorType label.selected {
+    border: 1px solid #fff;
+}
+#startNote label {
+    width: 14px;
+    float: left;
+}
+#musicalScale label {
+    width: 82px;
+    float: left;
+}
+#startOctave ul {
+    border-width: 0 1px 1px 1px;
+    border-color: black;
+    border-style: solid;
+    margin: 4px 0;
+}
+#startOctave li {
+    border-width: 0 0 0 1px;
+    border-color: black;
+    border-style: solid;
+    display: inline;
+    float:left;
+    width: 22px;
+    text-align: center;
+}
+#startOctave label {
+    float:left;
+    width: 22px;
+    text-align: center;
+}
+#startOctave li:first-child {
+    border-width: 0;
+}
+#startOctave label.selected {
+    border-bottom: 1px solid #fff;
+    color: #fff;
+}
+#numOctaves ul {
+    margin: 4px 0;
+}
+#numOctaves label {
+    float: left;
+    border: 1px solid #000;
+    border-radius: 13px;
+    width: 26px;
+    height: 26px;
+    margin: 0 4px 0 0;
+    text-align: center;
+    line-height: 23px;
+}
+#numOctaves label.selected {
+    border: 1px solid #fff;
+    color: #fff;
+}
+#delay ul {
+    margin-top: 15px;
+    float: left;
+}
+#delay h4 {
+    text-align: center;
+}
+#delay li {
+    text-align: center;
+    float: left;
+    display: inline;
+    margin: 0 4px;
+}
+#delay .control {
+    width: 54px;
+    height: 54px;
+    line-height: 54px;
+    background-color: green;
+    border-radius: 27px;
+    border: 1px solid #000;
+}
+.horizontal-slider {
+    top: 3px;
+    height: 7px;
+    border: 1px solid #242424;
+    position: relative;
+    margin: 0 0 10px 110px;
+    -moz-border-radius: 12px;
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+    background-color: transparent;
+}
+.horizontal-slider .slider-handle {
+    left:2px;
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #242424;
+    cursor: w-resize;
+    top: -3px
+}
+.horizontal-slider .fill {
+    background-color: #B03060;
+    height: 7px;
+    border-radius: 4px 0 0 4px;
+}
+.balloon {
+    top: -16px;
+    border-radius: 3px;
+    position: relative;
+    font-size: 8px;
+    padding: 1px 2px;
+}
+#speed {
+    float: left;
+}
+#speed .balloon {
+    background: #228B22;
+}
+#speed .horizontal-slider {
+    width: 140px;
+    top: 4px;
+    margin-left: 34px;
+}
+#speed .horizontal-slider .fill {
+    background-color: #228B22;
+}
+#speed label {
+    float: left;
+}
+#volume {
+    float: left;
+    margin-top: 14px;
+}
+#volume .balloon {
+    background: #218868;
+}
+#volume .horizontal-slider {
+    width: 140px;
+    top: 4px;
+    margin-left: 34px;
+}
+#volume .horizontal-slider .fill {
+    background-color: #218868;
+}
+#volume {
+    text-align: center;
+    float: left;
+    display: inline;
+}
+#volume.control {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background-color: green;
+    border-radius: 25px;
+    border: 1px solid #000;
+}
+.volume-controls {
+    float: left;
+    width: 100%;
+}
+.volume-controls a:before, .volume-controls a:after {
+    margin: -8px 0 0;
+    background: #fff;
+    content:"";
+    position: absolute;
+    top: 50%;
+    left: 0;
+}
+#stepDuration {
+    width: 30px;
+    text-align: center;
+}
+input[type="radio"] {
+}
+.ui-helper-hidden-accessible {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+/* media control buttons*/
+ .play-controls {
+    float: right;
+    width: 35%;
+    margin-top: 8px;
+}
+.media-controls {
+    float: left;
+    width: 64%;
+    margin: 6px 0;
+}
+.media-controls a:before, .media-controls a:after {
+    margin: -8px 0 0;
+    background: #fff;
+    content:"";
+    position: absolute;
+    top: 50%;
+    left: 0;
+}
+.media-buttons {
+    margin: 0 110px;
+    width: 190px;
+}
+.volume-controls .media-buttons {
+    margin: 0 auto;
+    width: 100px;
+}
+.duration {
+    float: left;
+    margin-left: 55px;
+}
+.button {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    float: left;
+    margin: 0 2px;
+    border: 1px solid #fff;
+    border-radius: 20px;
+}
+.button:before, .button:after {
+    content:"";
+    position: absolute;
+    top: 50%;
+    left: 0;
+}
+.play, .pause, .hold {
+    width: 40px;
+    height: 40px;
+}
+.play a:before {
+    left: 16px;
+    border: 8px solid transparent;
+    border-width: 12px 12px;
+    border-left-color: #fff;
+    margin-top: -12px;
+    background: transparent;
+}
+/*.pause a:before {left: 14px; width: 4px; height: 23px; border: 4px solid #fff; border-width: 0 4px; margin-top: -10px; background: transparent;}*/
+ .pause a:before {
+    left: 10px;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+}
+.mute {
+    width: 18px;
+    height: 20px;
+    margin-top: 0px;
+    margin-left: -48px !important;
+}
+.mute:before {
+    width:16px;
+    height:16px;
+    border:1px solid #fff;
+    margin-top: -9px;
+    border-radius:16px;
+}
+.mute:after {
+    width:18px;
+    border-top:1px solid #fff;
+    -webkit-transform:rotate(-45deg);
+    -moz-transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg);
+    -o-transform:rotate(-45deg);
+    transform:rotate(-45deg);
+}
+.hold:before {
+    left: 11px;
+    width: 2px;
+    height: 12px;
+    margin-top: -13px;
+    background: #fff;
+}
+.selected.hold:before {
+    background: green;
+}
+.hold:after {
+    left: 16px;
+    width: 2px;
+    height: 12px;
+    margin-top: -13px;
+    background: #fff;
+}
+.selected.hold:after {
+    background: green;
+}
+.hold a:before {
+    left: 21px;
+    left: 21px;
+    width: 10px;
+    top: 16px;
+    height: 19px;
+    border-width: 2px 1px 0 2px;
+    border-style: solid;
+    border-color: #fff transparent transparent #fff;
+    background: transparent;
+    border-radius: 0 10px 0 0;
+}
+.hold a:after {
+    left: 14px;
+    width: 9px;
+    height: 8px;
+    margin-top: 6px;
+    background: #fff;
+    border-radius: 10px;
+}
+.volume {
+    width: 24px;
+    height: 24px;
+    top: -4px;
+    margin-left: -30px;
+    border: 0px solid transparent;
+}
+.volume a:before {
+    left:-2px;
+    border:7px solid transparent;
+    border-right-color: #fff;
+    margin-top:-7px;
+    background:transparent;
+}
+.volume a:after {
+    left:4px;
+    width:4px;
+    height:6px;
+    margin-top:-3px;
+}
+.volume-on:before {
+    left:12px;
+    width:6px;
+    height:6px;
+    margin-top:-5px;
+    border:4px double #fff;
+    border-width:4px 4px 0 0;
+    -webkit-border-radius:0 15px 0 0;
+    -moz-border-radius:0 15px 0 0;
+    border-radius:0 15px 0 0;
+    -webkit-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+    -ms-transform:rotate(45deg);
+    -o-transform:rotate(45deg);
+    transform:rotate(45deg);
+}
+/* just for display */
+ .rotate {
+    margin-top: 120px;
+    /* Safari */
+    -webkit-transform: rotate(-90deg);
+    /* Firefox */
+    -moz-transform: rotate(-90deg);
+    /* IE */
+    -ms-transform: rotate(-90deg);
+    /* Opera */
+    -o-transform: rotate(-90deg);
+    /* Internet Explorer */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
