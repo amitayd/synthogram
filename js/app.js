@@ -1,5 +1,5 @@
 /*exported  synthogramInit */
-/*globals  Muscula, $, window, Model, MUSIC, CanvasSource, OscSynth, Sequencer, Firebase */
+/*globals  Muscula, $, window, Model, CanvasSource, OscSynth, Sequencer, Firebase, sgResources */
 function synthogramInit() {
 
   // MODEL CREATION
@@ -23,17 +23,6 @@ function synthogramInit() {
     currentStep: 0,
     isMuted: false
   });
-
-
-  var getKeys = function(obj) {
-    return $.map(obj, function(element, index) {
-      return index;
-    }).sort();
-  };
-
-  var musicalScales = getKeys(MUSIC.scales);
-  musicalScales.push('quarter notes');
-
 
   // Property computations
   
@@ -69,7 +58,7 @@ function synthogramInit() {
         sonoModel.setVal('volume', 0);
       }
     } else {
-      if (!sonoModel.getVal('volume') > 0) {
+      if (sonoModel.getVal('volume') === 0) {
         sonoModel.setVal('volume', unMuteVolume);
       }
     }
@@ -172,34 +161,6 @@ function synthogramInit() {
     $('#wPaint').wPaint('snapGridHorizontal', xStep);
 
   };
-
-
-  $('#oscillatorType').on('change', function() {
-    var option = $('input:checked', '#oscillatorType')[0].id;
-    sonoModel.get('waveShape').set(option);
-  });
-
-  sonoModel.get('waveShape').addChangeListener(function(value) {
-    // Check the correct button on change
-    $('#' + value).attr("checked", "checked").button('refresh');
-  });
-
-  $('#mute').on('click', function() {
-    var volumeValue = 0;
-    // Unmute if needed
-    if (sonoModel.getVal('volume') === 0) {
-      // TODO: yuck
-      volumeValue = 0.5;
-    }
-    sonoModel.get('volume').set(volumeValue);
-  });
-
-  $('body').on('keydown', function(e) {
-    if (e.keyCode === 32) { //spacebar
-      $('.play , .stop').click();
-    }
-  });
-
 
   var livePad = function livePad(el) {
     var isMouseDown;
@@ -437,9 +398,7 @@ function synthogramInit() {
 
       });
     } else {
-      var defaultImage = $('#defaultImage').attr('src');
-      //console.log('defaultImage', defaultImage);
-      $('#wPaint').wPaint('image', defaultImage);
+      $('#wPaint').wPaint('image', sgResources.defaultImage);
       //A hack
       window.setTimeout(function() {
         console.log('addUndo');
@@ -454,9 +413,5 @@ function synthogramInit() {
   sonoModel.get('musicalScale').addChangeListener(drawGrid);
   drawGrid();
 
-
-
-  //window.onhashchange = loadImage;
   loadImage();
-  $('#stopPlayToggle').sgStartupTooltip(2000, 3000);
 }

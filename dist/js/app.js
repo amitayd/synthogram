@@ -1,13 +1,10 @@
 /*exported  synthogramInit */
-/*globals  Muscula, $, window, Model, MUSIC, CanvasSource, OscSynth, Sequencer, Firebase */
+/*globals  Muscula, $, window, Model, CanvasSource, OscSynth, Sequencer, Firebase, sgResources */
 function synthogramInit() {
 
   // MODEL CREATION
-
-  $.fn._button = $.fn.button.noConflict();
-  $.fn._tooltip = $.fn.tooltip.noConflict();
   var sonoModel = new Model({
-    stepDuration: 33.33,
+    stepsPerSecond: 40,
     volume: 0.5,
     numOscillators: 80,
     startFrequency: 55,
@@ -15,132 +12,96 @@ function synthogramInit() {
     delayFeedbackGain: 0.25,
     delayWetGain: 0.3,
     startNote: 'C',
+    startNoteKey: 'C',
+    startNoteAccidental: '',
     startOctave: 4,
     musicalScale: 'major',
     numOctaves: 2,
     waveShape: 'sine',
     isPlaying: false,
     isSynthPlaying: false,
-    currentStep: 0
+    currentStep: 0,
+    isMuted: false
   });
 
+  // Property computations
+  
+  // Set the sequencer to playing stopping according to this.
+  sonoModel.get('isSynthPlaying').addChangeListener(function(value) {
+    sonoModel.get('isPlaying').set(value);
+  });
 
-  var getKeys = function(obj) {
-    return $.map(obj, function(element, index) {
-      return index;
-    }).sort();
-  };
+  // TODO: refactor into some way to add computed properties
+  // Todo two way conversion: note <==> (key,accidental)
+  sonoModel.get('startNoteKey').addChangeListener(function() {
+    sonoModel.get('startNote').set(sonoModel.getVal('startNoteKey') + sonoModel.getVal('startNoteAccidental'));
+  });  
 
-  var musicalScales = getKeys(MUSIC.scales);
-  musicalScales.push('quarter notes');
+  sonoModel.get('startNoteAccidental').addChangeListener(function() {
+    sonoModel.get('startNote').set(sonoModel.getVal('startNoteKey') + sonoModel.getVal('startNoteAccidental'));
+  });  
+
+  sonoModel.get('startNote').addChangeListener(function(value) {
+    sonoModel.setVal('startNoteKey', value[0]);
+    if (value.length > 1) {
+      sonoModel.setVal('startNoteAccidental', value[1]);
+    }
+  });
+
+  var unMuteVolume = 0.5;
+  // When mute is set
+  sonoModel.get('isMuted').addChangeListener(function(isMuted) {
+    if (isMuted) {
+      var currentVolume = sonoModel.getVal('volume');
+      if (currentVolume !== 0) {
+        unMuteVolume = currentVolume;
+        sonoModel.setVal('volume', 0);
+      }
+    } else {
+      if (sonoModel.getVal('volume') === 0) {
+        sonoModel.setVal('volume', unMuteVolume);
+      }
+    }
+  });
+
+  // When volume is set to 0 set Muted to 
+  sonoModel.get('volume').addChangeListener(function(volume) {
+    if (volume === 0) {
+      sonoModel.setVal("isMuted", true);
+    } else {
+      sonoModel.setVal("isMuted", false);
+    }
+  });
+  
 
 
   // END MODEL CREATION
 
 
   // SET UP UI
+  
+  $('.compSide').sgTab();
+  $('.harmony.tab-label').click();
+  $('.button').sgButton(sonoModel);
+  $('.horizontal-slider').sgSlider(sonoModel);
+  $('.buttonset').sgButtonSet(sonoModel);
+  $('.knob').sgKnob(sonoModel);
 
-  $("#oscillatorType").buttonset();
-  $("#drawingTool").buttonset();
-  $('#pause').button({
-    icons: {
-      primary: "ui-icon-pause"
-    }
-  });
-  $('#stopPlayToggle').button({
-    icons: {
-      primary: "ui-icon-play"
-    }
-  });
-  $('#stopPlayToggle').tooltip({
-    position: {
-      my: "left+15 center",
-      at: "top"
-    }
-  });
-  $('#mute').button({
-    icons: {
-      primary: "ui-icon-cancel"
-    }
-  });
-  $('#volumeUp').button({
-    icons: {
-      primary: "ui-icon-volume-on"
-    }
-  });
-  $('#volumeDown').button({
-    icons: {
-      primary: "ui-icon-volume-off"
-    }
-  });
-  $('#save').button();
-  $('#saveNew').button();
-  $('#new').button();
-
-  $('#startNote').sgDropdown(sonoModel.get('startNote'), getKeys(MUSIC.notes));
-  $('#startOctave').sgDropdown(sonoModel.get('startOctave'), [0, 1, 2, 3, 4, 5, 6, 7]);
-  $('#musicalScale').sgDropdown(sonoModel.get('musicalScale'), musicalScales);
-  $('#numOctaves').sgDropdown(sonoModel.get('numOctaves'), [1, 2, 3, 4, 5, 6]);
-
-
-  $('#volumeUp').on('mousedown', function() {
-    var value = Math.min(1, sonoModel.getVal('volume') + 0.05);
-    sonoModel.get('volume').set(value);
-  });
-
-  $('#volumeDown').on('mousedown', function() {
-    sonoModel.get('volume').set(Math.max(0, sonoModel.getVal('volume') - 0.05));
-  });
-
-  sonoModel.get('volume').addChangeListener(function(value) {
-    $('#volumeValue').text(Math.floor(value * 100));
-  });
-  $('#volumeValue').text(sonoModel.getVal('volume') * 100);
-
-  var isSelectorClicked = false;
-  var stepSelector = $('#stepSelector');
-  stepSelector.bindMobileEventsPreventMouse();
-
-  var stepSelectorChange = function(e) {
-    var step = e.pageX - stepSelector.offset().left;
-    console.log(step);
-    sonoModel.get('currentStep').set(Math.floor(Math.min(Math.max(step, 0), source.numSteps)));
+  var setCurrentPosition = function(value) {
+    var text = value + ' / ' + $('#wPaint').width();
+    $('.current-position').text(text);
   };
 
-  stepSelector.bind('mousedown', function(e) {
-    isSelectorClicked = true;
-    stepSelectorChange(e);
-  });
-
-  stepSelector.bind('mouseup', function() {
-    isSelectorClicked = false;
-  });
-
-  stepSelector.bind('mousemove', function(e) {
-    if (isSelectorClicked) {
-      stepSelectorChange(e);
-    }
-  });
-
-  sonoModel.get('currentStep').addChangeListener(function(value) {
-    $('#stepSelector .fill').css('width', value);
-    $('#stepSelector .slider-handle').css('left', value);
-  });
-
-  $('#stepDuration').sgStepDurationSlider(sonoModel.get('stepDuration'));
-
-  //$('#knb_volume').sgKnob(sonoModel.get('volume'), 0, 100, 100, 5);
-  $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 5);
-  $('#knb_delayFeedbackGain').sgKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
-  $('#knb_delayWetGain').sgKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
+  sonoModel.get('currentStep').addChangeListener(setCurrentPosition);
+  setCurrentPosition(0);
 
 
   // override some wPaint settings
   $.fn.wPaint.menus.text.items.fontSize.range = [8, 9, 10, 12, 14, 16, 20, 24, 30, 40, 50, 60];
   $('#wPaint').wPaint({
     path: 'lib/wpaint/',
-    menuOffsetLeft: -120, // left offset of primary menu
-    menuOffsetTop: -45,
+    menuOffsetLeft: -115, // left offset of primary menu
+    menuOffsetTop: -46,
     lineWidth: '4', // starting line width
     fillStyle: '#0000FF', // starting fill style
     strokeStyle: '#000000', // start stroke style
@@ -195,62 +156,11 @@ function synthogramInit() {
 
     console.log('drawing grid', xStep, yStep);
     $('#overlayGrid').sgGrid(xStep, yStep);
-    $('#gridLabels').sgGridLabels(yStep, legendFunc);
+    $('#gridLabelsCanvas').sgGridLabels(yStep, legendFunc);
     $('#wPaint').wPaint('snapGridVertical', yStep);
     $('#wPaint').wPaint('snapGridHorizontal', xStep);
 
   };
-
-
-  $('#oscillatorType').on('change', function() {
-    var option = $('input:checked', '#oscillatorType')[0].id;
-    sonoModel.get('waveShape').set(option);
-  });
-
-  sonoModel.get('waveShape').addChangeListener(function(value) {
-    // Check the correct button on change
-    $('#' + value).attr("checked", "checked").button('refresh');
-  });
-
-  $('#mute').on('click', function() {
-    var volumeValue = 0;
-    // Unmute if needed
-    if (sonoModel.getVal('volume') === 0) {
-      // TODO: yuck
-      volumeValue = 0.5;
-    }
-    sonoModel.get('volume').set(volumeValue);
-  });
-
-  sonoModel.get('volume').addChangeListener(function(value) {
-    $('#mute').button('option', 'icons', {
-      primary: value === 0 ? 'ui-icon-radio-off' : 'ui-icon-cancel'
-    });
-  });
-
-  $('#pause').on('click', function() {
-    sonoModel.get('isPlaying').set(!sonoModel.getVal('isPlaying'));
-  });
-
-  $('#stopPlayToggle').on('click', function() {
-    var isSynthPlaying = !sonoModel.getVal('isSynthPlaying');
-    sonoModel.get('isSynthPlaying').set(isSynthPlaying);
-    sonoModel.get('isPlaying').set(isSynthPlaying);
-  });
-
-  sonoModel.get('isSynthPlaying').addChangeListener(function() {
-    var isSynthPlaying = sonoModel.getVal('isSynthPlaying');
-    $('#stopPlayToggle').button('option', 'icons', {
-      primary: isSynthPlaying ? 'ui-icon-stop' : ' ui-icon-play'
-    });
-  });
-
-  $('body').on('keydown', function(e) {
-    if (e.keyCode === 32) { //spacebar
-      $('#stopPlayToggle').trigger('click');
-    }
-  });
-
 
   var livePad = function livePad(el) {
     var isMouseDown;
@@ -353,9 +263,6 @@ function synthogramInit() {
   livePad($('#livePad'));
 
 
-
-
-
   //END SETUP UI
 
 
@@ -389,7 +296,7 @@ function synthogramInit() {
   );
 
   var sequencer = new Sequencer(synth, source,
-    sonoModel.get('stepDuration'), sonoModel.get('currentStep')
+    sonoModel.get('stepsPerSecond'), sonoModel.get('currentStep')
   );
 
   sonoModel.get('isPlaying').addChangeListener(function(value) {
@@ -418,12 +325,12 @@ function synthogramInit() {
     var img = $("#wPaint").wPaint("image");
 
     var settingsToSave = [
-      'stepDuration',
+      'stepsPerSecond',
       'startFrequency',
       'delayTime',
       'delayFeedbackGain',
       'delayWetGain',
-      'startNote',
+      'startNoteKey',
       'startOctave',
       'musicalScale',
       'numOctaves',
@@ -491,9 +398,7 @@ function synthogramInit() {
 
       });
     } else {
-      var defaultImage = $('#defaultImage').attr('src');
-      //console.log('defaultImage', defaultImage);
-      $('#wPaint').wPaint('image', defaultImage);
+      $('#wPaint').wPaint('image', sgResources.defaultImage);
       //A hack
       window.setTimeout(function() {
         console.log('addUndo');
@@ -508,9 +413,5 @@ function synthogramInit() {
   sonoModel.get('musicalScale').addChangeListener(drawGrid);
   drawGrid();
 
-
-
-  //window.onhashchange = loadImage;
   loadImage();
-  $('#stopPlayToggle').sgStartupTooltip(2000, 3000);
 }

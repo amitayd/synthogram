@@ -2,50 +2,35 @@
 /*globals  jQuery, window, document*/
 
 (function ($) {
-
-  /* create a label based on an elements title and data-label attributes */
-  $.fn.sgLabel = function () {
-    return this.each(function () {
-
-      var label = $("<label class='controlLabel' />");
-      label.attr({
-        'for': $(this).attr('id'),
-        title: $(this).attr('title')
-      });
-      label.text($(this).attr('data-label'));
-      $(this).before(label);
-
-      label.tooltip();
-    });
-  };
-
-
-  $.fn.sgKnob = function (property, min, max, scale, step) {
+  $.fn.sgKnob = function (model) {
 
     return this.each(function () {
-      scale = scale || 1;
-      step = step || 1;
       var element = $(this);
-      element.tooltip();
-      element.sgLabel();
+      var property = model.get(element.data('prop'));
+      var scale = element.data('scale') || 1;
+      var step = element.data('step') || 1;
+      var min = element.data('min') || 1;
+      var max = element.data('max') || 100;
+
       element.bind('change', function () {
         property.set(parseInt(element.val(), 10) / scale);
       });
 
       element.val(property.get() * scale);
       element.knob({
-        width: 50,
-        height: 50,
-        fgColor: 'ffec03',
-        inputColor: '#ffec03',
+        width: element.width(),
+        height: element.height(),
+        fgColor: element.css('color'),
+        inputColor: element.css('color'),
         thickness: 0.3,
-        bgColor: '#202020',
+        bgColor: element.css('backgroundColor'),
         displayPrevious: true,
         step: step,
         min: min,
         max: max,
         change: function (val) {
           // fix for the even returning values not rounded
+          console.log('val', val);
           var valRounded = Math.floor(val - (val % step)) / scale;
           property.set(valRounded);
         }
@@ -55,78 +40,6 @@
         element.val(value * scale);
         element.trigger('change');
       });
-    });
-  };
-
-  $.fn.sgDropdown = function (property, values) {
-    var isInteger = (typeof property.get() === 'number');
-
-    return this.each(function () {
-      var element = $(this);
-      $.each(values, function (key, value) {
-        element
-          .append($("<option></option>")
-            .attr("value", value)
-            .text(value));
-      });
-
-      element.val(property.get());
-      element.bind('change', function () {
-        var value = element.val();
-        if (isInteger) {
-          value = parseInt(value, 10);
-        }
-        property.set(value);
-      });
-
-      element.sgLabel();
-
-      property.addChangeListener(function (value) {
-        element.val(value);
-      });
-    });
-  };
-
-
-
-  // TODO: make more general
-  $.fn.sgStepDurationSlider = function (property) {
-
-    var pps = 1000 / property.get('stepDuration');
-    $('#stepDuration').val(pps);
-    $('#stepDurationSlider').slider({
-      min: 1,
-      max: 120,
-      value: pps,
-      orientation: 'vertical',
-      change: function (event, ui) {
-        $("#stepDuration").val(ui.value);
-        $("#stepDuration").trigger("change");
-      }
-    });
-    $('#stepDuration').bind('change', function () {
-      property.set(1 / $(this).val() * 1000);
-    });
-    $('#stepDuration').bindMobileEvents();
-
-    property.addChangeListener(function (value) {
-      $('#stepDuration').val(1000 / value);
-      $('#stepDurationSlider').slider('value', 1000 / value);
-    });
-  };
-
-  $.fn.sgStartupTooltip = function (delayTime, displayTime) {
-    return this.each(function () {
-      var el = $(this);
-      window.setTimeout(function () {
-        console.log('open', $(this));
-        el.tooltip('open');
-        window.setTimeout(function () {
-          console.log('close');
-          el.tooltip('close');
-          el.tooltip('disable');
-        }, displayTime);
-      }, delayTime);
     });
   };
 
@@ -165,10 +78,11 @@
   };
 
   $.fn.bindMobileEventsPreventMouse = function () {
-    $(this).on('touchstart touchmove touchend touchcancel', function (event) {
+    $(this).on('touchstart touchmove touchend touchcancel', function (e) {
+      var event = e.originalEvent;
       var touches = event.changedTouches,
-        first = touches[0],
-        type = '';
+          first = touches[0],
+          type = '';
 
       switch (event.type) {
       case 'touchstart':
@@ -187,18 +101,137 @@
         return;
       }
 
-      var simulatedEvent = document.createEvent('MouseEvent');
+      var simulatedEvent = document.createEvent('MouseEvent'); 
 
       simulatedEvent.initMouseEvent(
-        type, true, true, window, 1,
-        first.screenX, first.screenY, first.clientX, first.clientY,
-        false, false, false, false, 0 /*left*/ , null
+        type, true, true, window, 1, 
+        first.screenX, first.screenY, first.clientX, first.clientY, 
+        false, false, false, false, 0/*left*/, null
       );
 
       first.target.dispatchEvent(simulatedEvent);
     });
   };
 
+  /* create a tab in the children of the passed elements */
+  $.fn.sgTab = function () {
+    return this.each(function () {
+      var tabContainer = $(this);
+      var tabs = tabContainer.children('.sidecontent');
+      tabContainer.on('click', '.tab-label', function () {
+        var tab = $($(this).data('tab-selector'));
+        // hid the other tabs but this one
+        tabs.not(tab).hide();
+        $('.tab-label', tabContainer).removeClass('selected');
+        // Show this tab
+        $(this).addClass('selected');
+        tab.show();
+      });
+    });
+  };
+
+  /* create a button */
+  $.fn.sgButton = function (model) {
+    return this.each(function () {
+      var button = $(this);
+      var property = model.get(button.data('prop'));
+
+      var setValue = function () {
+        var value = property.get();
+        button.addClass(button.data(value ? 'onclass' : 'offclass'));
+        button.removeClass(button.data(value ? 'offclass' : 'onclass'));
+      };
+
+      property.addChangeListener(function () {
+        setValue();
+      });
+
+      button.on('click', function () {
+        // Simply negate the current value;
+        property.set(!property.get());
+      });
+
+      //Set the initial state
+      setValue();
+    });
+  };
+
+  /* create a button */
+  $.fn.sgButtonSet = function (model) {
+    return this.each(function () {
+      var buttonSet = $(this);
+      var property = model.get(buttonSet.data('prop'));
+
+      buttonSet.children('li').on('click', function () {
+        var value = $(this).data('val');
+        property.set(value);
+        // To prevent from other children being triggered
+        return false;
+      });
+
+      var setValue = function () {
+        var value = property.get();
+        $('.selected', buttonSet).removeClass('selected');
+        $('li[data-val="' + value + '"] label',buttonSet).addClass('selected');
+      };
+
+      property.addChangeListener(setValue);
 
 
+      //Set the initial state
+      setValue();
+    });
+  };
+
+  $.fn.sgSlider = function (model) {
+    return this.each(function () {
+      var slider = $(this);
+      var property = model.get(slider.data('prop'));
+      var scale = Number(slider.data('scale')) || 1;
+      // TODO: Not clear how to calculate the offset... I know it's 4 right now...
+      var width = slider.width() - 4;
+      var max = Number(slider.data('max')) || width;
+      var min = Number(slider.data('min')) || 0;
+      var range = max - min;
+      var handleOffset = Number($('.slider-handle', slider).width()) / 2;
+
+      var setValue = function () {
+        var value = Math.floor(property.get() * scale);
+        var x = (value - min) / range * width; 
+        $('.fill', slider).css('width', x);
+        $('.slider-handle', slider).css('left', x);
+        $('.balloon', slider).text(value);
+      };
+
+      property.addChangeListener(setValue);
+
+      var sliderChange = function (e) {
+        var x = e.pageX - slider.offset().left - handleOffset;
+        x = Math.min(x, width);
+        var value = x / width * range + min;
+        value = Math.max(value, min);
+        value = Math.min(value, max);
+        property.set(Math.floor(value) / scale);
+      };
+
+      var isMousedown = false;
+      slider.bind('mousedown', function (e) {
+        isMousedown = true;
+        sliderChange(e);
+      });
+
+      slider.bind('mouseup', function () {
+        isMousedown = false;
+      });
+
+      slider.bind('mousemove', function (e) {
+        if (isMousedown) {
+          sliderChange(e);
+        }
+      });
+
+      slider.bindMobileEvents();
+      setValue();
+    });
+  };
 })(jQuery);

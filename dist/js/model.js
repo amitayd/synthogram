@@ -37,10 +37,14 @@ function Model(defaultProperties) {
 
 Model.prototype.get = function(propName) {
   if (!this.exists(propName)) {
-    throw new Error('property ' + propName + ' not in model.');
+    throw new Error('property "' + propName + '" is not in model.');
   } 
   
   return this.properties[propName];
+};
+
+Model.prototype.setVal = function(propName, val) {
+  this.get(propName).set(val);
 };
 
 Model.prototype.getVal = function(propName) {
