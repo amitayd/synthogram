@@ -17,7 +17,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     parameter.value = property.get();
     property.addChangeListener(function(value) {
       parameter.value = value;
-      console.log('set Parameter value', parameter.value);
+      console.log('set Parameter value', property.name, parameter.value);
 
     });
   }

@@ -20,32 +20,35 @@
   };
 
 
-  $.fn.sgKnob = function (property, min, max, scale, step) {
+  $.fn.sgKnob = function (model) {
 
     return this.each(function () {
-      scale = scale || 1;
-      step = step || 1;
       var element = $(this);
-      element.tooltip();
-      element.sgLabel();
+      var property = model.get(element.data('prop'));
+      var scale = element.data('scale') || 1;
+      var step = element.data('step') || 1;
+      var min = element.data('min') || 1;
+      var max = element.data('max') || 100;
+
       element.bind('change', function () {
         property.set(parseInt(element.val(), 10) / scale);
       });
 
       element.val(property.get() * scale);
       element.knob({
-        width: 50,
-        height: 50,
-        fgColor: 'ffec03',
-        inputColor: '#ffec03',
+        width: element.width(),
+        height: element.height(),
+        fgColor: element.css('color'),
+        inputColor: element.css('color'),
         thickness: 0.3,
-        bgColor: '#202020',
+        bgColor: element.css('backgroundColor'),
         displayPrevious: true,
         step: step,
         min: min,
         max: max,
         change: function (val) {
           // fix for the even returning values not rounded
+          console.log('val', val);
           var valRounded = Math.floor(val - (val % step)) / scale;
           property.set(valRounded);
         }
@@ -204,16 +207,15 @@
     return this.each(function () {
       var tabContainer = $(this);
       var tabs = tabContainer.children('.sidecontent');
-      tabs.on('click', '.tab-label', function () {
-        var tab = $(this).parent();
-        // Unshow the other tabs but this one
-        tabs.not(tab).children('.tab-content').hide();
-        tabs.not(tab).children('.tab-label').removeClass('selected');
-        tabs.not(tab).css('z-index', 2);
+      tabContainer.on('click', '.tab-label', function () {
+        var tab = $($(this).data('tab-selector'));
+        console.log('tab', tab);
+        // hid the other tabs but this one
+        tabs.not(tab).hide();
+        tabContainer.children('.tab-label').removeClass('selected');
         // Show this tab
-        tab.children('.tab-label').addClass('selected');
-        tab.children('.tab-content').show();
-        tab.css('z-index', 1);
+        $(this).addClass('selected');
+        tab.show();
       });
     });
   };
@@ -244,6 +246,35 @@
     });
   };
 
+  /* create a button */
+  $.fn.sgButtonSet = function (model) {
+    return this.each(function () {
+      var buttonSet = $(this);
+      console.log(buttonSet);
+      var property = model.get(buttonSet.data('prop'));
+
+      buttonSet.children('li').on('click', function () {
+        var value = $(this).data('val');
+        property.set(value);
+        // To prevent from other children being triggered
+        console.log('click');
+        return false;
+      });
+
+      var setValue = function () {
+        var value = property.get();
+        $('.selected', buttonSet).removeClass('selected');
+        $('li[data-val="' + value + '"] label',buttonSet).addClass('selected');
+      };
+
+      property.addChangeListener(setValue);
+
+
+      //Set the initial state
+      setValue();
+    });
+  };
+
   $.fn.sgSlider = function (model) {
     return this.each(function () {
       var slider = $(this);
@@ -258,11 +289,9 @@
         $('.balloon', slider).text(value);
       };
 
-      property.addChangeListener(function () {
-        setValue();
-      });
+      property.addChangeListener(setValue);
 
-      var sliderChange = function(e) {
+      var sliderChange = function (e) {
         var value = e.pageX - slider.offset().left - handleOffset;
         value = Math.max(value, 0);
         value = Math.min(value, slider.width());

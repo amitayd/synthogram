@@ -100,27 +100,26 @@
             <div class="note">
               <div id="freqData">Note: <span id="freqName">--</span> | Freq: <span id="freqHertz">--</span> | HZ</div>
             </div>
+            <div class="side-tabs">
+              <div class="tab-label boxing harmony" data-tab-selector="#harmony">Harmony</div>
+              <div class="tab-label boxing sound" data-tab-selector="#sound">Sound</div>
+            </div>
             <div id="sound" class="sidecontent">
-              <div class="tab-label boxing">Sound</div>
               <div class="tab-content">
                 <div class="box" id="oscillatorType">
                   <h4>Wave Shape</h4>
-                  <ul class="buttons">                  
-                    <li>
-                      <label for="sine" role="button" aria-disabled="false">sine</label>
-                      <input type="radio" id="sine" name="radio" checked="" class="ui-helper-hidden-accessible">                  
+                  <ul class="buttons buttonset" data-prop="waveShape">                  
+                    <li data-val="sine">
+                      <label aria-disabled="false">sine</label>
                     </li>
-                    <li>
-                      <label for="square" role="button" aria-disabled="false">square</label>
-                      <input type="radio" id="square" name="radio" class="ui-helper-hidden-accessible">                                 
+                    <li data-val="square">
+                      <label aria-disabled="false">square</label>
                     </li>
-                    <li>
-                      <label for="sawtooth" role="button" aria-disabled="false">sawtooth</label>
-                      <input type="radio" id="sawtooth" name="radio" class="ui-helper-hidden-accessible">
+                    <li  data-val="sawtooth">
+                      <label aria-disabled="false">sawtooth</label>
                     </li>
-                    <li>
-                      <label for="triangle" role="button" aria-disabled="false">triangle</label>
-                      <input type="radio" id="triangle" name="radio" class="ui-helper-hidden-accessible">                   
+                    <li data-val="triangle">
+                      <label aria-disabled="false">triangle</label>
                     </li>                                   
                   </ul>             
                 </div>  
@@ -128,15 +127,21 @@
                   <ul>
                     <li>
                       <span>Time</span>
-                      <div class="control">125</div>
+                      <div class="control">
+                        <input type="text" class="knob" data-prop="delayTime" data-scale="1000" data-max="1000" data-step="5"></input>
+                      </div>
                     </li>
                     <li>
                       <span>Depth</span>
-                      <div class="control">30</div>
+                      <div class="control">
+                        <input type="text" class="knob" data-prop="delayWetGain" data-scale="100"></input>
+                      </div>
                     </li>
                     <li>
                       <span>Feedback</span>
-                      <div class="control">25</div>
+                      <div class="control">
+                        <input type="text" class="knob" data-prop="delayFeedbackGain" data-scale="100"></input>
+                      </div>
                     </li>
                   </ul>
                   <h4>Delay</h4>
@@ -144,146 +149,121 @@
               </div>
             </div>
             <div id="harmony" class="sidecontent">
-              <div class="tab-label boxing selected">Harmony</div>
               <div class="tab-content">
                 <div class="box" id="musicalScale">
                   <h4>Musical Scale</h4>
-                  <ul>
-                    <li>
+                  <ul class="buttonset" data-prop="musicalScale">
+                    <li data-val="harmonic minor">
                       <label for="harmonic-minor">harmonic minor</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="harmonic-minor" value="harmonic minor" />
                     </li>
-                    <li>
+                    <li data-val="major">
                       <label for="major">major</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="major" value="major" />
                     </li>
-                    <li>
+                    <li data-val="major pentatonic">
                       <label for="major-pentatonic">major pentatonic</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="major-pentatonic" value="major pentatonic" />
                     </li>
-                    <li>
-                      <label for="minor-pentatonic">minor pentatonic</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="minor-pentatonic" value="minor pentatonic" />
+                    <li data-val="minor pentatonic">
+                      <label>minor pentatonic</label>
                     </li>
-                    <li>
-                      <label for="natural-minor">natural minor</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="natural-minor" value="natural minor" />
+                    <li data-val="natural minor">
+                      <label>natural minor</label>
                     </li>
-                    <li>
-                      <label for="quarter-notes">quarter notes</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="quarter-notes" value="quarter notes" />
+                    <li data-val="quarter notes">
+                      <label>quarter notes</label>
+                      
                     </li>
                   </ul>
                 </div>
                 <div class="sep"></div>
                 <div class="box" id="startNote">
                   <h4>Starting Note</h4>
-                  <ul>                  
-                    <li>
-                      <label for="A">A</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="A" value="A" />
+                  <ul class="buttonset" data-prop="startNoteKey">                  
+                    <li data-val="A">
+                      <label>A</label>
                     </li>               
-                    <li>
-                      <label for="B">B</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="B" value="B" />
+                    <li data-val="B">
+                      <label>B</label>
                     </li>               
-                    <li>
-                      <label for="C">C</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="C" value="C" />
+                    <li data-val="C">
+                      <label>C</label>
                     </li>               
-                    <li>
-                      <label for="D">D</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="D" value="D" />
+                    <li data-val="D">
+                      <label>D</label>
                     </li>               
-                    <li>
-                      <label for="E">E</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="E" value="E" />
+                    <li data-val="E">
+                      <label>E</label>
                     </li>               
-                    <li>
-                      <label for="F">F</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="F" value="F" />
+                    <li  data-val="F">
+                      <label>F</label>
                     </li>               
-                    <li>
-                      <label for="G">G</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="G" value="G" />
+                    <li data-val="G">
+                      <label>G</label>
                     </li>               
                   </ul>
-                  <ul>                
-                    <li>
-                      <label for="diese">#</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="diese" value="diese" />
+                  <ul class="buttonset" data-prop="startNoteAccidental">                
+                    <li data-val="#">
+                      <label>#</label>
+                      
                     </li>
-                    <li>
-                      <label for="bemolle">b</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="bemolle" value="bemolle" />
+                    <li data-val="b">
+                      <label>b</label>
                     </li>
                   </ul>
                 </div>
                 <div class="sep"></div>
                 <div class="box" id="startOctave">
                   <h4>Starting Octave</h4>
-                  <ul>
-                    <li>
-                      <label for="s0">0</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="s0" value="0" />
+                  <ul class="buttonset" data-prop="startOctave">
+                    <li data-val="0">
+                      <label>0</label>
                     </li>
-                    <li>
-                      <label for="s1">1</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="s1" value="1" />
+                    <li data-val="1">
+                      <label>1</label>
                     </li>
-                    <li>
-                      <label for="s2">2</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="s2" value="2" />
+                    <li data-val="2">
+                      <label>2</label>
                     </li>
-                    <li>
-                      <label for="s3">3</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="s3" value="3" />
+                    <li data-val="3">
+                      <label>3</label>
                     </li>
-                    <li>
-                      <label for="s4">4</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="s4" value="4" />
+                    <li data-val="4">
+                      <label>4</label>
                     </li>
-                    <li>
-                      <label for="s5">5</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="s5" value="5" />
+                    <li data-val="5">
+                      <label>5</label>
                     </li>
-                    <li>
-                      <label for="s6">6</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="s6" value="6" />
+                    <li data-val="6">
+                      <label>6</label>
                     </li>
-                    <li>
-                      <label for="s7">7</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="s7" value="7" />
+                    <li data-val="7">
+                      <label>7</label>
                     </li>
                   </ul>
                 </div>    
                 <div class="sep"></div>
                 <div class="box" id="numOctaves">
                   <h4>Number of octaves</h4>
-                  <ul>                  
-                    <li>
-                      <label for="n1">1</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="n1" value="1" />
+                  <ul class="buttonset" data-prop="numOctaves">                  
+                    <li data-val="1">
+                      <label>1</label>
                     </li>
-                    <li>
-                      <label for="n2">2</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="n2" value="2" />
+                    <li data-val="2">
+                      <label>2</label>
                     </li>
-                    <li>
-                      <label for="n3">3</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="n3" value="3" />
+                    <li data-val="3">
+                      <label>3</label>
+                      
                     </li>
-                    <li>
-                      <label for="n4">4</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="n4" value="4" />
+                    <li data-val="4">
+                      <label>4</label>
+                      
                     </li>
-                    <li>
-                      <label for="n5">5</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="n5" value="5" />
+                    <li data-val="5">
+                      <label>5</label>
+                      
                     </li>
-                    <li>
-                      <label for="n6">6</label>
-                      <input class="ui-helper-hidden-accessible" type="radio" id="n6" value="6" />
+                    <li data-val="6">
+                      <label>6</label>
                     </li>                 
                   </ul>               
                 </div>
@@ -310,7 +290,7 @@
     </noscript>
     <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>  
-    <script src='https://cdn.firebase.com/v0/firebase.js'></script>
+    <noscript src='https://cdn.firebase.com/v0/firebase.js'></noscript>
     <!-- build:js synthogram.js -->
     <script src="lib/music.js"></script>
     <script src="js/waapi_shim.js"></script>

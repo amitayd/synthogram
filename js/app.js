@@ -12,6 +12,8 @@ function synthogramInit() {
     delayFeedbackGain: 0.25,
     delayWetGain: 0.3,
     startNote: 'C',
+    startNoteKey: 'C',
+    startNoteAccidental: '',
     startOctave: 4,
     musicalScale: 'major',
     numOctaves: 2,
@@ -38,6 +40,23 @@ function synthogramInit() {
   sonoModel.get('isSynthPlaying').addChangeListener(function(value) {
     sonoModel.get('isPlaying').set(value);
   });
+
+  // TODO: refactor into some way to add computed properties
+  // Todo two way conversion: note <==> (key,accidental)
+  sonoModel.get('startNoteKey').addChangeListener(function() {
+    sonoModel.get('startNote').set(sonoModel.getVal('startNoteKey') + sonoModel.getVal('startNoteAccidental'));
+  });  
+
+  sonoModel.get('startNoteAccidental').addChangeListener(function() {
+    sonoModel.get('startNote').set(sonoModel.getVal('startNoteKey') + sonoModel.getVal('startNoteAccidental'));
+  });  
+
+  sonoModel.get('startNote').addChangeListener(function(value) {
+    sonoModel.setVal('startNoteKey', value[0]);
+    if (value.length > 1) {
+      sonoModel.setVal('startNoteAccidental', value[1]);
+    }
+  });    
   
 
 
@@ -50,6 +69,13 @@ function synthogramInit() {
   $('#harmony .tab-label').click();
   $('.media-controls .button').sgButton(sonoModel);
   $('.horizontal-slider').sgSlider(sonoModel);
+  $('.buttonset').sgButtonSet(sonoModel);
+  $('.knob').sgKnob(sonoModel);
+
+
+  // $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 5);
+  // $('#knb_delayFeedbackGain').sgKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
+  // $('#knb_delayWetGain').sgKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
 
 
   $('#volumeUp').on('mousedown', function() {
@@ -98,7 +124,6 @@ function synthogramInit() {
 
 
 
-  //$('#knb_volume').sgKnob(sonoModel.get('volume'), 0, 100, 100, 5);
   $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 5);
   $('#knb_delayFeedbackGain').sgKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
   $('#knb_delayWetGain').sgKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
@@ -392,7 +417,7 @@ function synthogramInit() {
       'delayTime',
       'delayFeedbackGain',
       'delayWetGain',
-      'startNote',
+      'startNoteKey',
       'startOctave',
       'musicalScale',
       'numOctaves',
