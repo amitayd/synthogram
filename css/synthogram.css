@@ -1,19 +1,6 @@
 .transparentOverlay {z-index: 50; pointer-events: none;}
 .paintLayer { position: absolute; top: 0px; left:0px; width: 384px; height: 240px;}
 
-/*#livePad {
-  position: absolute;
-  top: 50px;
-  left:5px;
-  width: 95px;
-  height: 240px;
-  background-color: white;
-  overflow:hidden;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  }*/
-
 .livePadCursor {
 display: none;
 position: absolute;
@@ -276,6 +263,8 @@ ul {
 #musicalScale label {
     width: 82px;
     float: left;
+    white-space: nowrap;
+    overflow: hidden;
 }
 #startOctave ul {
     border-width: 0 1px 1px 1px;
@@ -339,12 +328,11 @@ ul {
     height: 54px;
     line-height: 54px;
     background-color: green;
-    margin-top:5px;
 }
 
 .knob {
-    width: 51px;
-    height: 51px;
+    width: 50px;
+    height: 50px;
     background-color: black;
     color: white;
 }
@@ -482,7 +470,7 @@ input[type="radio"] {
     margin: 0 auto;
     width: 100px;
 }
-.duration {
+.current-position {
     float: left;
     margin-left: 55px;
 }
@@ -524,7 +512,6 @@ input[type="radio"] {
     width: 18px;
     height: 20px;
     margin-top: 0px;
-    margin-left: -48px !important;
 }
 .mute:before {
     width:16px;

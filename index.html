@@ -42,16 +42,18 @@
             <h1>Synthogram</h1>
             <div id="saving-box">
               <ul>
-                <li><a href="#noop">New</a></li>
-                <li><a href="#noop">Save</a></li>
-                <li><a href="#noop">Save a copy</a></li>
+                <li><a id="new">New</a></li>
+                <li><a id="save">Save</a></li>
+                <li><a id="saveNew">Save a copy</a></li>
               </ul>
             </div>
           </div>
           <div id="sonogram" class="componenet">
             <div class="compMain">          
               <div id="wPaint-menu">Draw Menu</div>
-              <div id="livePad">livePad</div>
+              <div id="livePad">Live Pad (c)
+                <div class="livePadCursor"></div>
+              </div>
               <div class="note-legend" id="gridLabels">
                 <canvas id="gridLabelsCanvas" width="20" height="240"></canvas>
               </div>  
@@ -63,7 +65,7 @@
           </div>
           <div id="sequencer" class="componenet">       
             <div id="progress">
-              <span class="duration">0:41 / 4:39</span>
+              <span class="current-position">-</span>
               <div class="horizontal-slider" data-prop="currentStep">
                 <div class="fill" style="width: 80px;"></div>
                 <div class="slider-handle" style="left: 80px;"></div>
@@ -71,25 +73,24 @@
             </div>        
             <div class="media-controls">
               <div class="media-buttons">           
-                <div class="button play" title="Play" data-onclass="stop" data-offclass="play" data-prop="isSynthPlaying"><a href="#noop"></a></div>
+                <div class="button play" title="Play" data-onclass="stop" data-offclass="play" data-prop="isSynthPlaying"><a /></div>
                 
-                <div class="button hold" title="Hold Tune" data-onclass="" data-offclass="selected" data-prop="isPlaying"><a href="#noop"></a></div> 
+                <div class="button hold" title="Hold Tune" data-onclass="" data-offclass="selected" data-prop="isPlaying"><a /></div> 
               </div>        
             </div>  
             <div class="play-controls">
               <div id="speed">
                 <label>Speed:</label>
-                <div class="horizontal-slider" data-prop="stepsPerSecond">
+                <div class="horizontal-slider" data-prop="stepsPerSecond" data-max="120" data-min="1">
                   <div class="fill" style="width: 30px;"></div>
                   <div class="slider-handle" style="left: 30px;"><span class="balloon">30</span></div>
                 </div>  
               </div>
               <div id="volume" class="volume-controls">
                 <div class="media-buttons">                                 
-                  <div class="button volume volume-on" title="Volume"><a href="#noop"></a></div>  
-                  <div class="button volume mute" title="Mute"><a href="#noop"></a></div>               
+                  <div class="button volume mute" title="Mute" data-onclass="mute" data-offclass="volume-on" data-prop="isMuted"><a /></div>
                 </div>  
-                <div class="horizontal-slider" data-prop="volume" data-scale="100">
+                <div class="horizontal-slider" data-prop="volume" data-scale="100" data-max="100">
                   <div class="fill" style="width: 60px;"></div>
                   <div class="slider-handle" style="left: 60px;"><span class="balloon">60</span></div>
                 </div>  
@@ -101,10 +102,10 @@
               <div id="freqData">Note: <span id="freqName">--</span> | Freq: <span id="freqHertz">--</span> | HZ</div>
             </div>
             <div class="side-tabs">
-              <div class="tab-label boxing harmony" data-tab-selector="#harmony">Harmony</div>
+              <div class="tab-label boxing harmony selected" data-tab-selector="#harmony">Harmony</div>
               <div class="tab-label boxing sound" data-tab-selector="#sound">Sound</div>
             </div>
-            <div id="sound" class="sidecontent">
+            <div id="sound" class="sidecontent" style="display:none">
               <div class="tab-content">
                 <div class="box" id="oscillatorType">
                   <h4>Wave Shape</h4>
@@ -290,7 +291,7 @@
     </noscript>
     <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
     <script src="http://codeorigin.jquery.com/ui/1.10.3/jquery-ui.min.js"></script>  
-    <noscript src='https://cdn.firebase.com/v0/firebase.js'></noscript>
+    <script src='https://cdn.firebase.com/v0/firebase.js'></script>
     <!-- build:js synthogram.js -->
     <script src="lib/music.js"></script>
     <script src="js/waapi_shim.js"></script>

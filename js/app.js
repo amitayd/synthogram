@@ -4,7 +4,7 @@ function synthogramInit() {
 
   // MODEL CREATION
   var sonoModel = new Model({
-    stepsPerSecond: 30,
+    stepsPerSecond: 40,
     volume: 0.5,
     numOscillators: 80,
     startFrequency: 55,
@@ -20,7 +20,8 @@ function synthogramInit() {
     waveShape: 'sine',
     isPlaying: false,
     isSynthPlaying: false,
-    currentStep: 0
+    currentStep: 0,
+    isMuted: false
   });
 
 
@@ -56,7 +57,32 @@ function synthogramInit() {
     if (value.length > 1) {
       sonoModel.setVal('startNoteAccidental', value[1]);
     }
-  });    
+  });
+
+  var unMuteVolume = 0.5;
+  // When mute is set
+  sonoModel.get('isMuted').addChangeListener(function(isMuted) {
+    if (isMuted) {
+      var currentVolume = sonoModel.getVal('volume');
+      if (currentVolume !== 0) {
+        unMuteVolume = currentVolume;
+        sonoModel.setVal('volume', 0);
+      }
+    } else {
+      if (!sonoModel.getVal('volume') > 0) {
+        sonoModel.setVal('volume', unMuteVolume);
+      }
+    }
+  });
+
+  // When volume is set to 0 set Muted to 
+  sonoModel.get('volume').addChangeListener(function(volume) {
+    if (volume === 0) {
+      sonoModel.setVal("isMuted", true);
+    } else {
+      sonoModel.setVal("isMuted", false);
+    }
+  });
   
 
 
@@ -66,67 +92,19 @@ function synthogramInit() {
   // SET UP UI
   
   $('.compSide').sgTab();
-  $('#harmony .tab-label').click();
-  $('.media-controls .button').sgButton(sonoModel);
+  $('.harmony.tab-label').click();
+  $('.button').sgButton(sonoModel);
   $('.horizontal-slider').sgSlider(sonoModel);
   $('.buttonset').sgButtonSet(sonoModel);
   $('.knob').sgKnob(sonoModel);
 
-
-  // $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 5);
-  // $('#knb_delayFeedbackGain').sgKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
-  // $('#knb_delayWetGain').sgKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
-
-
-  $('#volumeUp').on('mousedown', function() {
-    var value = Math.min(1, sonoModel.getVal('volume') + 0.05);
-    sonoModel.get('volume').set(value);
-  });
-
-  $('#volumeDown').on('mousedown', function() {
-    sonoModel.get('volume').set(Math.max(0, sonoModel.getVal('volume') - 0.05));
-  });
-
-  sonoModel.get('volume').addChangeListener(function(value) {
-    $('#volumeValue').text(Math.floor(value * 100));
-  });
-  $('#volumeValue').text(sonoModel.getVal('volume') * 100);
-
-  var isSelectorClicked = false;
-  var stepSelector = $('#stepSelector');
-  stepSelector.bindMobileEventsPreventMouse();
-
-  var stepSelectorChange = function(e) {
-    var step = e.pageX - stepSelector.offset().left;
-    console.log(step);
-    sonoModel.get('currentStep').set(Math.floor(Math.min(Math.max(step, 0), source.numSteps)));
+  var setCurrentPosition = function(value) {
+    var text = value + ' / ' + $('#wPaint').width();
+    $('.current-position').text(text);
   };
 
-  stepSelector.bind('mousedown', function(e) {
-    isSelectorClicked = true;
-    stepSelectorChange(e);
-  });
-
-  stepSelector.bind('mouseup', function() {
-    isSelectorClicked = false;
-  });
-
-  stepSelector.bind('mousemove', function(e) {
-    if (isSelectorClicked) {
-      stepSelectorChange(e);
-    }
-  });
-
-  sonoModel.get('currentStep').addChangeListener(function(value) {
-    $('#stepSelector .fill').css('width', value);
-    $('#stepSelector .slider-handle').css('left', value);
-  });
-
-
-
-  $('#knb_delayTime').sgKnob(sonoModel.get('delayTime'), 0, 1000, 1000, 5);
-  $('#knb_delayFeedbackGain').sgKnob(sonoModel.get('delayFeedbackGain'), 0, 100, 100, 5);
-  $('#knb_delayWetGain').sgKnob(sonoModel.get('delayWetGain'), 0, 100, 100, 5);
+  sonoModel.get('currentStep').addChangeListener(setCurrentPosition);
+  setCurrentPosition(0);
 
 
   // override some wPaint settings
@@ -216,32 +194,9 @@ function synthogramInit() {
     sonoModel.get('volume').set(volumeValue);
   });
 
-  sonoModel.get('volume').addChangeListener(function(value) {
-    $('#mute').button('option', 'icons', {
-      primary: value === 0 ? 'ui-icon-radio-off' : 'ui-icon-cancel'
-    });
-  });
-
-  $('#pause').on('click', function() {
-    sonoModel.get('isPlaying').set(!sonoModel.getVal('isPlaying'));
-  });
-
-  $('#stopPlayToggle').on('click', function() {
-    var isSynthPlaying = !sonoModel.getVal('isSynthPlaying');
-    sonoModel.get('isSynthPlaying').set(isSynthPlaying);
-    sonoModel.get('isPlaying').set(isSynthPlaying);
-  });
-
-  sonoModel.get('isSynthPlaying').addChangeListener(function() {
-    var isSynthPlaying = sonoModel.getVal('isSynthPlaying');
-    $('#stopPlayToggle').button('option', 'icons', {
-      primary: isSynthPlaying ? 'ui-icon-stop' : ' ui-icon-play'
-    });
-  });
-
   $('body').on('keydown', function(e) {
     if (e.keyCode === 32) { //spacebar
-      $('#stopPlayToggle').trigger('click');
+      $('.play , .stop').click();
     }
   });
 
@@ -345,9 +300,6 @@ function synthogramInit() {
   };
 
   livePad($('#livePad'));
-
-
-
 
 
   //END SETUP UI

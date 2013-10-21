@@ -168,10 +168,11 @@
   };
 
   $.fn.bindMobileEventsPreventMouse = function () {
-    $(this).on('touchstart touchmove touchend touchcancel', function (event) {
+    $(this).on('touchstart touchmove touchend touchcancel', function (e) {
+      var event = e.originalEvent;
       var touches = event.changedTouches,
-        first = touches[0],
-        type = '';
+          first = touches[0],
+          type = '';
 
       switch (event.type) {
       case 'touchstart':
@@ -190,12 +191,12 @@
         return;
       }
 
-      var simulatedEvent = document.createEvent('MouseEvent');
+      var simulatedEvent = document.createEvent('MouseEvent'); 
 
       simulatedEvent.initMouseEvent(
-        type, true, true, window, 1,
-        first.screenX, first.screenY, first.clientX, first.clientY,
-        false, false, false, false, 0 /*left*/ , null
+        type, true, true, window, 1, 
+        first.screenX, first.screenY, first.clientX, first.clientY, 
+        false, false, false, false, 0/*left*/, null
       );
 
       first.target.dispatchEvent(simulatedEvent);
@@ -209,10 +210,9 @@
       var tabs = tabContainer.children('.sidecontent');
       tabContainer.on('click', '.tab-label', function () {
         var tab = $($(this).data('tab-selector'));
-        console.log('tab', tab);
         // hid the other tabs but this one
         tabs.not(tab).hide();
-        tabContainer.children('.tab-label').removeClass('selected');
+        $('.tab-label', tabContainer).removeClass('selected');
         // Show this tab
         $(this).addClass('selected');
         tab.show();
@@ -250,14 +250,12 @@
   $.fn.sgButtonSet = function (model) {
     return this.each(function () {
       var buttonSet = $(this);
-      console.log(buttonSet);
       var property = model.get(buttonSet.data('prop'));
 
       buttonSet.children('li').on('click', function () {
         var value = $(this).data('val');
         property.set(value);
         // To prevent from other children being triggered
-        console.log('click');
         return false;
       });
 
@@ -280,21 +278,29 @@
       var slider = $(this);
       var property = model.get(slider.data('prop'));
       var scale = Number(slider.data('scale')) || 1;
+      // TODO: Not clear how to calculate the offset... I know it's 4 right now...
+      var width = slider.width() - 4;
+      var max = Number(slider.data('max')) || width;
+      var min = Number(slider.data('min')) || 0;
+      var range = max - min;
       var handleOffset = Number($('.slider-handle', slider).width()) / 2;
 
       var setValue = function () {
         var value = Math.floor(property.get() * scale);
-        $('.fill', slider).css('width', value);
-        $('.slider-handle', slider).css('left', value);
+        var x = (value - min) / range * width; 
+        $('.fill', slider).css('width', x);
+        $('.slider-handle', slider).css('left', x);
         $('.balloon', slider).text(value);
       };
 
       property.addChangeListener(setValue);
 
       var sliderChange = function (e) {
-        var value = e.pageX - slider.offset().left - handleOffset;
-        value = Math.max(value, 0);
-        value = Math.min(value, slider.width());
+        var x = e.pageX - slider.offset().left - handleOffset;
+        x = Math.min(x, width);
+        var value = x / width * range + min;
+        value = Math.max(value, min);
+        value = Math.min(value, max);
         property.set(Math.floor(value) / scale);
       };
 
