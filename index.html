@@ -37,13 +37,15 @@
   </head>
   <body>
         <!-- SYNTH -->
-        <div id="mainContainer">
+        <div id="mainContainer" class="mainShadow">
           <div id="synth" class="componenet">
             <h1>Synthogram</h1>
             <div id="saving-box">
               <ul>
                 <li><a id="new">New</a></li>
+				<li>|</li>
                 <li><a id="save">Save</a></li>
+				<li>|</li>
                 <li><a id="saveNew">Save a copy</a></li>
               </ul>
             </div>
@@ -58,8 +60,8 @@
                 <canvas id="gridLabelsCanvas" width="20" height="240"></canvas>
               </div>  
               <div id="wPaint">
-                <canvas id="overlay" class='paintLayer transparentOverlay ' width="384" height="240"></canvas>
-                <canvas id="overlayGrid" class='paintLayer transparentOverlay' width="384" height="240"></canvas>
+                <canvas id="overlay" class="paintLayer transparentOverlay" width="384" height="240"></canvas>
+                <canvas id="overlayGrid" class="paintLayer transparentOverlay" width="384" height="240"></canvas>
               </div>                 
             </div>        
           </div>
@@ -73,14 +75,13 @@
             </div>        
             <div class="media-controls">
               <div class="media-buttons">           
-                <div class="button play" title="Play" data-onclass="stop" data-offclass="play" data-prop="isSynthPlaying"><a /></div>
-                
-                <div class="button hold" title="Hold Tune" data-onclass="" data-offclass="selected" data-prop="isPlaying"><a /></div> 
+                <div class="button play buttonShadow" title="Play" data-onclass="stop" data-offclass="play" data-prop="isSynthPlaying"><a></a></div>                
+                <div class="button hold buttonShadow" title="Hold Tune" data-onclass="" data-offclass="selected" data-prop="isPlaying"><a></a></div> 
               </div>        
             </div>  
             <div class="play-controls">
               <div id="speed">
-                <label>Speed:</label>
+                <label>Speed</label>
                 <div class="horizontal-slider" data-prop="stepsPerSecond" data-max="120" data-min="1">
                   <div class="fill" style="width: 30px;"></div>
                   <div class="slider-handle" style="left: 30px;"><span class="balloon">30</span></div>
@@ -88,7 +89,7 @@
               </div>
               <div id="volume" class="volume-controls">
                 <div class="media-buttons">                                 
-                  <div class="button volume mute" title="Mute" data-onclass="mute" data-offclass="volume-on" data-prop="isMuted"><a /></div>
+                  <div class="button volume mute" title="Mute" data-onclass="mute" data-offclass="volume-on" data-prop="isMuted"><a></a></div>
                 </div>  
                 <div class="horizontal-slider" data-prop="volume" data-scale="100" data-max="100">
                   <div class="fill" style="width: 60px;"></div>
@@ -99,7 +100,7 @@
           </div>
           <div class="compSide">  
             <div class="note">
-              <div id="freqData">Note: <span id="freqName">--</span> | Freq: <span id="freqHertz">--</span> | HZ</div>
+              <div id="freqData">Note: <span id="freqName">--</span> | Freq: <span id="freqHertz">--</span> Hz</div>
             </div>
             <div class="side-tabs">
               <div class="tab-label boxing harmony selected" data-tab-selector="#harmony">Harmony</div>
@@ -111,19 +112,20 @@
                   <h4>Wave Shape</h4>
                   <ul class="buttons buttonset" data-prop="waveShape">                  
                     <li data-val="sine">
-                      <label aria-disabled="false">sine</label>
+                      <label aria-disabled="false">Sine</label>
                     </li>
                     <li data-val="square">
-                      <label aria-disabled="false">square</label>
+                      <label aria-disabled="false">Square</label>
                     </li>
                     <li  data-val="sawtooth">
-                      <label aria-disabled="false">sawtooth</label>
+                      <label aria-disabled="false">Sawtooth</label>
                     </li>
                     <li data-val="triangle">
-                      <label aria-disabled="false">triangle</label>
+                      <label aria-disabled="false">Triangle</label>
                     </li>                                   
                   </ul>             
-                </div>  
+                </div> 
+				<div class="sep"></div>				
                 <div class="box" id="delay">
                   <ul>
                     <li>
@@ -155,23 +157,22 @@
                   <h4>Musical Scale</h4>
                   <ul class="buttonset" data-prop="musicalScale">
                     <li data-val="harmonic minor">
-                      <label for="harmonic-minor">harmonic minor</label>
+                      <label for="harmonic-minor">Harmonic Minor</label>
                     </li>
                     <li data-val="major">
-                      <label for="major">major</label>
+                      <label for="major">Major</label>
                     </li>
                     <li data-val="major pentatonic">
-                      <label for="major-pentatonic">major pentatonic</label>
+                      <label for="major-pentatonic">Major Pentatonic</label>
                     </li>
                     <li data-val="minor pentatonic">
-                      <label>minor pentatonic</label>
+                      <label>Minor Pentatonic</label>
                     </li>
                     <li data-val="natural minor">
-                      <label>natural minor</label>
+                      <label>Natural Minor</label>
                     </li>
                     <li data-val="quarter notes">
-                      <label>quarter notes</label>
-                      
+                      <label>Quarter Notes</label>                      
                     </li>
                   </ul>
                 </div>
@@ -203,8 +204,7 @@
                   </ul>
                   <ul class="buttonset" data-prop="startNoteAccidental">                
                     <li data-val="#">
-                      <label>#</label>
-                      
+                      <label>#</label>                      
                     </li>
                     <li data-val="b">
                       <label>b</label>
@@ -252,16 +252,13 @@
                       <label>2</label>
                     </li>
                     <li data-val="3">
-                      <label>3</label>
-                      
+                      <label>3</label>                      
                     </li>
                     <li data-val="4">
-                      <label>4</label>
-                      
+                      <label>4</label>                      
                     </li>
                     <li data-val="5">
-                      <label>5</label>
-                      
+                      <label>5</label>                      
                     </li>
                     <li data-val="6">
                       <label>6</label>
@@ -272,8 +269,6 @@
             </div>
           </div> 
         </div>
-
-
         <div id="notSupportedModal" title="Browser not supported" style="display: none">
           <p>Unfortunately, your browser does not support the technology needed to run the application.</p>
           <p>You can use a free, modern browser such a <a href="http://www.google.com/chrome">Google Chrome</a> to enjoy Synthogram.</p>
