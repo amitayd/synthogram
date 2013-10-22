@@ -250,11 +250,10 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 }
 
 
-function CanvasSource(canvas, overlayId, numOscillators) {
+function CanvasSource(canvas, overlayCanvas, numOscillators) {
 
   //var canvas = document.getElementById(elementId);
   var context = canvas.getContext('2d');
-  var overlayCanvas = document.getElementById(overlayId);
   var overlayContext = overlayCanvas.getContext('2d');
   var numSteps = canvas.width;
   var markedStep = 0;
