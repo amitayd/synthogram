@@ -13,7 +13,7 @@ function sgEventReporter(ga) {
       console.log('send', 'event', category, action, label, value);
       if (ga) {
         ga('send', 'event', category, action, label, value);
-        
+
       }
       sent[hash(category, action, label)] = true;
     },
@@ -39,7 +39,7 @@ function sgView(model, eventReporter) {
     fillStyle: '#0000FF', // starting fill style
     strokeStyle: '#000000', // start stroke style
     menuHandle: false,
-    onShapeDown: function() {
+    onShapeDown: function () {
       var mode = $('#wPaint').wPaint('mode');
       eventReporter.send('wPaint', 'paint', mode);
     }
@@ -224,6 +224,24 @@ function sgView(model, eventReporter) {
       $('#wPaint').wPaint('clear');
       eventReporter.send('click', 'button', 'new');
     });
+
+    $('body').on('keydown', function (e) {
+      console.log(e);
+      if (e.keyCode === 32) { //spacebar
+        // TODO: add an identifier in the html instead of using both classes
+        $('.play, .stop').trigger('click');
+      } else if (e.ctrlKey && e.keyCode === 90) {
+        if (e.shiftKey) {
+          $('#wPaint').wPaint('redo');
+        } else {
+          $('#wPaint').wPaint('undo');
+        }
+      }
+
+    });
+
+
+
   } //end init()
 
   var setImage = function (imageData) {
