@@ -41,7 +41,7 @@ function sgView(model, eventReporter) {
     menuHandle: false,
     onShapeDown: function() {
       var mode = $('#wPaint').wPaint('mode');
-      eventReporter.sendOnce('wPaint', 'paint', mode);
+      eventReporter.send('wPaint', 'paint', mode);
     }
   });
   var wPaintCanvas = $('.wPaint-canvas');
@@ -159,7 +159,7 @@ function sgView(model, eventReporter) {
         drawCursor(e);
         window.clearInterval(interval);
         interval = window.setInterval(drawMove, 20);
-        eventReporter.sendOnce('mousedown', 'livePad', 'livePad');
+        eventReporter.send('mousedown', 'livePad', 'livePad');
       });
 
       el.on('mouseup', function () {
@@ -253,7 +253,7 @@ function sgView(model, eventReporter) {
 
 }
 
-function sgMainController(model, view, sequencer, synth, source) {
+function sgMainController(model, view, sequencer, synth, source, eventReporter) {
   var settingsToSave = [
     'stepsPerSecond',
     'startFrequency',
@@ -364,7 +364,10 @@ function sgMainController(model, view, sequencer, synth, source) {
         Muscula.errors.push(new Error('Browser not supported for Synthogram'));
       }
       view.showNotSupported();
+      eventReporter.send('not_supported', 'audioContext', 'audio context not supported', 0);
       return;
+    } else {
+      eventReporter.send('supported', 'audioContext', 'audio context supported', 1);
     }
 
 
@@ -412,7 +415,7 @@ function synthogramInit() {
     model.get('stepsPerSecond'), model.get('currentStep')
   );
 
-  var controller = sgMainController(model, view, sequencer, synth, source);
+  var controller = sgMainController(model, view, sequencer, synth, source, eventReporter);
   controller.init();
 
 

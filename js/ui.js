@@ -218,13 +218,13 @@
         value = Math.max(value, min);
         value = Math.min(value, max);
         property.set(Math.floor(value) / scale);
-        eventReporter.sendOnce('change', 'slider', property.name);
       };
 
       var isMousedown = false;
       slider.bind('mousedown', function (e) {
         isMousedown = true;
         sliderChange(e);
+        eventReporter.sendOnce('change', 'slider', property.name);
       });
 
       slider.bind('mouseup', function () {
