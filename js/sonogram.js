@@ -1,5 +1,5 @@
 /*exported OscSynth, CanvasSource, Sequencer */
-/*globals window, console, document, Note */
+/*globals window, console, Note */
 
 function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctaves,
   volume, delayTime, delayFeedbackGain, delayWetGain, waveShape, isSynthPlaying) {
@@ -328,16 +328,21 @@ function Sequencer(synth, source, stepsPerSecond, currentStep) {
   var isStarted = false;
 
 
-  var moveToNextStep = function() {
+  var playAndIncrement = function() {
+    var step = currentStep.get();
     if (isPlaying) {
-      currentStep.set((currentStep.get() + 1) % numSteps);
+      step = (step + 1) % numSteps;
     }
+    playStep(step);
+
   };
 
   var playStep = function(newStep) {
     newStep = parseInt(newStep, 10);
     var step = source.getStep(currentStep.get());
+    console.log(step);
     synth.play(step);
+    currentStep.set(newStep);
   };
 
   var start = function() {
@@ -349,7 +354,7 @@ function Sequencer(synth, source, stepsPerSecond, currentStep) {
     isStarted = true;
 
     function loop() {
-      moveToNextStep();
+      playAndIncrement();
       window.setTimeout(loop, 1000 / stepsPerSecond.get());
     }
 
