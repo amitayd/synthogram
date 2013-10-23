@@ -66,7 +66,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
   var inputForOscillators = delayNode.input;
 
-  var construct = function() {
+  var init = function() {
     volume.addChangeListener(function(val) {
       if (isSynthPlaying.get()) {
         masterGain.gain.value = val;
@@ -78,6 +78,8 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     numOctaves.addChangeListener(rebuildOscillators);
     waveShape.addChangeListener(setOscillatorsType);
     isSynthPlaying.addChangeListener(isSynthPlayingChange);
+    createOscillators();
+
   };
 
   // Ugly hack for iOS devices, which require a note played by user interaction to enable audio.
@@ -111,11 +113,11 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
     oscillators = [];
 
-    init();
+    createOscillators();
   };
 
-  var init = function() {
-    console.log("initializing");
+  var createOscillators = function() {
+    console.log("createOscillators");
     var frequencies = getFrequencies(startNote.get(), startOctave.get(), musicalScale.get(), numOctaves.get());
     var i = frequencies.length;
     while (i > 0) {
@@ -238,7 +240,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     }
   };
 
-  construct();
   init();
 
   return {
