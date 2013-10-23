@@ -1,5 +1,5 @@
 /*exported  synthogramInit */
-/*globals  Muscula, $, window, sgModel, CanvasSource, OscSynth, Sequencer, Firebase, sgResources */
+/*globals  Muscula, $, window, sgModel, CanvasSource, OscSynth, Sequencer, Firebase, sgResources, ga */
 
 function sgEventReporter(ga) {
   var sent = {};
@@ -40,8 +40,8 @@ function sgView(model, eventReporter) {
     strokeStyle: '#000000', // start stroke style
     menuHandle: false,
     onShapeDown: function() {
-      console.log(arguments);
-      //eventReporter.sendOnce('wPaint', 'paint');
+      var mode = $('#wPaint').wPaint('mode');
+      eventReporter.sendOnce('wPaint', 'paint', mode);
     }
   });
   var wPaintCanvas = $('.wPaint-canvas');
@@ -159,7 +159,7 @@ function sgView(model, eventReporter) {
         drawCursor(e);
         window.clearInterval(interval);
         interval = window.setInterval(drawMove, 20);
-        eventReporter.sendOnce('mousedown', 'livePad');
+        eventReporter.sendOnce('mousedown', 'livePad', 'livePad');
       });
 
       el.on('mouseup', function () {
@@ -388,7 +388,7 @@ function sgMainController(model, view, sequencer, synth, source) {
 
 function synthogramInit() {
 
-  var eventReporter = sgEventReporter();
+  var eventReporter = sgEventReporter(ga);
 
   // TODO: Why is the model a function: kind of ugly
   var model = sgModel().createSynthogramModel();

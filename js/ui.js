@@ -33,7 +33,7 @@
           console.log('val', val);
           var valRounded = Math.floor(val - (val % step)) / scale;
           property.set(valRounded);
-          eventReporter.sendOnce('change', 'knob', property);
+          eventReporter.sendOnce('change', 'knob', property.name);
         }
       });
 
@@ -218,7 +218,7 @@
         value = Math.max(value, min);
         value = Math.min(value, max);
         property.set(Math.floor(value) / scale);
-        eventReporter.sendOnce('change', 'slider', property);
+        eventReporter.sendOnce('change', 'slider', property.name);
       };
 
       var isMousedown = false;
