@@ -2,7 +2,7 @@
 /*globals  jQuery, window, document*/
 
 (function ($) {
-  $.fn.sgKnob = function (model) {
+  $.fn.sgKnob = function (model, eventReporter) {
 
     return this.each(function () {
       var element = $(this);
@@ -33,6 +33,7 @@
           console.log('val', val);
           var valRounded = Math.floor(val - (val % step)) / scale;
           property.set(valRounded);
+          eventReporter.sendOnce('change', 'knob', property);
         }
       });
 
@@ -114,27 +115,30 @@
   };
 
   /* create a tab in the children of the passed elements */
-  $.fn.sgTab = function () {
+  $.fn.sgTab = function (eventReporter) {
     return this.each(function () {
       var tabContainer = $(this);
       var tabs = tabContainer.children('.sidecontent');
       tabContainer.on('click', '.tab-label', function () {
-        var tab = $($(this).data('tab-selector'));
+        var tabSelector = $(this).data('tab-selector');
+        var tab = $(tabSelector);
         // hid the other tabs but this one
         tabs.not(tab).hide();
         $('.tab-label', tabContainer).removeClass('selected');
         // Show this tab
         $(this).addClass('selected');
         tab.show();
+        eventReporter.send('click', 'tab', tabSelector);
       });
     });
   };
 
   /* create a button */
-  $.fn.sgButton = function (model) {
+  $.fn.sgButton = function (model, eventReporter) {
     return this.each(function () {
       var button = $(this);
       var property = model.get(button.data('prop'));
+      var buttonName = button.data('onclass') + '/' + button.data('offclass');
 
       var setValue = function () {
         var value = property.get();
@@ -149,6 +153,7 @@
       button.on('click', function () {
         // Simply negate the current value;
         property.set(!property.get());
+        eventReporter.send('click', 'button', buttonName);
       });
 
       //Set the initial state
@@ -157,7 +162,7 @@
   };
 
   /* create a button */
-  $.fn.sgButtonSet = function (model) {
+  $.fn.sgButtonSet = function (model, eventReporter) {
     return this.each(function () {
       var buttonSet = $(this);
       var property = model.get(buttonSet.data('prop'));
@@ -165,6 +170,7 @@
       buttonSet.children('li').on('click', function () {
         var value = $(this).data('val');
         property.set(value);
+        eventReporter.send('click', 'buttonset', value);
         // To prevent from other children being triggered
         return false;
       });
@@ -183,7 +189,7 @@
     });
   };
 
-  $.fn.sgSlider = function (model) {
+  $.fn.sgSlider = function (model, eventReporter) {
     return this.each(function () {
       var slider = $(this);
       var property = model.get(slider.data('prop'));
@@ -212,6 +218,7 @@
         value = Math.max(value, min);
         value = Math.min(value, max);
         property.set(Math.floor(value) / scale);
+        eventReporter.sendOnce('change', 'slider', property);
       };
 
       var isMousedown = false;

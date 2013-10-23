@@ -82,8 +82,23 @@ $.extend($.fn.wPaint.defaults, {
 
 ## Examples
 
-To start you will need to include the wPaint core files:
+To start, you will need to include any dependencies (the paths and versions may differ):
+```html
+<!-- jQuery -->
+<script type="text/javascript" src="./lib/jquery.1.10.2.min.js"></script>
+<!-- jQuery UI -->
+<script type="text/javascript" src="./lib/jquery.ui.core.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.widget.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.mouse.1.10.3.min.js"></script>
+<script type="text/javascript" src="./lib/jquery.ui.draggable.1.10.3.min.js"></script>
+<!-- wColorPicker -->
+<link rel="Stylesheet" type="text/css" href="./lib/wColorPicker.min.css" />
+<script type="text/javascript" src="./lib/wColorPicker.min.js"></script>
+```
 
+
+
+Then you need to include the wPaint core files:
 ```html
 <link rel="Stylesheet" type="text/css" href="./wPaint.min.css" />
 <script type="text/javascript" src="./wPaint.min.js"></script>
@@ -96,6 +111,17 @@ From here we will need to include plugin files for whatever menu icons we would 
 <script type="text/javascript" src="./plugins/text/wPaint.menu.text.min.js"></script>
 <script type="text/javascript" src="./plugins/shapes/wPaint.menu.main.shapes.min.js"></script>
 <script type="text/javascript" src="./plugins/file/wPaint.menu.main.file.min.js"></script>
+```
+
+
+### path
+
+If you are putting wPaint into a path other than root (most likely you will) then you will need to set the `path` option since the image and cursor icon paths are set in the JavaScript and not in CSS.  This means we can not make them relative from the included file like we can in the CSS file but rather relative to the dispalying page.  The default path is just the root folder `/` but a path can be set for wpaint.
+
+```js
+$('#wPaint').wPaint({
+  path: '/js/lib/wPaint/'
+});
 ```
 
 

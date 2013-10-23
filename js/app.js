@@ -1,12 +1,36 @@
 /*exported  synthogramInit */
 /*globals  Muscula, $, window, sgModel, CanvasSource, OscSynth, Sequencer, Firebase, sgResources */
 
-function sgView(model) {
+function sgEventReporter(ga) {
+  var sent = {};
+
+  var hash = function (action, label, value) {
+    return [action, label, value].join('|');
+  };
+
+  return {
+    send: function (category, action, label, value) {
+      console.log('send', 'event', category, action, label, value);
+      if (ga) {
+        ga('send', 'event', category, action, label, value);
+        
+      }
+      sent[hash(category, action, label)] = true;
+    },
+    sendOnce: function (category, action, label, value) {
+      if (!sent[hash(category, action, label)]) {
+        this.send(category, action, label, value);
+      }
+    }
+  };
+}
+
+function sgView(model, eventReporter) {
 
 
   // TODO: this should be done in init: it is here because Canvas Source needs it before the init
   // override some wPaint settings
-  $.fn.wPaint.menus.text.items.fontSize.range = [8, 9, 10, 12, 14, 16, 20, 24, 30, 40, 50, 60];
+  //$.fn.wPaint.menus.text.items.fontSize.range = [8, 9, 10, 12, 14, 16, 20, 24, 30, 40, 50, 60];
   $('#wPaint').wPaint({
     path: 'lib/wpaint/',
     menuOffsetLeft: -115, // left offset of primary menu
@@ -14,18 +38,23 @@ function sgView(model) {
     lineWidth: '4', // starting line width
     fillStyle: '#0000FF', // starting fill style
     strokeStyle: '#000000', // start stroke style
-    menuHandle: false
+    menuHandle: false,
+    onShapeDown: function() {
+      console.log(arguments);
+      //eventReporter.sendOnce('wPaint', 'paint');
+    }
   });
   var wPaintCanvas = $('.wPaint-canvas');
 
   function init(getOscDataForY, saveImage) {
 
-    $('.compSide').sgTab();
+    $('.compSide').sgTab(eventReporter);
+    $('.button').sgButton(model, eventReporter);
+    $('.horizontal-slider').sgSlider(model, eventReporter);
+    $('.buttonset').sgButtonSet(model, eventReporter);
+    $('.knob').sgKnob(model, eventReporter);
+
     $('.harmony.tab-label').click();
-    $('.button').sgButton(model);
-    $('.horizontal-slider').sgSlider(model);
-    $('.buttonset').sgButtonSet(model);
-    $('.knob').sgKnob(model);
 
     var setCurrentPosition = function (value) {
       var text = value + ' / ' + $('#wPaint').width();
@@ -58,7 +87,8 @@ function sgView(model) {
       return false;
     });
 
-    var livePad = function livePad(el) {
+    // TODO: move to ui.js
+    var livePad = function livePad(el, eventReporter) {
       var isMouseDown;
       var interval;
       var lastCoordinates;
@@ -129,6 +159,7 @@ function sgView(model) {
         drawCursor(e);
         window.clearInterval(interval);
         interval = window.setInterval(drawMove, 20);
+        eventReporter.sendOnce('mousedown', 'livePad');
       });
 
       el.on('mouseup', function () {
@@ -156,7 +187,7 @@ function sgView(model) {
       };
     };
 
-    livePad($('#livePad'));
+    livePad($('#livePad'), eventReporter);
 
     var drawGrid = function () {
       var legendFunc = function (y) {
@@ -180,14 +211,18 @@ function sgView(model) {
 
     $('#saveNew').on('click', function () {
       saveImage(true);
+      eventReporter.send('click', 'button', 'saveCopy');
+
     });
 
     $('#save').on('click', function () {
       saveImage(false);
+      eventReporter.send('click', 'button', 'save');
     });
 
     $('#new').on('click', function () {
       $('#wPaint').wPaint('clear');
+      eventReporter.send('click', 'button', 'new');
     });
   } //end init()
 
@@ -353,10 +388,12 @@ function sgMainController(model, view, sequencer, synth, source) {
 
 function synthogramInit() {
 
+  var eventReporter = sgEventReporter();
+
   // TODO: Why is the model a function: kind of ugly
   var model = sgModel().createSynthogramModel();
   console.log(model);
-  var view = sgView(model);
+  var view = sgView(model, eventReporter);
   var source = new CanvasSource(view.paintCanvas, view.overlayCanvas, model.get('numOscillators'));
   var synth = new OscSynth(
     model.get('numOscillators'),

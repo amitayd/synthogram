@@ -92,13 +92,25 @@
       this._showFileModal('fg', images);
     }
 
+    function createCallback(cbName) {
+      return function() {
+        if (console) {
+          console.log(cbName, arguments);
+        }
+      }
+    }
+
     // init wPaint
     $('#wPaint-demo1').wPaint({
+      menuHandle: false,
       menuOffsetLeft: -35,
       menuOffsetTop: -50,
       saveImg: saveImg,
       loadImgBg: loadImgBg,
-      loadImgFg: loadImgFg
+      loadImgFg: loadImgFg,
+      onShapeDown: createCallback('onShapeDown'),
+      onShapeUp: createCallback('onShapeUp'),
+      onShapeMove: createCallback('onShapeDMove')
     });
   </script>
 
