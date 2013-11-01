@@ -341,7 +341,7 @@ function Sequencer(synth, source, stepsPerSecond, currentStep) {
   var playStep = function(newStep) {
     newStep = parseInt(newStep, 10);
     var step = source.getStep(currentStep.get());
-    console.log(step);
+    //console.log(step);
     synth.play(step);
     currentStep.set(newStep);
   };
