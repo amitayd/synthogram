@@ -13,6 +13,7 @@
     "node": true,
     "es5": false,
     "es3": true,
+    "strict": true,
     "camelcase": true,
     "indent": 2,
     "globals": {

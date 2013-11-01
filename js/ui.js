@@ -1,5 +1,6 @@
 /*exported  synthogramInit */
 /*globals  jQuery, window, document*/
+'use strict';
 
 (function ($) {
   $.fn.sgKnob = function (model, eventReporter) {

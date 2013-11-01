@@ -1,4 +1,5 @@
 /*exported sgModel */
+'use strict';
 
 function sgModel() {
   function ModelProperty(name, value, changeListeners) {

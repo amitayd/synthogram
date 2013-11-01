@@ -1,5 +1,5 @@
 /*global  webkitAudioContext, window */
-
+'use strict';
 // Based on https://github.com/g200kg/WAAPISim
 
 if (typeof(AudioContext) === "undefined" && typeof(webkitAudioContext) !== "undefined" &&

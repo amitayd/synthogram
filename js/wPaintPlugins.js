@@ -1,4 +1,5 @@
 /* global jQuery*/
+'use strict';
 
 (function($) {
 

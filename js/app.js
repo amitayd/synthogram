@@ -1,5 +1,6 @@
 /*exported  synthogramInit */
 /*globals  Muscula, $, window, sgModel, CanvasSource, OscSynth, Sequencer, Firebase, sgResources, ga */
+'use strict';
 
 function sgEventReporter(ga) {
   var sent = {};

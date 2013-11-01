@@ -1,5 +1,6 @@
 /*exported OscSynth, CanvasSource, Sequencer */
 /*globals window, console, Note */
+'use strict';
 
 function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctaves,
   volume, delayTime, delayFeedbackGain, delayWetGain, waveShape, isSynthPlaying) {
