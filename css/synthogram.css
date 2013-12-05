@@ -738,15 +738,26 @@ input[type="radio"] {
 }
 
 #about {
-    font-family: 'Times New Roman';
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
     width: 720px;
     margin: 0 auto;
     font-size: 9pt;
 
     position: relative;
-    border-radius: 8px;
+    border-radius: 10px;
     margin-top: 50px
 
+}
+
+#about p {
+}
+
+#about h2 {
+    font-size: 15pt;
+}
+
+#shareUrl {
+    opacity: 0.5;
 }
 
 #shareContainer {
@@ -755,7 +766,7 @@ input[type="radio"] {
 
 #shareContainer div{
     display: inline;
-    margin-right: 8px;
+    margin-right: 20px;
 }
 
 #shareContainer .fb_iframe_widget_lift {

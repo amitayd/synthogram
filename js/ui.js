@@ -171,7 +171,7 @@
 
       buttonSet.children('li').on('click', function () {
         var value = $(this).data('val');
-        if (allowNone && value == property.get()) {
+        if (allowNone && value === property.get()) {
           value = '';
         }
         property.set(value);

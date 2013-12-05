@@ -212,10 +212,10 @@ function sgView(model, eventReporter) {
 
 
     $('#share').on('click', function () {
-      //$('#shareContainer').toggle();
+      saveImage(true);
       eventReporter.send('click', 'button', 'share');
 
-    });    
+    });
 
     $('#saveNew').on('click', function () {
       saveImage(true);
@@ -230,6 +230,8 @@ function sgView(model, eventReporter) {
 
     $('#new').on('click', function () {
       $('#wPaint').wPaint('clear');
+      //TODO: hack-ish
+      window.location.hash = '';
       eventReporter.send('click', 'button', 'new');
     });
 
@@ -275,7 +277,11 @@ function sgView(model, eventReporter) {
     overlayCanvas: window.document.getElementById('overlay'),
     init: init,
     showNotSupported: showNotSupported,
-    setImage: setImage
+    setImage: setImage,
+    showShareDialog: function() {
+      $('#shareUrl').text(window.location);
+      $('#shareDialog').dialog({minWidth: 500});
+    }
   };
 
 }
@@ -342,6 +348,7 @@ function sgMainController(model, view, sequencer, synth, source, eventReporter) 
     imagesDataRef.child(key).set(saveData, function () {
       console.log('saved', saveData);
       window.location.hash = loadRoute + key;
+      view.showShareDialog();
     });
   };
 
