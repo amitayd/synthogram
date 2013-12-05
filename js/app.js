@@ -227,7 +227,6 @@ function sgView(model, eventReporter) {
     });
 
     $('body').on('keydown', function (e) {
-      console.log(e);
       if (e.keyCode === 32) { //spacebar
         // TODO: add an identifier in the html instead of using both classes
         $('.play, .stop').trigger('click');
