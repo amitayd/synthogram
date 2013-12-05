@@ -736,3 +736,28 @@ input[type="radio"] {
     /* Internet Explorer */
     filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
 }
+
+#about {
+    font-family: 'Times New Roman';
+    width: 720px;
+    margin: 0 auto;
+    font-size: 9pt;
+
+    position: relative;
+    border-radius: 8px;
+    margin-top: 50px
+
+}
+
+#shareContainer {
+
+}
+
+#shareContainer div{
+    display: inline;
+    margin-right: 8px;
+}
+
+#shareContainer .fb_iframe_widget_lift {
+    z-index: 5000;
+}

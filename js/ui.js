@@ -167,9 +167,13 @@
     return this.each(function () {
       var buttonSet = $(this);
       var property = model.get(buttonSet.data('prop'));
+      var allowNone = buttonSet.data('allowNone') || false;
 
       buttonSet.children('li').on('click', function () {
         var value = $(this).data('val');
+        if (allowNone && value == property.get()) {
+          value = '';
+        }
         property.set(value);
         eventReporter.send('click', 'buttonset', value);
         // To prevent from other children being triggered

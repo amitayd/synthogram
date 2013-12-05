@@ -1,5 +1,5 @@
 /*exported  synthogramInit */
-/*globals  Muscula, $, window, sgModel, CanvasSource, OscSynth, Sequencer, Firebase, sgResources, ga */
+/*globals  Socialite, Muscula, $, window, sgModel, CanvasSource, OscSynth, Sequencer, Firebase, sgResources, ga */
 'use strict';
 
 function sgEventReporter(ga) {
@@ -210,6 +210,13 @@ function sgView(model, eventReporter) {
     model.get('musicalScale').addChangeListener(drawGrid);
     drawGrid();
 
+
+    $('#share').on('click', function () {
+      //$('#shareContainer').toggle();
+      eventReporter.send('click', 'button', 'share');
+
+    });    
+
     $('#saveNew').on('click', function () {
       saveImage(true);
       eventReporter.send('click', 'button', 'saveCopy');
@@ -239,6 +246,8 @@ function sgView(model, eventReporter) {
       }
 
     });
+
+    Socialite.load();
 
 
 

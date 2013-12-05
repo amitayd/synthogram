@@ -43,10 +43,11 @@
             <div id="saving-box">
               <ul>
                 <li><a id="new">New</a></li>
-				<li>|</li>
+				        <li>|</li>
                 <li><a id="save">Save</a></li>
-				<li>|</li>
-                <li><a id="saveNew">Save a copy</a></li>
+				        <li>|</li>
+                
+                <li><a id="share">Share</a></li>
               </ul>
             </div>
           </div>
@@ -202,7 +203,7 @@
                       <label>G</label>
                     </li>               
                   </ul>
-                  <ul class="buttonset" data-prop="startNoteAccidental">                
+                  <ul class="buttonset" data-prop="startNoteAccidental" data-allow-none="true">                
                     <li data-val="#">
                       <label>#</label>                      
                     </li>
@@ -273,6 +274,18 @@
           <p>Unfortunately, your browser does not support the technology needed to run the application.</p>
           <p>You can use a free, modern browser such a <a href="http://www.google.com/chrome">Google Chrome</a> to enjoy Synthogram.</p>
       </div>
+
+      <div id="about">
+        <div id="shareContainer">
+
+                  <a href="http://www.facebook.com/sharer.php?u=http://www.socialitejs.com&t=Socialite.js" class="socialite facebook-like" data-href="http://socialitejs.com" data-send="false" data-layout="button_count" data-width="60" data-show-faces="false" rel="nofollow" target="_blank"><span class="vhidden">Share on Facebook</span></a>
+
+                  <a href="https://plus.google.com/share?url=http://socialitejs.com" class="socialite googleplus-one" data-size="small" data-href="http://socialitejs.com" rel="nofollow" target="_blank"><span class="vhidden">Share on Google+</span></a>
+                  <a href="http://twitter.com/share" class="socialite twitter-share" data-text="Socialite.js" data-url="http://socialitejs.com" data-count="horizontal" rel="nofollow" target="_blank"><span class="vhidden">Share on Twitter</span></a>
+        </div>
+      </div>
+
+
   
       <img id="defaultImage" src="" style="display:none;" />
     <!-- Google analytics -->
@@ -291,6 +304,7 @@
     <script src="lib/music.js"></script>
     <script src="js/waapi_shim.js"></script>
     <script src="lib/jquery.knob.js"></script>
+    <script src="lib/Socialite/socialite.min.js"></script>
     <script src="lib/wpaint/wPaint.min.js"></script>
     <script src="lib/wpaint/lib/wColorPicker.min.js"></script>
     <script type="text/javascript" src="lib/wpaint/plugins/main/wPaint.menu.main.min.js"></script>
@@ -303,7 +317,6 @@
     <script src='js/wPaintPlugins.js'></script>
     <script src='js/resources.js'></script>
     <!-- endbuild -->
-    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
     <script>
       window.addEventListener('load', synthogramInit, false);
     </script>
