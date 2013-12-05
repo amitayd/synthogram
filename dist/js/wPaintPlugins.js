@@ -1,4 +1,5 @@
 /* global jQuery*/
+'use strict';
 
 (function($) {
 
@@ -38,7 +39,7 @@
       this.ctx.fillStyle = this.options.strokeStyle;
       //this.ctx.fillRect(x, y, width, height);
       this.ctx.fillRect(Math.floor(x), Math.floor(y), Math.floor(width), fixedHeight);
-      console.log('draw note', Math.floor(x), Math.floor(y), Math.floor(width), fixedHeight, width, height);
+      //console.log('draw note', Math.floor(x), Math.floor(y), Math.floor(width), fixedHeight, width, height);
     },
     _drawNoteMove: function(e) {
       this._drawNoteDown(e);

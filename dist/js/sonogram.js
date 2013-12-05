@@ -1,5 +1,6 @@
 /*exported OscSynth, CanvasSource, Sequencer */
-/*globals window, console, document, Note */
+/*globals window, console, Note */
+'use strict';
 
 function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctaves,
   volume, delayTime, delayFeedbackGain, delayWetGain, waveShape, isSynthPlaying) {
@@ -66,7 +67,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
   var inputForOscillators = delayNode.input;
 
-  var construct = function() {
+  var init = function() {
     volume.addChangeListener(function(val) {
       if (isSynthPlaying.get()) {
         masterGain.gain.value = val;
@@ -78,6 +79,8 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     numOctaves.addChangeListener(rebuildOscillators);
     waveShape.addChangeListener(setOscillatorsType);
     isSynthPlaying.addChangeListener(isSynthPlayingChange);
+    createOscillators();
+
   };
 
   // Ugly hack for iOS devices, which require a note played by user interaction to enable audio.
@@ -111,11 +114,11 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 
     oscillators = [];
 
-    init();
+    createOscillators();
   };
 
-  var init = function() {
-    console.log("initializing");
+  var createOscillators = function() {
+    console.log("createOscillators");
     var frequencies = getFrequencies(startNote.get(), startOctave.get(), musicalScale.get(), numOctaves.get());
     var i = frequencies.length;
     while (i > 0) {
@@ -238,7 +241,6 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
     }
   };
 
-  construct();
   init();
 
   return {
@@ -250,11 +252,10 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
 }
 
 
-function CanvasSource(canvas, overlayId, numOscillators) {
+function CanvasSource(canvas, overlayCanvas, numOscillators) {
 
   //var canvas = document.getElementById(elementId);
   var context = canvas.getContext('2d');
-  var overlayCanvas = document.getElementById(overlayId);
   var overlayContext = overlayCanvas.getContext('2d');
   var numSteps = canvas.width;
   var markedStep = 0;
@@ -328,16 +329,21 @@ function Sequencer(synth, source, stepsPerSecond, currentStep) {
   var isStarted = false;
 
 
-  var moveToNextStep = function() {
+  var playAndIncrement = function() {
+    var step = currentStep.get();
     if (isPlaying) {
-      currentStep.set((currentStep.get() + 1) % numSteps);
+      step = (step + 1) % numSteps;
     }
+    playStep(step);
+
   };
 
   var playStep = function(newStep) {
     newStep = parseInt(newStep, 10);
     var step = source.getStep(currentStep.get());
+    //console.log(step);
     synth.play(step);
+    currentStep.set(newStep);
   };
 
   var start = function() {
@@ -349,7 +355,7 @@ function Sequencer(synth, source, stepsPerSecond, currentStep) {
     isStarted = true;
 
     function loop() {
-      moveToNextStep();
+      playAndIncrement();
       window.setTimeout(loop, 1000 / stepsPerSecond.get());
     }
 
