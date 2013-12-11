@@ -1,4 +1,4 @@
-/*exported OscSynth, CanvasSource, Sequencer */
+/*exported OscSynth*/
 /*globals window, console, Note */
 'use strict';
 
@@ -95,7 +95,7 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
       gainNode.connect(context.destination);
       oscillator.start(0);
       initializedOnUserInteraction = true;
-      window.setTimeout(function() {
+      setTimeout(function() {
         gainNode.disconnect();
         oscillator.disconnect();
 
@@ -251,129 +251,3 @@ function OscSynth(numOscillators, startNote, startOctave, musicalScale, numOctav
   };
 }
 
-
-function CanvasSource(canvas, overlayCanvas, numOscillators) {
-
-  //var canvas = document.getElementById(elementId);
-  var context = canvas.getContext('2d');
-  var overlayContext = overlayCanvas.getContext('2d');
-  var numSteps = canvas.width;
-  var markedStep = 0;
-
-  var getHeightScale = function() {
-    return canvas.height / numOscillators.get();
-  };
-
-  var markStep = function(stepIndex) {
-    overlayContext.clearRect(markedStep - 1, 0, markedStep + 1, overlayCanvas.height);
-    overlayContext.beginPath();
-    overlayContext.moveTo(stepIndex, 0);
-    overlayContext.lineTo(stepIndex, overlayCanvas.height);
-    overlayContext.stroke();
-    markedStep = stepIndex;
-  };
-
-
-  return {
-    getStep: function(stepIndex) {
-      // get just the corresponding row for this step
-      var imageData = context.getImageData(stepIndex, 0, 1, canvas.height);
-      var data = imageData.data;
-      var heightScale = getHeightScale();
-
-      var step = [];
-      for (var y = 0, numOsc = numOscillators.get(); y < numOsc; y++) {
-
-        // Use scaling by averging the pixels in the scale
-        var scaledY = Math.floor(y * heightScale);
-        var scaledYEnd = Math.floor((y + 1) * heightScale);
-        var pixelsToSum = scaledYEnd - scaledY;
-        var ampSum = 0;
-        while (scaledY < scaledYEnd) {
-          // get the channels
-          var red = data[(scaledY) * 4 + 0];
-          var green = data[(scaledY) * 4 + 1];
-          var blue = data[(scaledY) * 4 + 2];
-          var alpha = data[(scaledY) * 4 + 3];
-
-          // compute amplitude as the avg of all colors divided by alpha          
-          var amp = 0;
-          if (alpha !== 0) {
-
-            amp = (255 - ((red + green + blue) / 3)) * (alpha / 255);
-          }
-          ampSum += amp;
-          scaledY++;
-        }
-        var finalAmp = ampSum / pixelsToSum / 255;
-        step.push(finalAmp);
-      }
-
-      markStep(stepIndex);
-      //console.log("step", step);
-      return step;
-    },
-    numSteps: numSteps,
-    getOscillatorForY: function(y) {
-      var oscIndex = parseInt(y / getHeightScale(), 10);
-      return oscIndex;
-    }
-  };
-}
-
-
-function Sequencer(synth, source, stepsPerSecond, currentStep) {
-
-  var numSteps = source.numSteps;
-  var isPlaying = false;
-  var isStarted = false;
-
-
-  var playAndIncrement = function() {
-    var step = currentStep.get();
-    if (isPlaying) {
-      step = (step + 1) % numSteps;
-    }
-    playStep(step);
-
-  };
-
-  var playStep = function(newStep) {
-    newStep = parseInt(newStep, 10);
-    var step = source.getStep(currentStep.get());
-    //console.log(step);
-    synth.play(step);
-    currentStep.set(newStep);
-  };
-
-  var start = function() {
-    console.log('seq.play');
-    if (isStarted) {
-      return;
-    }
-
-    isStarted = true;
-
-    function loop() {
-      playAndIncrement();
-      window.setTimeout(loop, 1000 / stepsPerSecond.get());
-    }
-
-    loop();
-  };
-
-  var setIsPlaying = function(isPlayingParam) {
-    isPlaying = isPlayingParam;
-    console.log('pauseToggle', isPlaying);
-  };
-
-  currentStep.addChangeListener(playStep);
-
-  return {
-    start: start,
-    setIsPlaying: setIsPlaying,
-    isPlaying: function() {
-      return isPlaying;
-    }
-  };
-}
