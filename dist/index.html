@@ -8,7 +8,7 @@
     <meta name="author" content="Amitay Dobo" />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <link rel="stylesheet" href="css/synthogram.css" />
-    <link href="http://codeorigin.jquery.com/ui/1.10.3/themes/trontastic/jquery-ui.css" rel="stylesheet">
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/flick/jquery-ui.css" rel="stylesheet">
     <link rel="Stylesheet" type="text/css" href="lib/wpaint/wPaint.min.css" />
     <link rel="Stylesheet" type="text/css" href="lib/wpaint/lib/wColorPicker.min.css" />    
     <title>Synthogram - Draw the music (or noise...)</title>
@@ -51,9 +51,10 @@
           <div id="sonogram" class="componenet">
             <div class="compMain">          
               <div id="wPaint-menu">Draw Menu</div>
-              <div id="livePad">Live Pad (c)
+              <div id="livePad">
                 <div class="livePadCursor"></div>
               </div>
+              <canvas id="livePadGrid" class="transparentOverlay" width="95" height="240"></canvas>
               <div class="note-legend" id="gridLabels">
                 <canvas id="gridLabelsCanvas" width="20" height="240"></canvas>
               </div>  

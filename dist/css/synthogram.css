@@ -12,18 +12,24 @@ a {cursor: pointer;}
 .paintLayer { position: absolute; top: 0px; left:0px; width: 384px; height: 240px;}
 
 .livePadCursor {
-display: none;
 position: absolute;
+top: 35%;
+left: 25%;
 width: 60px;
 height: 60px;
 -webkit-border-radius: 30px;
 -moz-border-radius: 30px;
 border-radius: 30px;
-cursor: pointer;
+background-image: -o-radial-gradient(circle, blue, white 30px);
+background-image: -moz-radial-gradient(circle, blue, white 30px);
+background-image: -webkit-radial-gradient(circle, blue, white 30px);
+background-repeat: no-repeat;
+}
+
+.livePadCursor.active {
 background-image: -o-radial-gradient(circle, red, white 30px);
 background-image: -moz-radial-gradient(circle, red, white 30px);
-background-image: -webkit-radial-gradient(circle, red, white 30px);
-background-repeat: no-repeat;
+background-image: -webkit-radial-gradient(circle, red, white 30px); 
 }
 
 #mainContainer {
@@ -158,13 +164,23 @@ h1 {
     left: 116px;
 }
 #livePad {
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#livePadGrid {
+    
+}
+
+#livePadGrid, #livePad {
+    margin-top: 10px;
     position: absolute;
     width: 95px;
     height: 240px;
-    background-color: #fff;
-    margin-top: 10px;
-    border-radius: 4px;
 }
+
 .side-tabs {
     width: 100%;
     height: 31px;

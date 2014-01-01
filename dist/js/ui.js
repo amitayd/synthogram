@@ -49,12 +49,14 @@
     var canvas = $(this)[0];
     var ctx = canvas.getContext('2d');
     ctx.fillStyle = 'rgba(0,0,0,0.2)';
-    var width = canvas.width;
-    var height = canvas.height;
+    var width = $(this).width();
+    var height = $(this).height();
 
     ctx.clearRect(0, 0, width, height);
-    for (var x = 0; x < width; x += xStep) {
-      ctx.fillRect(x, 0, 1, height);
+    if (xStep) {
+      for (var x = 0; x < width; x += xStep) {
+        ctx.fillRect(x, 0, 1, height);
+      }
     }
     for (var y = 0; y < height; y += yStep) {
       ctx.fillRect(0, parseInt(y, 10), width, 1);
