@@ -43,10 +43,10 @@ function sgView(model, eventReporter) {
 
 
 
-
     var freqHerz = $('#freqHertz');
     var freqName = $('#freqName');
-    wPaintCanvas.bind('mousemove', function (e) {
+
+    $('#livePad, #wPaint').bind('mousemove', function (e) {
       var y = e.pageY - wPaintCanvas.offset().top;
       if (y >= wPaintCanvas.height() || y < 0) {
         return;
@@ -57,7 +57,7 @@ function sgView(model, eventReporter) {
     }).bind("mouseout", function () {
       freqHerz.text('--');
       freqName.text('--');
-    });
+    });    
 
 
     $('.transparentOverlay').on('touchstart touchmove touchend touchcancel', function () {
@@ -104,9 +104,6 @@ function sgView(model, eventReporter) {
           } else {
             updateWPaint("paintAtCoordinatesMove", coordinates);
           }
-          if (e) {
-            drawCursor(e);
-          }
         }
 
       };
@@ -137,16 +134,18 @@ function sgView(model, eventReporter) {
         window.clearInterval(interval);
         interval = window.setInterval(drawMove, 20);
         eventReporter.send('mousedown', 'livePad', 'livePad');
+        $('.livePadCursor').addClass('active');
       });
 
       el.on('mouseup', function () {
         updateWPaint("paintAtCoordinatesUp");
         window.clearInterval(interval);
-        $('.livePadCursor').hide();
+        $('.livePadCursor').removeClass('active');
       });
 
       el.on('mousemove', function (e) {
         drawMove(e);
+        drawCursor(e);
       });
 
       el.bindMobileEventsPreventMouse();
@@ -160,7 +159,6 @@ function sgView(model, eventReporter) {
           'top': top,
           'left': left
         });
-        $('.livePadCursor').show();
       };
     };
 
@@ -175,6 +173,7 @@ function sgView(model, eventReporter) {
       var yStep = Number($('#overlayGrid').attr('height')) / model.getVal('numOscillators');
       console.log('drawing grid', xStep, yStep);
       $('#overlayGrid').sgGrid(xStep, yStep);
+      $('#livePadGrid').sgGrid(0, yStep);
       $('#gridLabelsCanvas').sgGridLabels(yStep, legendFunc);
       $('#wPaint').wPaint('snapGridVertical', yStep);
       $('#wPaint').wPaint('snapGridHorizontal', xStep);
