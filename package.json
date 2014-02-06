@@ -1,6 +1,6 @@
 {
   "name": "synthogram",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Synthesizer based on a drawing (sonogram) as input",
   "main": "Gruntfile.js",
   "dependencies": {},

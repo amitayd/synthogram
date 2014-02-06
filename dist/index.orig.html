@@ -21,7 +21,6 @@
     <link rel="Stylesheet" type="text/css" href="lib/wpaint/lib/wColorPicker.min.css" />    
     <title>Synthogram - Draw the music (or noise...)</title>
     <!-- Bootstrap core CSS -->
-    <alink href="lib/bootstrap/css/bootstrap.css" rel="stylesheet">
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../../assets/js/html5shiv.js"></script>
@@ -290,13 +289,41 @@
       <div id="about">
         <div id="shareContainer">
 
-                  <a href="http://www.facebook.com/sharer.php?u=http://www.synthogram.com&t=Synthogram: draw the sound" class="socialite facebook-like" data-href="http://www.synthogram.com" data-send="false" data-layout="button_count" data-width="80" data-show-faces="false" rel="nofollow" target="_blank"><span class="vhidden">Share on Facebook</span></a>
+            <div style="width:150px">
+            <!-- start facebook BS -->
+            <script>(function(d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) return;
+              js = d.createElement(s); js.id = id;
+              js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=182352978632123";
+              fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+            <div class="fb-like" data-href="http://www.synthogram.com" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true" data-width="150"></div>
+            <!-- end facebook BS -->
+          </div>
 
-                  <a href="http://twitter.com/share" class="socialite twitter-share" data-text="Synthogram: draw the sound" data-url="http://www.synthogram.com" data-count="horizontal" rel="nofollow" target="_blank"><span class="vhidden">Share on Twitter</span></a>
+          <div>
+          <!-- start twitter BS -->
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.synthogram.com" data-text="Synthogram - Draw the Sound" data-via="AmitayD">Tweet</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+          <!-- end twitter BS -->
+          </div>
 
-                  <a href="https://plus.google.com/share?url=http://www.synthogram.com" class="socialite googleplus-one" data-size="medium" data-href="http://www.synthogram.com" rel="nofollow" target="_blank"><span class="vhidden">Share on Google+</span></a>
-
-                  <iframe src="http://ghbtns.com/github-btn.html?user=amitayd&repo=synthogram&type=fork" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
+          <div>
+            <!-- start G+ BS -->
+            <div class="g-plusone" data-size="medium" data-href="http://www.synthogram.com"></div>
+            <script type="text/javascript">
+              (function() {
+                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                po.src = 'https://apis.google.com/js/platform.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+              })();
+            </script>
+            <!-- end G+ BS -->
+          </div>
+          <div>
+              <iframe src="http://ghbtns.com/github-btn.html?user=amitayd&repo=synthogram&type=fork" allowtransparency="true" frameborder="0" scrolling="0" width="62" height="20"></iframe>
+          </div>
         </div>
 
         <h2>About</h2>
@@ -332,7 +359,6 @@
     <script src="lib/music.js"></script>
     <script src="js/waapi_shim.js"></script>
     <script src="lib/jquery.knob.js"></script>
-    <script src="lib/Socialite/socialite.min.js"></script>
     <script src="lib/wpaint/wPaint.min.js"></script>
     <script src="lib/wpaint/lib/wColorPicker.min.js"></script>
     <script type="text/javascript" src="lib/wpaint/plugins/main/wPaint.menu.main.min.js"></script>

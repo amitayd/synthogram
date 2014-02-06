@@ -1,5 +1,5 @@
 /*exported  sgView */
-/*globals  Socialite, $, window */
+/*globals  $, window */
 'use strict';
 
 function sgView(model, eventReporter) {
@@ -223,11 +223,6 @@ function sgView(model, eventReporter) {
       }
 
     });
-
-    Socialite.load();
-
-
-
   } //end init()
 
   var setImage = function (imageData) {
