@@ -772,19 +772,12 @@ input[type="radio"] {
     font-size: 15pt;
 }
 
-#shareUrl {
-    opacity: 0.5;
-}
-
 #shareContainer {
-
+    height:40px
 }
 
-#shareContainer div{
-    display: inline;
-    margin-right: 20px;
+#shareContainer > div {
+    float: left;
 }
 
-#shareContainer .fb_iframe_widget_lift {
-    z-index: 5000;
-}
+

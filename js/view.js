@@ -223,11 +223,6 @@ function sgView(model, eventReporter) {
       }
 
     });
-
-    Socialite.load();
-
-
-
   } //end init()
 
   var setImage = function (imageData) {
