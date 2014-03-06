@@ -293,13 +293,6 @@
 
             <div style="width:150px">
             <!-- start facebook BS -->
-            <script>(function(d, s, id) {
-              var js, fjs = d.getElementsByTagName(s)[0];
-              if (d.getElementById(id)) return;
-              js = d.createElement(s); js.id = id;
-              js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=182352978632123";
-              fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));</script>
             <div class="fb-like" data-href="http://www.synthogram.com" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true" data-width="150"></div>
             <!-- end facebook BS -->
           </div>
@@ -307,20 +300,12 @@
           <div>
           <!-- start twitter BS -->
             <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.synthogram.com" data-text="Synthogram - Draw the Sound" data-via="AmitayD">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
           <!-- end twitter BS -->
           </div>
 
           <div>
             <!-- start G+ BS -->
             <div class="g-plusone" data-size="medium" data-href="http://www.synthogram.com"></div>
-            <script type="text/javascript">
-              (function() {
-                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-                po.src = 'https://apis.google.com/js/platform.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-              })();
-            </script>
             <!-- end G+ BS -->
           </div>
           <div>
@@ -329,6 +314,9 @@
         </div>
 
         <h2>About</h2>
+        <span style="float:right;">
+          <a href="http://www.chromeexperiments.com/detail/synthogram /"><img src="http://www.chromeexperiments.com/img/badge-black_black.png" alt="See my Experiment on ChromeExperiments.com" /></a>              
+        </span>
         <p>Synthogram is an experiment in synthesizing drawings on a painting canvas.</p>
         <p>It uses HTML5 Web Audio API, which enables sound synthesis in the browser. Because of that, it will only run on browsers that support it (such as Google Chrome). It is designed to work on mobile and touch devices as well (it is recommended to use headphones or an external speaker).
         <p>Synthogram is proudly open source, and availabled at <a href="https://github.com/amitayd/synthogram">Github</a>.
