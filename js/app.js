@@ -1,5 +1,5 @@
 /*exported  synthogramInit */
-/*globals  ga, sgMainController, sgView, sgEventReporter, sgModel, CanvasSource, OscSynth, Sequencer */
+/*globals  window, ga, sgMainController, sgView, sgEventReporter, sgModel, CanvasSource, OscSynth, Sequencer */
 'use strict';
 
 function synthogramInit() {
@@ -35,4 +35,35 @@ function synthogramInit() {
 
   var controller = sgMainController(model, view, sequencer, synth, source, eventReporter);
   controller.init();
+
+  window.setTimeout(function() {
+    /* jshint ignore:start */
+
+  // Social share plugins
+
+  //FB
+    (function (d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=182352978632123";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+   
+
+  //Twitter
+ !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
+
+
+  //Google plus
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/platform.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+
+  /* jshint ignore:end */
+
+  }, 1000);
 }
