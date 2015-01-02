@@ -1,5 +1,6 @@
 /*exported  synthogramInit */
-/*globals  window, ga, sgMainController, sgView, sgEventReporter, sgModel, CanvasSource, OscSynth, Sequencer */
+/*globals  window, ga, sgMainController, sgView, sgEventReporter, sgModel, 
+           SgAPI, CanvasSource, OscSynth, Sequencer */
 'use strict';
 
 function synthogramInit() {
@@ -35,6 +36,8 @@ function synthogramInit() {
 
   var controller = sgMainController(model, view, sequencer, synth, source, eventReporter);
   controller.init();
+
+  window.SGApi = new SgAPI(view.paintCanvas, model);
 
   window.setTimeout(function() {
     /* jshint ignore:start */
